@@ -19,13 +19,32 @@ Progetto di tirocinio / prova finale – Laurea triennale in Ingegneria Informat
 
 ## Avvio in sviluppo
 
+Servono due terminali, uno per il backend e uno per il frontend.
+
+Backend (API Express, riavvio automatico con nodemon):
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Frontend (server di sviluppo Vite, da aprire nel browser):
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
+## Build di produzione
+
+```bash
+cd frontend
+npm run build
+```
+
 ```bash
 cd backend
-npm install
+npm start
 ```
