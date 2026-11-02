@@ -1,0 +1,21 @@
+# Dipendenze
+node_modules/
+
+# Variabili d'ambiente
+.env
+.env.*
+!.env.example
+
+# Build
+dist/
+build/
+
+# Log
+*.log
+npm-debug.log*
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
