@@ -8,28 +8,48 @@ Progetto di tirocinio / prova finale – Laurea triennale in Ingegneria Informat
 
 ```
 ├── frontend/   # React + Vite
-├── backend/    # Node.js + Express
+├── backend/    # Python + Flask
 └── docs/       # Documentazione
 ```
 
 ## Requisiti
 
-- Node.js (LTS)
-- npm
+- Node.js (LTS) e npm, per il frontend
+- Python 3.12 o superiore, per il backend
 
 ## Avvio in sviluppo
 
 Servono due terminali, uno per il backend e uno per il frontend.
 
-Backend (API Express, riavvio automatico con nodemon):
+### Backend (API Flask, porta 5000)
+
+La prima volta, crea l'ambiente virtuale e installa le dipendenze:
 
 ```bash
 cd backend
-npm install
-npm run dev
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
 ```
 
-Frontend (server di sviluppo Vite, da aprire nel browser):
+Le volte successive:
+
+```bash
+cd backend
+.venv\Scripts\activate
+flask run
+```
+
+Su macOS/Linux l'ambiente virtuale si attiva con `source .venv/bin/activate` e il file `.env` si crea con `cp .env.example .env`.
+
+Dopo aver installato una nuova libreria con `pip install`, aggiorna l'elenco delle dipendenze:
+
+```bash
+pip freeze > requirements.txt
+```
+
+### Frontend (server di sviluppo Vite, da aprire nel browser)
 
 ```bash
 cd frontend
@@ -44,7 +64,4 @@ cd frontend
 npm run build
 ```
 
-```bash
-cd backend
-npm start
-```
+La cartella `frontend/dist/` generata contiene i file statici del sito, che possono essere serviti da Flask o da un web server.

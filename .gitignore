@@ -1,6 +1,14 @@
 # Dipendenze
 node_modules/
 
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+instance/
+.pytest_cache/
+
 # Variabili d'ambiente
 .env
 .env.*
