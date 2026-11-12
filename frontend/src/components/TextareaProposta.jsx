@@ -16,7 +16,7 @@ function TextareaProposta() {
     }
 
     return (
-        <div className="textarea-proposta width-100 flex flex-column gap-1">
+        <div className="width-100 flex flex-column gap-1">
 
             <div className="flex flex-column gap-05">
                 <h3 className="color-granato">Non trovi quello che cerchi?</h3>

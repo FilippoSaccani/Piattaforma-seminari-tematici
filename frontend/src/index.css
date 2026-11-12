@@ -21,7 +21,7 @@
     text-decoration: none;
     color: unset;
     box-sizing: border-box;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: normal;
 }
 
@@ -48,8 +48,23 @@ body, #root {
 /*flex*/
 .flex { display: flex; }
 .flex-column { display: flex; flex-direction: column; }
+.flex-align-center { display: flex; align-items: center; }
 .flex-center { display: flex; align-items: center; justify-content: center; }
 .flex-between { display: flex; justify-content: space-between; }
+
+
+/*Grid*/
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
 
 
 /*gap*/
@@ -99,42 +114,147 @@ a:hover, button:hover { background-color: var(--granato); }
 
 
 /*Form*/
-.textarea-proposta textarea {
+textarea {
     resize: vertical;
     font-family: inherit;
 }
 
 
 /*Immagini*/
-img { width: 10rem; }
+img { width: 20rem; }
 
 
-/*Altro*/
+/*Bordi*/
 .border { border: 1px solid var(--bordo); }
-.rounded { border-radius: 5px; }
-.rounded-20 { border-radius: 20px; }
-
-.shadow { box-shadow: 0 1px 3px rgb(128 128 128 / 0.30); }
-
-
-/*Card*/
-.card-dipartimento {
+.border-top {
     border-top: 1px solid var(--bordo);
+    padding-top: 1rem;
+}
+.border-top-2 {
+    border-top: 2px solid var(--bordo);
     padding-top: 0.75rem;
 }
 
-.card-dipartimento span {
-    font-size: 12px;
+.rounded { border-radius: 5px; }
+.rounded-20 { border-radius: 20px; }
+.rounded-circle { border-radius: 50%; }
+
+
+/*Ombre*/
+.shadow { box-shadow: 0 1px 3px rgb(128 128 128 / 0.30); }
+
+
+/*Informazioni*/
+.info-label {
+    font-size: 14px;
     color: var(--grigio);
 }
 
-.card-dipartimento p {
-    margin: 3px 0 0;
+.info-value {
+    margin-top: 3px;
     font-weight: 500;
 }
 
-.card-seminari {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+
+/*Avatar*/
+.avatar {
+    width: 55px;
+    height: 55px;
+    min-width: 55px;
+}
+
+
+/*Video*/
+.video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.video iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 7px;
+}
+
+
+/*Puntatore*/
+.pointer { cursor: pointer; }
+
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    scrollbar-width: none;
+}
+
+
+/*Sfondo*/
+.sfondo {
+    position: relative;
+    isolation: isolate;        
+    overflow: hidden;
+    min-height: 100vh;
+
+    background-repeat: no-repeat;
+    background-image:
+        radial-gradient(circle at 93% 10%, transparent 0 90px, rgba(209, 65, 36, 0.8) 90px 108px, transparent 108px),
+        radial-gradient(circle at 12% 64%, transparent 0 60px, rgba(209, 65, 36, 0.8) 60px 74px, transparent 74px);
+}
+
+.sfondo::before,
+.sfondo::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.9;
+    background: linear-gradient(45deg, var(--rosso) 30%, var(--granato) 70%);
+
+    --spessore: 30px;
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--spessore)), #000 calc(100% - var(--spessore)));
+    mask: radial-gradient(farthest-side, transparent calc(100% - var(--spessore)), #000 calc(100% - var(--spessore)));
+}
+
+.sfondo::before {
+    width: 460px;
+    top: -150px;
+    left: -220px;
+}
+
+.sfondo::after {
+    width: 560px;
+    bottom: -230px;
+    right: -150px;
+    --spessore: 36px;
+}
+
+
+
+/*Responsive*/
+@media only screen and (max-width: 1300px) {
+    .content { padding: 7rem 2rem 4rem 2rem; }
+    .navbar { padding: 0.4rem 3rem}
+}
+
+@media only screen and (max-width: 768px) {
+    .navbar h2 { display: none; }
+    .navbar i { font-size: 1.5rem; }
+    .content { padding: 6rem 0.7rem 1rem 0.7rem; }
+    .navbar { padding: 0.4rem 2rem}
+    .grid-2 { grid-template-columns: 1fr; }
+}
+
+@media only screen and (max-width: 600px) {
+    .navbar { padding: 0.4rem}
+    .navbar div {gap: 0.6rem}
+
+    .grid-2 .flex-between {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }

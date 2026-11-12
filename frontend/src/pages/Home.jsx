@@ -1,13 +1,12 @@
 
 import { useState } from "react";
 
-import Navbar from "../components/Navbar";
 import Titolo from "../components/Titolo";
 import BarraRicercaFiltri from "../components/BarraRicercaFiltri";
 import TextareaProposta from "../components/TextareaProposta";
 import CardSeminari from "../components/CardSeminari";
 
-function Home({ utente, pagina }) {
+function Home({ utente}) {
     // TODO: recuperare le categorie dal backend tramite fetch
     const [categorie, setCategorie] = useState([
         "Scienze e Ingegneria",
@@ -26,6 +25,7 @@ function Home({ utente, pagina }) {
     const [testoRicerca, setTestoRicerca] = useState("");   
     const [categoriaSelezionata, setCategoriaSelezionata] = useState("");
     const [dipartimentoSelezionato, setDipartimentoSelezionato] = useState("");
+    const [statoSelezionato, setStatoSelezionato] = useState("");
 
     function filtraCategoria(categoria) {
         setCategoriaSelezionata(categoria);
@@ -35,14 +35,16 @@ function Home({ utente, pagina }) {
         setDipartimentoSelezionato(dipartimento);
     }
 
-    return (
-        <div className="content width-100 flex-column flex-center gap-2">
-            <Navbar utente={utente} pagina={pagina} />
+    function filtraStato(stato) {
+        setStatoSelezionato(stato);
+    }
 
+    return (
+        <div className="content width-100 flex-column flex-center gap-2 sfondo">
             <Titolo
                 titolo="Seminari tematici"
                 sottotitolo="I seminari tematici sono volti ad approfondire contenuti disciplinari curricolari o ad introdurre tematiche caratterizzanti il «mondo universitario» attraverso argomenti d’attualità, impatto scientifico e sociale."
-                paragrafo="Non trovi l'argomento che cerchi? Puoi suggerire nuove categorie e seminari selezionando la categoria «Altro»!"
+                paragrafo={utente == "Scuola" && "Non trovi l'argomento che cerchi? Puoi suggerire nuove categorie e seminari selezionando la categoria «Altro»!"}
             />
 
             <BarraRicercaFiltri
@@ -55,6 +57,9 @@ function Home({ utente, pagina }) {
                 dipartimento={dipartimento}
                 dipartimentoSelezionato={dipartimentoSelezionato}
                 onDipartimentoChange={filtraDipartimento}
+                statoSelezionato={statoSelezionato}
+                onStatoChange={filtraStato}
+                utente={utente}
                 mostraAltro={true}
             />
 
