@@ -1,5 +1,6 @@
 
 import Titolo from "../components/Titolo";
+import Prenotazione from "../components/Prenotazione";
 
 function DettagliSeminario({ utente }) {
 
@@ -15,7 +16,7 @@ function DettagliSeminario({ utente }) {
             { data: "17/12/2026", fasceOrarie: ["10:00 - 12:00"] },
             { data: "18/12/2026", fasceOrarie: ["09:00 - 12:00"] }
         ],
-        modalita: "In presenza",
+        modalita: ["In presenza"],
         target: ["Terza", "Quarta", "Quinta"],
         trailer: "https://www.youtube.com/watch?v=XXXXXXXXXXX"
     };
@@ -61,36 +62,45 @@ function DettagliSeminario({ utente }) {
                 </div>
             </div>
 
-            <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
-                <div className="flex-between flex-align-center">
-                    <h2 className="color-granato">Disponibilità</h2>
+            {seminario.disponibilita.length > 0 &&
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                    <div className="flex-between flex-align-center">
+                        <h2 className="color-granato">Disponibilità</h2>
 
-                    <span className="width-fit padding-05 rounded-20 background-red color-cream flex-align-center gap-05">
-                        <i className="fa-solid fa-location-dot"></i>
-                        <p>{seminario.modalita}</p>
-                    </span>
-                </div>
+                        <span className="width-fit padding-05 rounded-20 background-red color-cream flex-align-center gap-05">
+                            <i className="fa-solid fa-location-dot"></i>
+                            <p>{seminario.modalita.join(" e ")}</p>
+                        </span>
+                    </div>
 
-                <div className="flex-column gap-1">
-                    {seminario.disponibilita.map((giorno, index) => (
-                        <div
-                            key={index}
-                            className={`${index > 0 ? "border-top " : ""}flex-between flex-align-center gap-1`}
-                        >
-                            <p className="info-value color-grey">{giorno.data}</p>
+                    <div className="flex-column gap-1">
+                        {seminario.disponibilita.map((giorno, index) => (
+                            <div
+                                key={index}
+                                className={`${index > 0 ? "border-top " : ""}flex-between flex-align-center gap-1`}
+                            >
+                                <p className="info-value color-grey">{giorno.data}</p>
 
-                            <div className="flex-align-center gap-1 flex-wrap">
-                                {giorno.fasceOrarie.map((fascia, i) => (
-                                    <span key={i} className="color-grey">
-                                        {i > 0 && " | "}
-                                        {fascia}
-                                    </span>
-                                ))}
+                                <div className="flex-align-center gap-1 flex-wrap">
+                                    {giorno.fasceOrarie.map((fascia, i) => (
+                                        <span key={i} className="color-grey">
+                                            {i > 0 && " | "}
+                                            {fascia}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
+            }
+
+            { seminario.disponibilita.length === 0 &&
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                    <h2 className="color-granato">Disponibilità</h2>
+                    <p className="color-grey">Tutte le date e le fasce orarie previste per questo seminario sono state prenotate. Al momento non è possibile effettuare nuove prenotazioni.</p>
+                </div>
+            }
 
             {seminario.trailer && 
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
@@ -106,6 +116,11 @@ function DettagliSeminario({ utente }) {
                 </div>
             }
 
+            {seminario.disponibilita.length > 0 && utente == "Scuola" && 
+                <Prenotazione 
+                    disponibilita={seminario.disponibilita}
+                    modalita={seminario.modalita} 
+             />}
         </div>
     );
 }

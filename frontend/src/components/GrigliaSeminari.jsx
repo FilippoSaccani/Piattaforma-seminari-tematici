@@ -1,4 +1,5 @@
-function CardSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelezionato }) {
+
+function GrigliaSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelezionato }) {
     //TODO: recuperare i seminari dal backend tramite fetch
     const seminari = [
         {
@@ -47,7 +48,7 @@ function CardSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelezion
         return <p className="color-grey">Nessun seminario trovato.</p>;
     }
 
-    function CardSeminario({ id, titolo, descrizione, categoria, dipartimento }) {
+    function GrigliaSeminario({ id, titolo, descrizione, categoria, dipartimento }) {
         return (
             <div className="shadow background-white border rounded padding-1 flex flex-column gap-1 pointer" onClick={() => window.location.href = `/dettagli-seminario/${id}`}>
 
@@ -71,7 +72,7 @@ function CardSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelezion
     return (
         <div className="grid-3 width-100">
             {seminariFiltrati.map((seminario) => (
-                <CardSeminario
+                <GrigliaSeminario
                     key={seminario.id}
                     {...seminario}
                 />
@@ -80,4 +81,4 @@ function CardSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelezion
     );
 }
 
-export default CardSeminari;
+export default GrigliaSeminari;

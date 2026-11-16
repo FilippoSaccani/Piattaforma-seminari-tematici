@@ -37,7 +37,7 @@ function TextareaProposta() {
                 className="width-100 padding-1 border rounded"
             />
 
-            <button onClick={inviaProposta} className="padding-05-1 background-red color-cream border rounded">
+            <button onClick={inviaProposta} className="padding-05-1 background-red color-cream rounded hover shadow">
                 Invia proposta
             </button>
 

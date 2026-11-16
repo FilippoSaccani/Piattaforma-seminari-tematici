@@ -1,4 +1,4 @@
-function Titolo ({titolo, sottotitolo, paragrafo}) {
+function Titolo ({titolo, sottotitolo, paragrafo = ""}) {
     return(
         <div className="width-100 flex-column gap-05">
             <h1>{titolo}</h1>

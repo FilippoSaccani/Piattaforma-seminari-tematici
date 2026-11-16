@@ -35,7 +35,7 @@ function Navbar({ utente, pagina }) {
                         <a
                             key={link.nome}
                             href={link.href}
-                            className={`color-cream padding-05-1 flex-center rounded gap-05 ${
+                            className={`color-cream padding-05-1 flex-center rounded gap-05 hover ${
                                 pagina === link.pagina
                                     ? "background-granato"
                                     : "background-red"
