@@ -63,6 +63,7 @@ function FormPrenotazione({
                         id="numeroStudenti"
                         type="number"
                         min="1"
+                        step="1"
                         value={numeroStudenti}
                         onChange={e => onChangeStudenti(e.target.value)}
                         className="border rounded padding-05-1"

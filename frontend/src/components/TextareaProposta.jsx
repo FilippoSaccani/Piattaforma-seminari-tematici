@@ -16,7 +16,7 @@ function TextareaProposta() {
     }
 
     return (
-        <div className="width-100 flex flex-column gap-1">
+        <div className="width-100 flex flex-column gap-1 padding-1 border rounded background-white shadow">
 
             <div className="flex flex-column gap-05">
                 <h3 className="color-granato">Non trovi quello che cerchi?</h3>
@@ -37,12 +37,16 @@ function TextareaProposta() {
                 className="width-100 padding-1 border rounded"
             />
 
-            <button onClick={inviaProposta} className="padding-05-1 background-red color-cream rounded hover shadow">
+            <button 
+                onClick={inviaProposta} 
+                className="padding-05-1 background-red color-cream rounded hover shadow"
+                {...(!proposta.trim() && { disabled: true })}
+            >
                 Invia proposta
             </button>
 
             {inviata && (
-                <p>Proposta inviata correttamente!</p>
+                <p className="successo">Proposta inviata correttamente!</p>
             )}
         </div>
     );

@@ -1,11 +1,11 @@
 
+import { useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const linkUtenti = {
     Scuola: [
         { nome: "Home", icona: "fa-house", pagina: "Home", href: "/" },
-        { nome: "Prenotazioni", icona: "fa-calendar-check", pagina: "Prenotazioni", href: "/prenotazioni" },
-        { nome: "Carrello", icona: "fa-cart-shopping", pagina: "Carrello", href: "/carrello" }
+        { nome: "Prenotazioni", icona: "fa-calendar-check", pagina: "Prenotazioni", href: "/prenotazioni" }
     ],
 
     Docente: [
@@ -20,9 +20,9 @@ const linkUtenti = {
     ]
 };
 
-function Navbar({ utente, pagina }) {
-
+function Navbar({ utente }) {
     const links = linkUtenti[utente] || [];
+    const posizione = useLocation();
 
     return (
         <div className="navbar width-100 flex-center flex-between background-white shadow">
@@ -30,15 +30,14 @@ function Navbar({ utente, pagina }) {
 
             <div className="width-fit flex gap-1">
                 {links.map((link) => {
+                    const selezionato = posizione.pathname === link.href;
 
                     return (
                         <a
                             key={link.nome}
                             href={link.href}
                             className={`color-cream padding-05-1 flex-center rounded gap-05 hover ${
-                                pagina === link.pagina
-                                    ? "background-granato"
-                                    : "background-red"
+                                selezionato ? "background-granato" : "background-red"
                             }`}
                         >
                             <i className={`fa-solid ${link.icona}`}></i>

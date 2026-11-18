@@ -1,30 +1,4 @@
-
-function GrigliaSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelezionato }) {
-    //TODO: recuperare i seminari dal backend tramite fetch
-    const seminari = [
-        {
-            id: 1,
-            titolo: "Intelligenza artificiale",
-            descrizione: "Introduzione alle nuove tecnologie e alle applicazioni dell'intelligenza artificiale.",
-            categoria: "Scienze e Ingegneria",
-            dipartimento: "DIEF"
-        },
-        {
-            id: 2,
-            titolo: "Robotica",
-            descrizione: "Alla scoperta dei robot e dei sistemi automatizzati.",
-            categoria: "Scienze e Ingegneria",
-            dipartimento: "Scienze e Metodi dell'Ingegneria"
-        },
-        {
-            id: 3,
-            titolo: "Sostenibilità",
-            descrizione: "Le sfide ambientali e le possibili soluzioni.",
-            categoria: "Società e Cultura",
-            dipartimento: "Scienze chimiche e geologiche"
-        }
-    ];
-
+function GrigliaSeminari({ seminari, testoRicerca, categoriaSelezionata, dipartimentoSelezionato, statoSelezionato = "" }) {
     // Applicazione dei filtri
     const seminariFiltrati = seminari.filter((seminario) => {
         const testo = testoRicerca.toLowerCase().trim();
@@ -41,20 +15,31 @@ function GrigliaSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelez
         const corrispondeDipartimento =
             dipartimentoSelezionato === "" || seminario.dipartimento === dipartimentoSelezionato;
 
-        return corrispondeRicerca && corrispondeCategoria && corrispondeDipartimento;
+        const corrispondeStato =
+            statoSelezionato === "" || seminario.stato === statoSelezionato;
+
+        return corrispondeRicerca && corrispondeCategoria && corrispondeDipartimento && corrispondeStato;
     });
 
-    if (seminariFiltrati.length === 0) {
-        return <p className="color-grey">Nessun seminario trovato.</p>;
-    }
-
-    function GrigliaSeminario({ id, titolo, descrizione, categoria, dipartimento }) {
+    function CardSeminario({id, titolo, descrizione, categoria, dipartimento, mediaRecensioni, numeroRecensioni }) {
         return (
-            <div className="shadow background-white border rounded padding-1 flex flex-column gap-1 pointer" onClick={() => window.location.href = `/dettagli-seminario/${id}`}>
+            <div
+                className="shadow background-white border rounded padding-1 flex flex-column gap-1 pointer"
+                onClick={() => window.location.href = `/dettagli-seminario/${id}`}
+            >
+                <div className="flex-between flex-align-center">
+                    <span className="background-red color-cream width-fit padding-01-04 rounded-20">
+                        {categoria}
+                    </span>
 
-                <span className="background-red color-cream width-fit padding-01-04 rounded-20">
-                    {categoria}
-                </span>
+                    {numeroRecensioni > 0 && (
+                        <div className="flex flex-align-center gap-025">
+                            <i className="fa-regular fa-star stella"></i>
+                            <span>{mediaRecensioni.toFixed(1)}</span>
+                            <span className="info-label">({numeroRecensioni})</span>
+                        </div>
+                    )}
+                </div>
 
                 <h3>{titolo}</h3>
 
@@ -64,15 +49,20 @@ function GrigliaSeminari({ testoRicerca, categoriaSelezionata, dipartimentoSelez
                     <span className="info-label">Dipartimento</span>
                     <p className="info-value">{dipartimento}</p>
                 </div>
-
             </div>
+        );
+    }
+
+    if (seminariFiltrati.length === 0) {
+        return (
+            <p className="color-grey">Nessun seminario trovato.</p>
         );
     }
 
     return (
         <div className="grid-3 width-100">
             {seminariFiltrati.map((seminario) => (
-                <GrigliaSeminario
+                <CardSeminario
                     key={seminario.id}
                     {...seminario}
                 />

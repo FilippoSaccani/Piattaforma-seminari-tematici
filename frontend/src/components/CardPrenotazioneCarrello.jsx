@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import FormPrenotazione from "./FormPrenotazione";
 
-function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onModifica }) {
+function CardPrenotazioneCarrello({ seminario, selezionato, onSeleziona, onRimuovi, onModifica, mostraSelezione = true }) {
     const [inModifica, setInModifica] = useState(false);
     const [datiModificati, setDatiModificati] = useState(seminario);
 
@@ -27,18 +27,26 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1">
 
-            <div className="flex-between">
+            <div className="flex-between flex-align-center">
                 <div className="flex-column gap-05">
                     <h2 className="color-granato">{seminario.titolo}</h2>
                     <p className="color-grey">{seminario.dipartimento}</p>
                 </div>
 
-                <input
-                    type="checkbox"
-                    className="background-white rounded-circle pointer"
-                    checked={selezionato}
-                    onChange={onSeleziona}
-                />
+                {mostraSelezione ? (
+                    <input
+                        type="checkbox"
+                        className="background-white rounded-circle pointer"
+                        checked={selezionato}
+                        onChange={onSeleziona}
+                    />
+                ) :
+                (
+                    <span className="background-cream color-granato width-fit height-fit padding-03-1 rounded-20 flex gap-05 flex-align-center">
+                        <i className="fa-solid fa-list-check"></i>
+                        Da confermare
+                    </span>
+                )}
             </div>
             
             {inModifica ? (
@@ -84,8 +92,6 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
                     </div>
                 </div>
             )}
-            
-
 
             <div className="flex-end width-100 flex-align-center border-top">
                 <div className="width-fit flex gap-1">
@@ -93,7 +99,7 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
                         <>
                             <button
                                 type="button"
-                                className="pointer background-red color-cream padding-01-04 rounded-20 hover"
+                                className="pointer background-red color-cream padding-05 rounded hover"
                                 onClick={salvaModifiche}
                                 
                             >
@@ -102,7 +108,7 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
 
                             <button
                                 type="button"
-                                className="pointer background-red color-cream padding-01-04 rounded-20 hover"
+                                className="pointer background-red color-cream padding-05 rounded hover"
                                 onClick={annullaModifiche}
                             >
                                 Annulla
@@ -112,7 +118,7 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
                         <>
                             <button
                                 type="button"
-                                className="pointer background-red color-cream padding-01-04 rounded-20 hover"
+                                className="pointer background-red color-cream padding-05 rounded hover"
                                 onClick={() => setInModifica(true)}
                             >
                                 Modifica
@@ -120,7 +126,7 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
 
                             <button
                                 type="button"
-                                className="pointer background-red color-cream padding-01-04 rounded-20 hover"
+                                className="pointer background-red color-cream padding-05 rounded hover"
                                 onClick={onRimuovi}
                             >
                                 Rimuovi
@@ -134,4 +140,4 @@ function CardPrenotazione({ seminario, selezionato, onSeleziona, onRimuovi, onMo
     );
 }
 
-export default CardPrenotazione;
+export default CardPrenotazioneCarrello;

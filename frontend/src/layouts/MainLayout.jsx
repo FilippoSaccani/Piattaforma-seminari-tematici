@@ -4,8 +4,8 @@ import Navbar from "../components/Navbar";
 function MainLayout({ utente }) {
     return (
         <>
-            <Navbar utente={utente} pagina={"Home"}/>
-            <Outlet />
+            <Navbar utente={utente} />
+            <Outlet context={{ utente }} />
         </>
     );
 }
