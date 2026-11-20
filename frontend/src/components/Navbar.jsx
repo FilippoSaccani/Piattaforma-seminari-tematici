@@ -4,19 +4,19 @@ import logo from "../assets/logo.png";
 
 const linkUtenti = {
     Scuola: [
-        { nome: "Home", icona: "fa-house", pagina: "Home", href: "/" },
-        { nome: "Prenotazioni", icona: "fa-calendar-check", pagina: "Prenotazioni", href: "/prenotazioni" }
+        { nome: "Home", icona: "fa-house", href: "/" },
+        { nome: "Prenotazioni", icona: "fa-calendar-check", href: "/prenotazioni" }
     ],
 
     Docente: [
-        { nome: "Home", icona: "fa-house", pagina: "Home", href: "/" },
-        { nome: "Prenotazioni e statistiche", icona: "fa-user-clock", pagina: "Prenotazioni", href: "/prenotazioni" },
-        { nome: "Aggiungi seminario", icona: "fa-plus", pagina: "Aggiungi", href: "/aggiungi" }
+        { nome: "Home", icona: "fa-house", href: "/" },
+        { nome: "I miei seminari", icona: "fa-solid fa-file-lines", href: "/miei-seminari" },
+        { nome: "Statistiche", icona: "fa-solid fa-chart-line", href: "/statistiche" }
     ],
 
     Admin: [
-        { nome: "Home", icona: "fa-house", pagina: "Home", href: "/" },
-        { nome: "Statistiche", icona: "fa-chart-line", pagina: "Statistiche", href: "/statistiche" }
+        { nome: "Home", icona: "fa-house", href: "/" },
+        { nome: "Statistiche", icona: "fa-chart-line", href: "/statistiche-generali" }
     ]
 };
 

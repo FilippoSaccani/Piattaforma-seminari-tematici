@@ -36,7 +36,7 @@ function CardPrenotazioneCarrello({ seminario, selezionato, onSeleziona, onRimuo
                 {mostraSelezione ? (
                     <input
                         type="checkbox"
-                        className="background-white rounded-circle pointer"
+                        className="background-white rounded-circle pointer seleziona-tutti"
                         checked={selezionato}
                         onChange={onSeleziona}
                     />

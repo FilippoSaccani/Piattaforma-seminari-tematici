@@ -243,7 +243,7 @@ function Prenotazioni() {
                             <label className="flex-align-center gap-05 bold width-fit">
                                 <input
                                     type="checkbox"
-                                    className="background-white rounded-circle pointer"
+                                    className="background-white rounded-circle pointer seleziona-tutti"
                                     checked={tuttiSelezionati}
                                     onChange={selezionaTutti}
                                 />

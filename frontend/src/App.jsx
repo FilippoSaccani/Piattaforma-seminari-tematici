@@ -5,9 +5,11 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import DettagliSeminario from "./pages/DettagliSeminario";
 import Prenotazioni from "./pages/Prenotazioni";
+import IMieiSeminari from "./pages/IMieiSeminari";
+import AggiungiSeminario from "./pages/AggiungiSeminario";
 
 function App() {
-    const utente = "Scuola";
+    const utente = "Docente";
 
     return (
         <BrowserRouter>
@@ -16,6 +18,8 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/dettagli-seminario/:id" element={<DettagliSeminario />} />
                     <Route path="/prenotazioni" element={<Prenotazioni />} />
+                    <Route path="/miei-seminari" element={<IMieiSeminari />} />
+                    <Route path="/aggiungi-seminario" element={<AggiungiSeminario />} />
                 </Route>
             </Routes>
         </BrowserRouter>
