@@ -120,6 +120,12 @@ body, #root {
     gap: 1.5rem;
 }
 
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
 
 /*Gap*/
 .gap-025 { gap: 0.25rem; }
@@ -152,6 +158,7 @@ h1 { font-size: 2rem; }
 .color-granato, h1 { color: var(--granato); }
 .color-red { color: var(--rosso); }
 .color-grey, h4 { color: var(--grigio); }
+.color-black { color: var(--nero); }
 .stella {color: #E5A000}
 .successo {color: #16A34A}
 

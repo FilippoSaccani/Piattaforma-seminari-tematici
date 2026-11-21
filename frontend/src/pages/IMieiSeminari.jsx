@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -20,7 +21,6 @@ function IMieiSeminari() {
             dipartimento: "DIEF",
             mediaRecensioni: 4.5,
             numeroRecensioni: 10,
-            stato: "Prenotato",
             disponibilita: [
                 {
                     data: "15/12/2026",
@@ -30,8 +30,7 @@ function IMieiSeminari() {
                             prenotazione: {
                                 id: 1,
                                 scuola: "Liceo Scientifico Aldo Moro",
-                                numeroStudenti: 25,
-                                stato: "Da svolgere"
+                                numeroStudenti: 25
                             }
                         },
                         {
@@ -48,8 +47,7 @@ function IMieiSeminari() {
                             prenotazione: {
                                 id: 2,
                                 scuola: "Istituto Blaise Pascal",
-                                numeroStudenti: 20,
-                                stato: "Da svolgere"
+                                numeroStudenti: 20
                             }
                         }
                     ]
@@ -64,7 +62,6 @@ function IMieiSeminari() {
             dipartimento: "Scienze e Metodi dell'Ingegneria",
             mediaRecensioni: 4.2,
             numeroRecensioni: 8,
-            stato: "Concluso",
             disponibilita: [
                 {
                     data: "10/10/2026",
@@ -74,8 +71,7 @@ function IMieiSeminari() {
                             prenotazione: {
                                 id: 3,
                                 scuola: "Istituto Tecnico Fermi",
-                                numeroStudenti: 22,
-                                stato: "Concluso"
+                                numeroStudenti: 22
                             }
                         }
                     ]
@@ -99,7 +95,6 @@ function IMieiSeminari() {
             dipartimento: "Scienze chimiche e geologiche",
             mediaRecensioni: 0,
             numeroRecensioni: 0,
-            stato: "Pubblicato",
             disponibilita: [
                 {
                     data: "18/12/2026",
@@ -115,14 +110,86 @@ function IMieiSeminari() {
                     ]
                 }
             ]
+        },
+        {
+            id: 4,
+            titolo: "Sicurezza informatica",
+            descrizione: "I principali rischi informatici e le tecniche per proteggere dati e sistemi.",
+            categoria: "Scienze e Ingegneria",
+            dipartimento: "DIEF",
+            mediaRecensioni: 4.8,
+            numeroRecensioni: 5,
+            disponibilita: [
+                {
+                    data: "10/11/2026",
+                    fasceOrarie: [
+                        {
+                            orario: "09:00 - 11:00",
+                            prenotazione: {
+                                id: 4,
+                                scuola: "Istituto Tecnico Einaudi",
+                                numeroStudenti: 24
+                            }
+                        },
+                        {
+                            orario: "14:00 - 16:00",
+                            prenotazione: {
+                                id: 5,
+                                scuola: "Liceo Scientifico Aldo Moro",
+                                numeroStudenti: 20
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     ]);
 
     const [testoRicerca, setTestoRicerca] = useState("");
+
     const [statoSelezionato, setStatoSelezionato] = useState(
         searchParams.get("stato") || ""
     );
+
     const [seminarioDaEliminare, setSeminarioDaEliminare] = useState(null);
+
+    function convertiDataOra(data, orario) {
+        const [giorno, mese, anno] = data.split("/").map(Number);
+        const [ora, minuti] = orario.split(":").map(Number);
+
+        return new Date(anno, mese - 1, giorno, ora, minuti);
+    }
+
+    function calcolaStatoSeminario(seminario) {
+        const oggi = new Date();
+
+        const fasce = seminario.disponibilita.flatMap(disponibilita =>
+            disponibilita.fasceOrarie.map(fascia => {
+                const fine = convertiDataOra(
+                    disponibilita.data,
+                    fascia.orario.split(" - ")[1]
+                );
+
+                return {
+                    prenotata: fascia.prenotazione !== null,
+                    futura: fine > oggi
+                };
+            })
+        );
+
+        const haPrenotazioniFuture = fasce.some(
+            fascia => fascia.prenotata && fascia.futura
+        );
+
+        const haDisponibilitaFuture = fasce.some(
+            fascia => !fascia.prenotata && fascia.futura
+        );
+
+        if (haPrenotazioniFuture) return "Prenotato";
+        if (haDisponibilitaFuture) return "Pubblicato";
+
+        return "Concluso";
+    }
 
     const numeroPrenotazioni = seminari.reduce(
         (totale, seminario) =>
@@ -136,23 +203,18 @@ function IMieiSeminari() {
         0
     );
 
-    const numeroConclusi = seminari.filter(seminario => {
-        const prenotazioni = seminario.disponibilita.flatMap(
-            disponibilita => disponibilita.fasceOrarie
-                .filter(fascia => fascia.prenotazione !== null)
-                .map(fascia => fascia.prenotazione)
-        );
-
-        return prenotazioni.length > 0 &&
-            prenotazioni.every(prenotazione => prenotazione.stato === "Concluso");
-    }).length;
+    const numeroConclusi = seminari.filter(
+        seminario => calcolaStatoSeminario(seminario) === "Concluso"
+    ).length;
 
     const seminariFiltrati = seminari.filter(seminario => {
+        const stato = calcolaStatoSeminario(seminario);
+
         const corrispondeStato =
             statoSelezionato === "" ||
-            (statoSelezionato === "Pubblicati" && seminario.stato === "Pubblicato") ||
-            (statoSelezionato === "Prenotati" && seminario.stato === "Prenotato") ||
-            (statoSelezionato === "Conclusi" && seminario.stato === "Concluso");
+            (statoSelezionato === "Pubblicati" && stato === "Pubblicato") ||
+            (statoSelezionato === "Prenotati" && stato === "Prenotato") ||
+            (statoSelezionato === "Conclusi" && stato === "Concluso");
 
         const corrispondeRicerca =
             seminario.titolo.toLowerCase().includes(testoRicerca.toLowerCase());
@@ -203,7 +265,6 @@ function IMieiSeminari() {
                 <i className="fa-solid fa-plus"></i>
                 Aggiungi seminario
             </button>
-            
 
             <RiepilogoSeminari
                 numeroSeminari={seminari.length}
@@ -227,14 +288,18 @@ function IMieiSeminari() {
             </div>
 
             {seminariFiltrati.length > 0 ? (
-                seminariFiltrati.map(seminario => (
-                    <CardSeminarioDocente
-                        key={seminario.id}
-                        seminario={seminario}
-                        onModifica={modificaSeminario}
-                        onElimina={eliminaSeminario}
-                    />
-                ))
+                seminariFiltrati.map(seminario => {
+                    const stato = calcolaStatoSeminario(seminario);
+
+                    return (
+                        <CardSeminarioDocente
+                            key={seminario.id}
+                            seminario={{ ...seminario, stato }}
+                            onModifica={modificaSeminario}
+                            onElimina={eliminaSeminario}
+                        />
+                    );
+                })
             ) : (
                 <p className="color-grey">
                     Nessun seminario trovato.
@@ -250,7 +315,6 @@ function IMieiSeminari() {
                     onAnnulla={() => setSeminarioDaEliminare(null)}
                 />
             )}
-
         </div>
     );
 }
