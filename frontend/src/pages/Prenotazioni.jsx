@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 import carrello_vuoto from "../assets/carrello_vuoto.png";
 
 import BarraRicerca from "../components/BarraRicerca";
@@ -10,146 +11,11 @@ import StatoVuoto from "../components/StatoVuoto";
 import PopupConferma from "../components/PopupConferma";
 
 function Prenotazioni() {
-    const [prenotazioni, setPrenotazioni] = useState([
-        {
-            id: 1,
-            titolo: "Intelligenza artificiale e robotica",
-            dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
-            data: "2026-11-20",
-            oraInizio: "10:00",
-            durata: 120,
-            numeroStudenti: 25,
-            modalita: "In presenza",
-            modalitaDisponibili: ["In presenza", "A distanza"],
-            disponibilita: [
-                {
-                    data: "2026-12-15",
-                    fasceOrarie: [
-                        { oraInizio: "09:00", prenotazione: null },
-                        { oraInizio: "14:00", prenotazione: null }
-                    ]
-                },
-                {
-                    data: "2026-12-17",
-                    fasceOrarie: [
-                        { oraInizio: "10:00", prenotazione: null }
-                    ]
-                },
-                {
-                    data: "2026-12-18",
-                    fasceOrarie: [
-                        { oraInizio: "09:00", prenotazione: null }
-                    ]
-                }
-            ],
-            stato: "Da confermare",
-            recensione: null
-        },
-        {
-            id: 2,
-            titolo: "Cybersecurity e protezione dei dati",
-            dipartimento: "Dipartimento di Scienze e Metodi dell'Ingegneria",
-            data: "2026-11-25",
-            oraInizio: "14:00",
-            durata: 120,
-            numeroStudenti: 20,
-            modalita: "In presenza",
-            modalitaDisponibili: ["In presenza", "A distanza"],
-            disponibilita: [
-                {
-                    data: "2026-12-20",
-                    fasceOrarie: [
-                        { oraInizio: "09:00", prenotazione: null },
-                        { oraInizio: "14:00", prenotazione: null }
-                    ]
-                },
-                {
-                    data: "2026-12-17",
-                    fasceOrarie: [
-                        { oraInizio: "10:00", prenotazione: null }
-                    ]
-                },
-                {
-                    data: "2026-12-18",
-                    fasceOrarie: [
-                        { oraInizio: "09:00", prenotazione: null }
-                    ]
-                }
-            ],
-            stato: "Da confermare",
-            recensione: null
-        },
-        {
-            id: 3,
-            titolo: "Sviluppo di applicazioni web",
-            dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
-            data: "2026-11-28",
-            oraInizio: "09:00",
-            durata: 120,
-            numeroStudenti: 30,
-            modalita: "A distanza",
-            modalitaDisponibili: ["A distanza"],
-            disponibilita: [
-                {
-                    data: "2026-12-15",
-                    fasceOrarie: [
-                        { oraInizio: "09:00", prenotazione: null },
-                        { oraInizio: "14:00", prenotazione: null }
-                    ]
-                },
-                {
-                    data: "2026-12-17",
-                    fasceOrarie: [
-                        { oraInizio: "10:00", prenotazione: null }
-                    ]
-                },
-                {
-                    data: "2026-12-18",
-                    fasceOrarie: [
-                        { oraInizio: "09:00", prenotazione: null }
-                    ]
-                }
-            ],
-            stato: "Da confermare",
-            recensione: null
-        },
-        {
-            id: 4,
-            titolo: "La transizione energetica",
-            dipartimento: "Dipartimento di Scienze Fisiche, Informatiche e Matematiche",
-            data: "2026-11-10",
-            oraInizio: "09:00",
-            durata: 120,
-            numeroStudenti: 22,
-            modalita: "In presenza",
-            stato: "Da svolgere",
-            recensione: null
-        },
-        {
-            id: 5,
-            titolo: "Comunicazione e social media",
-            dipartimento: "Dipartimento di Comunicazione ed Economia",
-            data: "2026-11-05",
-            oraInizio: "14:00",
-            durata: 120,
-            numeroStudenti: 18,
-            modalita: "A distanza",
-            stato: "Da svolgere",
-            recensione: null
-        },
-        {
-            id: 6,
-            titolo: "Seminario di sostenibilità",
-            dipartimento: "Dipartimento di Scienze e Metodi dell'Ingegneria",
-            data: "2026-10-05",
-            oraInizio: "10:00",
-            durata: 120,
-            numeroStudenti: 20,
-            modalita: "In presenza",
-            stato: "Concluso",
-            recensione: null
-        }
-    ]);
+    const [prenotazioni, setPrenotazioni] = useState([]);
+
+    useEffect(() => {
+        api.get("/prenotazioni").then(risposta => setPrenotazioni(risposta.data));
+    }, []);
 
 
     const [testoRicerca, setTestoRicerca] = useState("");

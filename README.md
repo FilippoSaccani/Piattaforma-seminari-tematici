@@ -57,6 +57,8 @@ npm install
 npm run dev
 ```
 
+Il frontend legge i dati dal backend: Vite inoltra a Flask tutte le chiamate che iniziano con `/api`, quindi anche il backend deve essere avviato.
+
 ## Build di produzione
 
 ```bash

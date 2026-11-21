@@ -1,27 +1,19 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import api from "../services/api";
 
 import Titolo from "../components/Titolo";
 import FormSeminario from "../components/FormSeminario";
 
 function AggiungiSeminario() {
 
-    const categorie = [
-        "Scienze e Ingegneria",
-        "Medicina e Vita",
-        "Società e Cultura"
-    ];
-
-    const dipartimenti = [
-        "DIEF",
-        "Scienze e Metodi dell'Ingegneria",
-        "Scienze fisiche, informatiche e matematiche",
-        "Scienze chimiche e geologiche"
-    ];
+    const [categorie, setCategorie] = useState([]);
+    const [dipartimenti, setDipartimenti] = useState([]);
 
     const [seminario, setSeminario] = useState({
-        docente: "Marco Rossi",
-        email: "marco.rossi@unimore.it",
+        docente: "",
+        email: "",
         dipartimento: "",
         categoria: "",
         titolo: "",
@@ -35,6 +27,20 @@ function AggiungiSeminario() {
         video: null,
         disponibilita: []
     });
+
+    useEffect(() => {
+        api.get("/categorie").then(risposta => setCategorie(risposta.data));
+        api.get("/dipartimenti").then(risposta => setDipartimenti(risposta.data));
+
+        // Il docente relatore è l'utente collegato
+        api.get("/utente").then(risposta =>
+            setSeminario(precedente => ({
+                ...precedente,
+                docente: risposta.data.nome,
+                email: risposta.data.email
+            }))
+        );
+    }, []);
 
     function aggiungiSeminario(event) {
         event.preventDefault();

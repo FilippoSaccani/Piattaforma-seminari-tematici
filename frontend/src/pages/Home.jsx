@@ -1,6 +1,8 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+
+import api from "../services/api";
 
 import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
 
@@ -14,51 +16,15 @@ import GrigliaSeminari from "../components/GrigliaSeminari";
 function Home() {
     const { utente } = useOutletContext();
 
-    // TODO: recuperare le categorie dal backend tramite fetch
-    const [categorie, setCategorie] = useState([
-        "Scienze e Ingegneria",
-        "Medicina e Vita",
-        "Società e Cultura"
-    ]);
+    const [categorie, setCategorie] = useState([]);
+    const [dipartimenti, setDipartimenti] = useState([]);
+    const [seminari, setSeminari] = useState([]);
 
-    // TODO: recuperare i dipartimenti dal backend tramite fetch
-    const [dipartimenti, setDipartimenti] = useState([
-        "DIEF",
-        "Scienze e Metodi dell'Ingegneria",
-        "Scienze fisiche, informatiche e matematiche",
-        "Scienze chimiche e geologiche"
-    ]);
-
-    // TODO: recuperare i seminari dal backend tramite fetch
-    const [seminari, setSeminari] = useState([
-        {
-            id: 1,
-            titolo: "Intelligenza artificiale",
-            descrizione: "Introduzione alle nuove tecnologie e alle applicazioni dell'intelligenza artificiale.",
-            categoria: "Scienze e Ingegneria",
-            dipartimento: "DIEF",
-            mediaRecensioni: 4.5,
-            numeroRecensioni: 10
-        },
-        {
-            id: 2,
-            titolo: "Robotica",
-            descrizione: "Alla scoperta dei robot e dei sistemi automatizzati.",
-            categoria: "Scienze e Ingegneria",
-            dipartimento: "Scienze e Metodi dell'Ingegneria",
-            mediaRecensioni: 4.2,
-            numeroRecensioni: 8
-        },
-        {
-            id: 3,
-            titolo: "Sostenibilità",
-            descrizione: "Le sfide ambientali e le possibili soluzioni.",
-            categoria: "Società e Cultura",
-            dipartimento: "Scienze chimiche e geologiche",
-            mediaRecensioni: 0,
-            numeroRecensioni: 0
-        }
-    ]);
+    useEffect(() => {
+        api.get("/categorie").then(risposta => setCategorie(risposta.data));
+        api.get("/dipartimenti").then(risposta => setDipartimenti(risposta.data));
+        api.get("/seminari").then(risposta => setSeminari(risposta.data));
+    }, []);
 
     const [testoRicerca, setTestoRicerca] = useState("");
     const [categoriaSelezionata, setCategoriaSelezionata] = useState("");

@@ -1,5 +1,8 @@
 
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import api from "./services/api";
 
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
@@ -10,7 +13,16 @@ import AggiungiSeminario from "./pages/AggiungiSeminario";
 import ModificaSeminario from "./pages/ModificaSeminario";
 
 function App() {
-    const utente = "Docente";
+    const [utente, setUtente] = useState(null);
+
+    useEffect(() => {
+        api.get("/utente").then(risposta => setUtente(risposta.data.ruolo));
+    }, []);
+
+    // Attende il ruolo dell'utente prima di mostrare le pagine
+    if (!utente) {
+        return null;
+    }
 
     return (
         <BrowserRouter>

@@ -1,5 +1,8 @@
 
-import { useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useOutletContext, useParams } from "react-router-dom";
+
+import api from "../services/api";
 
 import Titolo from "../components/Titolo";
 import Prenotazione from "../components/Prenotazione";
@@ -30,88 +33,16 @@ function calcolaOraFine(oraInizio, durata) {
 function DettagliSeminario() {
     const { utente } = useOutletContext();
 
-    const seminario = {
-        id: 1,
-        docente: "Prof. Marco Rossi",
-        email: "marco.rossi@unimore.it",
-        dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
-        categoria: "Scienze e Ingegneria",
-        titolo: "Intelligenza artificiale: applicazioni e prospettive future",
-        descrizione_breve: "Un seminario dedicato alla scoperta dell'intelligenza artificiale e delle sue principali applicazioni.",
-        descrizione_dettagliata: "Un seminario dedicato alla scoperta dell'intelligenza artificiale, delle sue principali applicazioni e delle prospettive di sviluppo.\n\nNon sono richieste conoscenze pregresse di programmazione.",
-        requisiti: "",
-        durata: 120,
-        modalita: ["In presenza"],
-        anni: [3, 4, 5],
-        limite_prenotazioni: 10,
-        video: "/video/intelligenza-artificiale.mp4",
+    const { id } = useParams();
+    const [seminario, setSeminario] = useState(null);
 
-        disponibilita: [
-            {
-                data: "2026-12-15",
-                fasceOrarie: [
-                    {
-                        oraInizio: "09:00",
-                        prenotazione: null
-                    },
-                    {
-                        oraInizio: "14:00",
-                        prenotazione: {
-                            id: 1,
-                            scuola: "Liceo Scientifico Aldo Moro",
-                            numeroStudenti: 25
-                        }
-                    }
-                ]
-            },
-            {
-                data: "2026-12-17",
-                fasceOrarie: [
-                    {
-                        oraInizio: "10:00",
-                        prenotazione: null
-                    }
-                ]
-            },
-            {
-                data: "2026-12-18",
-                fasceOrarie: [
-                    {
-                        oraInizio: "09:00",
-                        prenotazione: null
-                    }
-                ]
-            }
-        ],
+    useEffect(() => {
+        api.get(`/seminari/${id}`).then(risposta => setSeminario(risposta.data));
+    }, [id]);
 
-        mediaRecensioni: 4.7,
-        numeroRecensioni: 3,
-
-        // Dati di esempio delle recensioni
-        recensioni: [
-            {
-                id: 1,
-                scuola: "Liceo Scientifico Aldo Moro",
-                voto: 5,
-                testo: "Seminario molto interessante e ben organizzato. Gli studenti hanno apprezzato particolarmente gli esempi pratici.",
-                anno: 2026
-            },
-            {
-                id: 2,
-                scuola: "Istituto Tecnico Blaise Pascal",
-                voto: 4,
-                testo: "Un'esperienza formativa interessante, che ha permesso di approfondire argomenti affrontati durante le lezioni.",
-                anno: 2025
-            },
-            {
-                id: 3,
-                scuola: "Liceo delle Scienze Applicate",
-                voto: 5,
-                testo: "Relatore molto preparato e contenuti spiegati in modo chiaro e coinvolgente.",
-                anno: 2025
-            }
-        ]
-    };
+    if (!seminario) {
+        return null;
+    }
 
     const classi = seminario.anni.length > 1
         ? `${seminario.anni.slice(0, -1).join(", ")} e ${seminario.anni.at(-1)}`

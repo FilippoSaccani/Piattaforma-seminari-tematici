@@ -1,8 +1,10 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
+
+import api from "../services/api";
 
 import StatoVuoto from "../components/StatoVuoto";
 import BarraRicerca from "../components/BarraRicerca";
@@ -16,174 +18,11 @@ import ModificaSeminario from "./ModificaSeminario";
 function IMieiSeminari() {
     const [searchParams] = useSearchParams();
 
-    const [seminari, setSeminari] = useState([
-        {
-            id: 1,
-            docente: "Marco Rossi",
-            email: "marco.rossi@unimore.it",
-            dipartimento: "DIEF",
-            categoria: "Scienze e Ingegneria",
-            titolo: "Intelligenza artificiale",
-            descrizione_breve: "Introduzione alle nuove tecnologie e alle applicazioni dell'intelligenza artificiale.",
-            descrizione_dettagliata: "Un approfondimento sulle tecnologie di intelligenza artificiale, sui principali algoritmi e sulle loro applicazioni nella vita quotidiana e nel mondo del lavoro.",
-            requisiti: "",
-            durata: 120,
-            modalita: ["In presenza"],
-            anni: [3, 4, 5],
-            limite_prenotazioni: 10,
-            video: null,
-            mediaRecensioni: 4.5,
-            numeroRecensioni: 10,
-            disponibilita: [
-                {
-                    data: "2026-12-15",
-                    fasceOrarie: [
-                        {
-                            oraInizio: "09:00",
-                            prenotazione: {
-                                id: 1,
-                                scuola: "Liceo Scientifico Aldo Moro",
-                                numeroStudenti: 25
-                            }
-                        },
-                        {
-                            oraInizio: "14:00",
-                            prenotazione: null
-                        }
-                    ]
-                },
-                {
-                    data: "2026-12-17",
-                    fasceOrarie: [
-                        {
-                            oraInizio: "10:00",
-                            prenotazione: {
-                                id: 2,
-                                scuola: "Istituto Blaise Pascal",
-                                numeroStudenti: 20
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 2,
-            docente: "Marco Rossi",
-            email: "marco.rossi@unimore.it",
-            dipartimento: "Scienze e Metodi dell'Ingegneria",
-            categoria: "Scienze e Ingegneria",
-            titolo: "Robotica",
-            descrizione_breve: "Alla scoperta dei robot e dei sistemi automatizzati.",
-            descrizione_dettagliata: "Un viaggio nel mondo della robotica, dai componenti fondamentali dei robot ai sistemi automatizzati e alle loro applicazioni industriali.",
-            requisiti: "",
-            durata: 120,
-            modalita: ["In presenza"],
-            anni: [3, 4, 5],
-            limite_prenotazioni: 10,
-            video: null,
-            mediaRecensioni: 4.2,
-            numeroRecensioni: 8,
-            disponibilita: [
-                {
-                    data: "2026-10-10",
-                    fasceOrarie: [
-                        {
-                            oraInizio: "09:00",
-                            prenotazione: {
-                                id: 3,
-                                scuola: "Istituto Tecnico Fermi",
-                                numeroStudenti: 22
-                            }
-                        }
-                    ]
-                },
-                {
-                    data: "2026-12-20",
-                    fasceOrarie: [
-                        {
-                            oraInizio: "14:00",
-                            prenotazione: null
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 3,
-            docente: "Marco Rossi",
-            email: "marco.rossi@unimore.it",
-            dipartimento: "Scienze chimiche e geologiche",
-            categoria: "Società e Cultura",
-            titolo: "Sostenibilità",
-            descrizione_breve: "Le sfide ambientali e le possibili soluzioni.",
-            descrizione_dettagliata: "Un'analisi delle principali sfide ambientali contemporanee e delle soluzioni tecnologiche e sociali per promuovere uno sviluppo sostenibile.",
-            requisiti: "",
-            durata: 120,
-            modalita: ["In presenza"],
-            anni: [3, 4, 5],
-            limite_prenotazioni: 10,
-            video: null,
-            mediaRecensioni: 0,
-            numeroRecensioni: 0,
-            disponibilita: [
-                {
-                    data: "2026-12-18",
-                    fasceOrarie: [
-                        {
-                            oraInizio: "09:00",
-                            prenotazione: null
-                        },
-                        {
-                            oraInizio: "14:00",
-                            prenotazione: null
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 4,
-            docente: "Marco Rossi",
-            email: "marco.rossi@unimore.it",
-            dipartimento: "DIEF",
-            categoria: "Scienze e Ingegneria",
-            titolo: "Sicurezza informatica",
-            descrizione_breve: "I principali rischi informatici e le tecniche per proteggere dati e sistemi.",
-            descrizione_dettagliata: "Un'introduzione alle minacce informatiche, alle vulnerabilità dei sistemi e alle principali tecniche utilizzate per proteggere informazioni e infrastrutture digitali.",
-            requisiti: "",
-            durata: 120,
-            modalita: ["In presenza"],
-            anni: [3, 4, 5],
-            limite_prenotazioni: 10,
-            video: null,
-            mediaRecensioni: 4.8,
-            numeroRecensioni: 5,
-            disponibilita: [
-                {
-                    data: "2026-11-10",
-                    fasceOrarie: [
-                        {
-                            oraInizio: "09:00",
-                            prenotazione: {
-                                id: 4,
-                                scuola: "Istituto Tecnico Einaudi",
-                                numeroStudenti: 24
-                            }
-                        },
-                        {
-                            oraInizio: "14:00",
-                            prenotazione: {
-                                id: 5,
-                                scuola: "Liceo Scientifico Aldo Moro",
-                                numeroStudenti: 20
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    ]);
+    const [seminari, setSeminari] = useState([]);
+
+    useEffect(() => {
+        api.get("/miei-seminari").then(risposta => setSeminari(risposta.data));
+    }, []);
 
     const [testoRicerca, setTestoRicerca] = useState("");
 

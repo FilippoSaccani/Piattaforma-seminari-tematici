@@ -1,22 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import api from "../services/api";
 
 import Titolo from "../components/Titolo";
 import FormSeminario from "../components/FormSeminario";
 
 function ModificaSeminario({ seminario: seminarioIniziale, onSalva, onAnnulla }) {
 
-    const categorie = [
-        "Scienze e Ingegneria",
-        "Medicina e Vita",
-        "Società e Cultura"
-    ];
+    const [categorie, setCategorie] = useState([]);
+    const [dipartimenti, setDipartimenti] = useState([]);
 
-    const dipartimenti = [
-        "DIEF",
-        "Scienze e Metodi dell'Ingegneria",
-        "Scienze fisiche, informatiche e matematiche",
-        "Scienze chimiche e geologiche"
-    ];
+    useEffect(() => {
+        api.get("/categorie").then(risposta => setCategorie(risposta.data));
+        api.get("/dipartimenti").then(risposta => setDipartimenti(risposta.data));
+    }, []);
 
     const [seminario, setSeminario] = useState({
         ...seminarioIniziale
