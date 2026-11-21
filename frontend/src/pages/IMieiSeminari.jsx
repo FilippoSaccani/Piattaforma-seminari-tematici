@@ -2,12 +2,16 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
+
+import StatoVuoto from "../components/StatoVuoto";
 import BarraRicerca from "../components/BarraRicerca";
 import Filtro from "../components/Filtro";
 import Titolo from "../components/Titolo";
 import RiepilogoSeminari from "../components/RiepilogoSeminari";
 import CardSeminarioDocente from "../components/CardSeminarioDocente";
 import PopupConferma from "../components/PopupConferma";
+import ModificaSeminario from "./ModificaSeminario";
 
 function IMieiSeminari() {
     const [searchParams] = useSearchParams();
@@ -15,18 +19,27 @@ function IMieiSeminari() {
     const [seminari, setSeminari] = useState([
         {
             id: 1,
-            titolo: "Intelligenza artificiale",
-            descrizione: "Introduzione alle nuove tecnologie e alle applicazioni dell'intelligenza artificiale.",
-            categoria: "Scienze e Ingegneria",
+            docente: "Marco Rossi",
+            email: "marco.rossi@unimore.it",
             dipartimento: "DIEF",
+            categoria: "Scienze e Ingegneria",
+            titolo: "Intelligenza artificiale",
+            descrizione_breve: "Introduzione alle nuove tecnologie e alle applicazioni dell'intelligenza artificiale.",
+            descrizione_dettagliata: "Un approfondimento sulle tecnologie di intelligenza artificiale, sui principali algoritmi e sulle loro applicazioni nella vita quotidiana e nel mondo del lavoro.",
+            requisiti: "",
+            durata: 120,
+            modalita: ["In presenza"],
+            anni: [3, 4, 5],
+            limite_prenotazioni: 10,
+            video: null,
             mediaRecensioni: 4.5,
             numeroRecensioni: 10,
             disponibilita: [
                 {
-                    data: "15/12/2026",
+                    data: "2026-12-15",
                     fasceOrarie: [
                         {
-                            orario: "09:00 - 11:00",
+                            oraInizio: "09:00",
                             prenotazione: {
                                 id: 1,
                                 scuola: "Liceo Scientifico Aldo Moro",
@@ -34,16 +47,16 @@ function IMieiSeminari() {
                             }
                         },
                         {
-                            orario: "14:00 - 16:00",
+                            oraInizio: "14:00",
                             prenotazione: null
                         }
                     ]
                 },
                 {
-                    data: "17/12/2026",
+                    data: "2026-12-17",
                     fasceOrarie: [
                         {
-                            orario: "10:00 - 12:00",
+                            oraInizio: "10:00",
                             prenotazione: {
                                 id: 2,
                                 scuola: "Istituto Blaise Pascal",
@@ -56,18 +69,27 @@ function IMieiSeminari() {
         },
         {
             id: 2,
-            titolo: "Robotica",
-            descrizione: "Alla scoperta dei robot e dei sistemi automatizzati.",
-            categoria: "Scienze e Ingegneria",
+            docente: "Marco Rossi",
+            email: "marco.rossi@unimore.it",
             dipartimento: "Scienze e Metodi dell'Ingegneria",
+            categoria: "Scienze e Ingegneria",
+            titolo: "Robotica",
+            descrizione_breve: "Alla scoperta dei robot e dei sistemi automatizzati.",
+            descrizione_dettagliata: "Un viaggio nel mondo della robotica, dai componenti fondamentali dei robot ai sistemi automatizzati e alle loro applicazioni industriali.",
+            requisiti: "",
+            durata: 120,
+            modalita: ["In presenza"],
+            anni: [3, 4, 5],
+            limite_prenotazioni: 10,
+            video: null,
             mediaRecensioni: 4.2,
             numeroRecensioni: 8,
             disponibilita: [
                 {
-                    data: "10/10/2026",
+                    data: "2026-10-10",
                     fasceOrarie: [
                         {
-                            orario: "09:00 - 11:00",
+                            oraInizio: "09:00",
                             prenotazione: {
                                 id: 3,
                                 scuola: "Istituto Tecnico Fermi",
@@ -77,10 +99,10 @@ function IMieiSeminari() {
                     ]
                 },
                 {
-                    data: "20/12/2026",
+                    data: "2026-12-20",
                     fasceOrarie: [
                         {
-                            orario: "14:00 - 16:00",
+                            oraInizio: "14:00",
                             prenotazione: null
                         }
                     ]
@@ -89,22 +111,31 @@ function IMieiSeminari() {
         },
         {
             id: 3,
-            titolo: "Sostenibilità",
-            descrizione: "Le sfide ambientali e le possibili soluzioni.",
-            categoria: "Società e Cultura",
+            docente: "Marco Rossi",
+            email: "marco.rossi@unimore.it",
             dipartimento: "Scienze chimiche e geologiche",
+            categoria: "Società e Cultura",
+            titolo: "Sostenibilità",
+            descrizione_breve: "Le sfide ambientali e le possibili soluzioni.",
+            descrizione_dettagliata: "Un'analisi delle principali sfide ambientali contemporanee e delle soluzioni tecnologiche e sociali per promuovere uno sviluppo sostenibile.",
+            requisiti: "",
+            durata: 120,
+            modalita: ["In presenza"],
+            anni: [3, 4, 5],
+            limite_prenotazioni: 10,
+            video: null,
             mediaRecensioni: 0,
             numeroRecensioni: 0,
             disponibilita: [
                 {
-                    data: "18/12/2026",
+                    data: "2026-12-18",
                     fasceOrarie: [
                         {
-                            orario: "09:00 - 11:00",
+                            oraInizio: "09:00",
                             prenotazione: null
                         },
                         {
-                            orario: "14:00 - 16:00",
+                            oraInizio: "14:00",
                             prenotazione: null
                         }
                     ]
@@ -113,18 +144,27 @@ function IMieiSeminari() {
         },
         {
             id: 4,
-            titolo: "Sicurezza informatica",
-            descrizione: "I principali rischi informatici e le tecniche per proteggere dati e sistemi.",
-            categoria: "Scienze e Ingegneria",
+            docente: "Marco Rossi",
+            email: "marco.rossi@unimore.it",
             dipartimento: "DIEF",
+            categoria: "Scienze e Ingegneria",
+            titolo: "Sicurezza informatica",
+            descrizione_breve: "I principali rischi informatici e le tecniche per proteggere dati e sistemi.",
+            descrizione_dettagliata: "Un'introduzione alle minacce informatiche, alle vulnerabilità dei sistemi e alle principali tecniche utilizzate per proteggere informazioni e infrastrutture digitali.",
+            requisiti: "",
+            durata: 120,
+            modalita: ["In presenza"],
+            anni: [3, 4, 5],
+            limite_prenotazioni: 10,
+            video: null,
             mediaRecensioni: 4.8,
             numeroRecensioni: 5,
             disponibilita: [
                 {
-                    data: "10/11/2026",
+                    data: "2026-11-10",
                     fasceOrarie: [
                         {
-                            orario: "09:00 - 11:00",
+                            oraInizio: "09:00",
                             prenotazione: {
                                 id: 4,
                                 scuola: "Istituto Tecnico Einaudi",
@@ -132,7 +172,7 @@ function IMieiSeminari() {
                             }
                         },
                         {
-                            orario: "14:00 - 16:00",
+                            oraInizio: "14:00",
                             prenotazione: {
                                 id: 5,
                                 scuola: "Liceo Scientifico Aldo Moro",
@@ -151,13 +191,20 @@ function IMieiSeminari() {
         searchParams.get("stato") || ""
     );
 
+    const [seminarioDaModificare, setSeminarioDaModificare] = useState(null);
     const [seminarioDaEliminare, setSeminarioDaEliminare] = useState(null);
 
-    function convertiDataOra(data, orario) {
-        const [giorno, mese, anno] = data.split("/").map(Number);
-        const [ora, minuti] = orario.split(":").map(Number);
+    function convertiDataOra(data, oraInizio, durata) {
+        const [anno, mese, giorno] = data.split("-").map(Number);
+        const [ore, minuti] = oraInizio.split(":").map(Number);
 
-        return new Date(anno, mese - 1, giorno, ora, minuti);
+        return new Date(
+            anno,
+            mese - 1,
+            giorno,
+            ore,
+            minuti + Number(durata)
+        );
     }
 
     function calcolaStatoSeminario(seminario) {
@@ -167,7 +214,8 @@ function IMieiSeminari() {
             disponibilita.fasceOrarie.map(fascia => {
                 const fine = convertiDataOra(
                     disponibilita.data,
-                    fascia.orario.split(" - ")[1]
+                    fascia.oraInizio,
+                    seminario.durata
                 );
 
                 return {
@@ -222,14 +270,20 @@ function IMieiSeminari() {
         return corrispondeStato && corrispondeRicerca;
     });
 
-    function modificaSeminario(modificato) {
+    function modificaSeminario(seminario) {
+        setSeminarioDaModificare(seminario);
+    }
+
+    function salvaModifiche(seminarioModificato) {
         setSeminari(precedenti =>
             precedenti.map(seminario =>
-                seminario.id === modificato.id
-                    ? modificato
+                seminario.id === seminarioModificato.id
+                    ? seminarioModificato
                     : seminario
             )
         );
+
+        setSeminarioDaModificare(null);
 
         // TODO: fetch PUT per aggiornare il seminario
     }
@@ -251,71 +305,91 @@ function IMieiSeminari() {
     }
 
     return (
-        <div className="page-content flex-column gap-2">
-            <Titolo
-                titolo="I miei seminari"
-                sottotitolo="Gestisci i tuoi seminari, consulta le prenotazioni ricevute e tieni traccia delle attività svolte."
-            />
-
-            <button
-                type="button"
-                className="background-red color-cream padding-05-1 rounded pointer shadow hover flex-center gap-05"
-                onClick={() => window.location.href = "/aggiungi-seminario"}
-            >
-                <i className="fa-solid fa-plus"></i>
-                Aggiungi seminario
-            </button>
-
-            <RiepilogoSeminari
-                numeroSeminari={seminari.length}
-                numeroPrenotazioni={numeroPrenotazioni}
-                numeroConclusi={numeroConclusi}
-            />
-
-            <div className="flex gap-1 width-100">
-                <BarraRicerca
-                    placeholder="Cerca i tuoi seminari..."
-                    value={testoRicerca}
-                    onChange={setTestoRicerca}
+        <>
+            {seminarioDaModificare ? (
+                <ModificaSeminario
+                    seminario={seminarioDaModificare}
+                    onSalva={salvaModifiche}
+                    onAnnulla={() => setSeminarioDaModificare(null)}
                 />
-
-                <Filtro
-                    categorie={["Pubblicati", "Prenotati", "Conclusi"]}
-                    categoriaSelezionata={statoSelezionato}
-                    onChange={setStatoSelezionato}
-                    opzione="Tutti i seminari"
-                />
-            </div>
-
-            {seminariFiltrati.length > 0 ? (
-                seminariFiltrati.map(seminario => {
-                    const stato = calcolaStatoSeminario(seminario);
-
-                    return (
-                        <CardSeminarioDocente
-                            key={seminario.id}
-                            seminario={{ ...seminario, stato }}
-                            onModifica={modificaSeminario}
-                            onElimina={eliminaSeminario}
-                        />
-                    );
-                })
             ) : (
-                <p className="color-grey">
-                    Nessun seminario trovato.
-                </p>
-            )}
+                <div className="page-content flex-column gap-2">
+                    <Titolo
+                        titolo="I miei seminari"
+                        sottotitolo="Gestisci i tuoi seminari, consulta le prenotazioni ricevute e tieni traccia delle attività svolte."
+                    />
 
-            {seminarioDaEliminare && (
-                <PopupConferma
-                    titolo="Conferma eliminazione"
-                    messaggio={`Vuoi davvero eliminare il seminario "${seminarioDaEliminare.titolo}"?`}
-                    testoConferma="Elimina"
-                    onConferma={confermaEliminazione}
-                    onAnnulla={() => setSeminarioDaEliminare(null)}
-                />
+                    {seminari.length === 0 ? (
+                        <StatoVuoto
+                            titolo="Nessun seminario disponibile"
+                            descrizione="Non hai ancora caricato nessun seminario. Quando ne aggiungerai uno, potrai gestirlo da questa sezione."
+                            immagine={seminari_non_disponibili}
+                        />
+                    ) : (
+                        <>
+                            <button
+                                type="button"
+                                className="background-red color-cream padding-05-1 rounded pointer shadow hover flex-center gap-05"
+                                onClick={() => window.location.href = "/aggiungi-seminario"}
+                            >
+                                <i className="fa-solid fa-plus"></i>
+                                Aggiungi seminario
+                            </button>
+
+                            <RiepilogoSeminari
+                                numeroSeminari={seminari.length}
+                                numeroPrenotazioni={numeroPrenotazioni}
+                                numeroConclusi={numeroConclusi}
+                            />
+
+                            <div className="flex gap-1 width-100">
+                                <BarraRicerca
+                                    placeholder="Cerca i tuoi seminari..."
+                                    value={testoRicerca}
+                                    onChange={setTestoRicerca}
+                                />
+
+                                <Filtro
+                                    categorie={["Pubblicati", "Prenotati", "Conclusi"]}
+                                    categoriaSelezionata={statoSelezionato}
+                                    onChange={setStatoSelezionato}
+                                    opzione="Tutti i seminari"
+                                />
+                            </div>
+
+                            {seminariFiltrati.length > 0 ? (
+                                seminariFiltrati.map(seminario => {
+                                    const stato = calcolaStatoSeminario(seminario);
+
+                                    return (
+                                        <CardSeminarioDocente
+                                            key={seminario.id}
+                                            seminario={{ ...seminario, stato }}
+                                            onModifica={modificaSeminario}
+                                            onElimina={eliminaSeminario}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <p className="color-grey">
+                                    Nessun seminario trovato.
+                                </p>
+                            )}
+                        </>
+                    )}
+
+                    {seminarioDaEliminare && (
+                        <PopupConferma
+                            titolo="Conferma eliminazione"
+                            messaggio={`Vuoi davvero eliminare il seminario "${seminarioDaEliminare.titolo}"?`}
+                            testoConferma="Elimina"
+                            onConferma={confermaEliminazione}
+                            onAnnulla={() => setSeminarioDaEliminare(null)}
+                        />
+                    )}
+                </div>
             )}
-        </div>
+        </>
     );
 }
 

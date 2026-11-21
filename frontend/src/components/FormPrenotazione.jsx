@@ -1,6 +1,7 @@
 
 function FormPrenotazione({
     disponibilita,
+    durata,
     dataSelezionata,
     fasciaSelezionata,
     numeroStudenti,
@@ -15,6 +16,27 @@ function FormPrenotazione({
         giorno => giorno.data === dataSelezionata
     );
 
+    function calcolaOraFine(oraInizio) {
+        const [ore, minuti] = oraInizio.split(":").map(Number);
+
+        const minutiTotali = ore * 60 + minuti + Number(durata);
+
+        const oreFine = Math.floor(minutiTotali / 60);
+        const minutiFine = minutiTotali % 60;
+
+        return (
+            String(oreFine).padStart(2, "0") +
+            ":" +
+            String(minutiFine).padStart(2, "0")
+        );
+    }
+
+    function formattaData(data) {
+        const [anno, mese, giorno] = data.split("-");
+
+        return `${giorno}/${mese}/${anno}`;
+    }
+
     return (
         <>
             <div className="flex-column gap-05">
@@ -28,7 +50,7 @@ function FormPrenotazione({
                             className={`padding-05-1 border rounded pointer ${dataSelezionata === giorno.data ? "background-cream color-granato border-granato" : "background-white"}`}
                             onClick={() => onChangeData(giorno.data)}
                         >
-                            {giorno.data}
+                            {formattaData(giorno.data)}
                         </button>
                     ))}
                 </div>
@@ -41,12 +63,12 @@ function FormPrenotazione({
                     <div className="flex gap-05">
                         {giornoSelezionato.fasceOrarie.map(fascia => (
                             <button
-                                key={fascia}
+                                key={fascia.oraInizio}
                                 type="button"
-                                className={`padding-05-1 border rounded pointer ${fasciaSelezionata === fascia ? "background-cream color-granato border-granato" : "background-white"}`}
-                                onClick={() => onChangeFascia(fascia)}
+                                className={`padding-05-1 border rounded pointer ${fasciaSelezionata === fascia.oraInizio ? "background-cream color-granato border-granato" : "background-white"}`}
+                                onClick={() => onChangeFascia(fascia.oraInizio)}
                             >
-                                {fascia}
+                                {fascia.oraInizio} - {calcolaOraFine(fascia.oraInizio)}
                             </button>
                         ))}
                     </div>

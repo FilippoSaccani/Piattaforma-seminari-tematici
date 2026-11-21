@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import FormPrenotazione from "./FormPrenotazione";
 
-function Prenotazione({ disponibilita, modalita }) {
+function Prenotazione({ disponibilita, modalita, durata }) {
 
     const [dataSelezionata, setDataSelezionata] = useState("");
     const [fasciaSelezionata, setFasciaSelezionata] = useState("");
@@ -11,7 +12,7 @@ function Prenotazione({ disponibilita, modalita }) {
     function aggiungiAlCarrello() {
         const prenotazione = {
             data: dataSelezionata,
-            fasciaOraria: fasciaSelezionata,
+            oraInizio: fasciaSelezionata,
             numeroStudenti: Number(numeroStudenti),
             modalita: modalitaSelezionata
         };
@@ -31,6 +32,7 @@ function Prenotazione({ disponibilita, modalita }) {
                 dataSelezionata={dataSelezionata}
                 fasciaSelezionata={fasciaSelezionata}
                 numeroStudenti={numeroStudenti}
+                durata={durata}
                 modalita={modalita}
                 modalitaSelezionata={modalitaSelezionata}
                 onChangeData={data => {

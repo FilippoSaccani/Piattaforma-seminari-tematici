@@ -3,15 +3,60 @@ import { useState } from "react";
 
 import FormPrenotazione from "./FormPrenotazione";
 
-function CardPrenotazioneCarrello({ seminario, selezionato, onSeleziona, onRimuovi, onModifica, mostraSelezione = true }) {
+// Converte una data da YYYY-MM-DD a DD/MM/YYYY
+function formattaData(data) {
+    const [anno, mese, giorno] = data.split("-");
+
+    return `${giorno}/${mese}/${anno}`;
+}
+
+// Calcola l'orario di fine
+function calcolaOraFine(oraInizio, durata) {
+    const [ore, minuti] = oraInizio.split(":").map(Number);
+
+    const minutiTotali = ore * 60 + minuti + Number(durata);
+
+    const oreFine = Math.floor(minutiTotali / 60);
+    const minutiFine = minutiTotali % 60;
+
+    return (
+        String(oreFine).padStart(2, "0") +
+        ":" +
+        String(minutiFine).padStart(2, "0")
+    );
+}
+
+function CardPrenotazioneCarrello({
+    seminario,
+    selezionato,
+    onSeleziona,
+    onRimuovi,
+    onModifica,
+    mostraSelezione = true
+}) {
     const [inModifica, setInModifica] = useState(false);
     const [datiModificati, setDatiModificati] = useState(seminario);
+
+    // Mantiene soltanto le fasce ancora disponibili
+    const disponibilitaDisponibili = seminario.disponibilita
+        .map(giorno => ({
+            ...giorno,
+            fasceOrarie: giorno.fasceOrarie.filter(
+                fascia => fascia.prenotazione === null
+            )
+        }))
+        .filter(giorno => giorno.fasceOrarie.length > 0);
 
     function aggiornaCampo(campo, valore) {
         setDatiModificati(precedenti => ({
             ...precedenti,
             [campo]: valore
         }));
+    }
+
+    function apriModifica() {
+        setDatiModificati(seminario);
+        setInModifica(true);
     }
 
     function salvaModifiche() {
@@ -40,52 +85,70 @@ function CardPrenotazioneCarrello({ seminario, selezionato, onSeleziona, onRimuo
                         checked={selezionato}
                         onChange={onSeleziona}
                     />
-                ) :
-                (
+                ) : (
                     <span className="background-cream color-granato width-fit height-fit padding-03-1 rounded-20 flex gap-05 flex-align-center">
                         <i className="fa-solid fa-list-check"></i>
                         Da confermare
                     </span>
                 )}
             </div>
-            
+
             {inModifica ? (
                 <FormPrenotazione
-                    disponibilita={seminario.disponibilita}
+                    disponibilita={disponibilitaDisponibili}
+                    durata={seminario.durata}
                     dataSelezionata={datiModificati.data}
-                    fasciaSelezionata={datiModificati.fasciaOraria}
+                    fasciaSelezionata={datiModificati.oraInizio}
                     numeroStudenti={datiModificati.numeroStudenti}
                     modalita={seminario.modalitaDisponibili}
                     modalitaSelezionata={datiModificati.modalita}
                     onChangeData={data => {
-                        const giorno = seminario.disponibilita.find(
+                        const giorno = disponibilitaDisponibili.find(
                             giorno => giorno.data === data
                         );
 
                         setDatiModificati(precedenti => ({
                             ...precedenti,
                             data,
-                            fasciaOraria: giorno?.fasceOrarie[0] || ""
+                            oraInizio: giorno?.fasceOrarie[0]?.oraInizio || ""
                         }));
                     }}
-                    onChangeFascia={fasciaOraria => aggiornaCampo("fasciaOraria", fasciaOraria)}
-                    onChangeStudenti={numeroStudenti => aggiornaCampo("numeroStudenti", Number(numeroStudenti))}
-                    onChangeModalita={valore => aggiornaCampo("modalita", valore)}
+                    onChangeFascia={oraInizio =>
+                        aggiornaCampo("oraInizio", oraInizio)
+                    }
+                    onChangeStudenti={numeroStudenti =>
+                        aggiornaCampo("numeroStudenti", Number(numeroStudenti))
+                    }
+                    onChangeModalita={valore =>
+                        aggiornaCampo("modalita", valore)
+                    }
                 />
             ) : (
                 <div className="grid-2">
                     <div>
                         <p className="info-label">Data</p>
-                        <p className="info-value">{seminario.data}</p>
+                        <p className="info-value">
+                            {formattaData(seminario.data)}
+                        </p>
                     </div>
+
                     <div>
                         <p className="info-label">Fascia oraria</p>
-                        <p className="info-value">{seminario.fasciaOraria}</p>
+                        <p className="info-value">
+                            {seminario.oraInizio} - {calcolaOraFine(
+                                seminario.oraInizio,
+                                seminario.durata
+                            )}
+                        </p>
                     </div>
+
                     <div>
                         <p className="info-label">Numero di studenti</p>
-                        <p className="info-value">{seminario.numeroStudenti}</p>
+                        <p className="info-value">
+                            {seminario.numeroStudenti}
+                        </p>
                     </div>
+
                     <div>
                         <p className="info-label">Modalità</p>
                         <p className="info-value">{seminario.modalita}</p>
@@ -101,7 +164,6 @@ function CardPrenotazioneCarrello({ seminario, selezionato, onSeleziona, onRimuo
                                 type="button"
                                 className="pointer background-red color-cream padding-05 rounded hover"
                                 onClick={salvaModifiche}
-                                
                             >
                                 Salva
                             </button>
@@ -119,7 +181,7 @@ function CardPrenotazioneCarrello({ seminario, selezionato, onSeleziona, onRimuo
                             <button
                                 type="button"
                                 className="pointer background-red color-cream padding-05 rounded hover"
-                                onClick={() => setInModifica(true)}
+                                onClick={apriModifica}
                             >
                                 Modifica
                             </button>

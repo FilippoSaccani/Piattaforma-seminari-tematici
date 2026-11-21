@@ -1,5 +1,29 @@
+
 import { useState } from "react";
 import FormRecensione from "./FormRecensione";
+
+// Converte una data da YYYY-MM-DD a DD/MM/YYYY
+function formattaData(data) {
+    const [anno, mese, giorno] = data.split("-");
+
+    return `${giorno}/${mese}/${anno}`;
+}
+
+// Calcola l'orario di fine
+function calcolaOraFine(oraInizio, durata) {
+    const [ore, minuti] = oraInizio.split(":").map(Number);
+
+    const minutiTotali = ore * 60 + minuti + Number(durata);
+
+    const oreFine = Math.floor(minutiTotali / 60);
+    const minutiFine = minutiTotali % 60;
+
+    return (
+        String(oreFine).padStart(2, "0") +
+        ":" +
+        String(minutiFine).padStart(2, "0")
+    );
+}
 
 function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
     const svolta = prenotazione.stato === "Concluso";
@@ -9,6 +33,7 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
 
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+
             {mostraFormRecensione ? (
                 <>
                     <h2 className="color-granato">{prenotazione.titolo}</h2>
@@ -39,10 +64,12 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                                     ))}
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <p className="info-label">La tua recensione</p>
-                                <p className="info-value">{prenotazione.recensione.testo}</p>
+                                <p className="info-value">
+                                    {prenotazione.recensione.testo}
+                                </p>
                             </div>
                         </div>
 
@@ -66,33 +93,43 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                         </div>
 
                         <span className="background-cream color-granato width-fit padding-03-1 rounded-20 flex gap-05 flex-align-center">
-                            {svolta ?
+                            {svolta ? (
                                 <>
                                     <i className="fa-regular fa-circle-check"></i>
                                     Concluso
-                                </> :
+                                </>
+                            ) : (
                                 <>
                                     <i className="fa-regular fa-hourglass"></i>
                                     Da svolgere
                                 </>
-                            }
+                            )}
                         </span>
                     </div>
 
                     <div className="grid-2">
                         <div>
                             <p className="info-label">Data</p>
-                            <p className="info-value">{prenotazione.data}</p>
+                            <p className="info-value">
+                                {formattaData(prenotazione.data)}
+                            </p>
                         </div>
 
                         <div>
                             <p className="info-label">Fascia oraria</p>
-                            <p className="info-value">{prenotazione.fasciaOraria}</p>
+                            <p className="info-value">
+                                {prenotazione.oraInizio} - {calcolaOraFine(
+                                    prenotazione.oraInizio,
+                                    prenotazione.durata
+                                )}
+                            </p>
                         </div>
 
                         <div>
                             <p className="info-label">Numero di studenti</p>
-                            <p className="info-value">{prenotazione.numeroStudenti}</p>
+                            <p className="info-value">
+                                {prenotazione.numeroStudenti}
+                            </p>
                         </div>
 
                         <div>
@@ -139,7 +176,6 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
 
         </div>
     );
-
 }
 
 export default CardPrenotazioneScuola;

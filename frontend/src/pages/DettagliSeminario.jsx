@@ -1,27 +1,93 @@
+
 import { useOutletContext } from "react-router-dom";
 
 import Titolo from "../components/Titolo";
 import Prenotazione from "../components/Prenotazione";
+
+// Converte una data da YYYY-MM-DD a DD/MM/YYYY
+function formattaData(data) {
+    const [anno, mese, giorno] = data.split("-");
+
+    return `${giorno}/${mese}/${anno}`;
+}
+
+// Calcola l'orario di fine
+function calcolaOraFine(oraInizio, durata) {
+    const [ore, minuti] = oraInizio.split(":").map(Number);
+
+    const minutiTotali = ore * 60 + minuti + Number(durata);
+
+    const oreFine = Math.floor(minutiTotali / 60);
+    const minutiFine = minutiTotali % 60;
+
+    return (
+        String(oreFine).padStart(2, "0") +
+        ":" +
+        String(minutiFine).padStart(2, "0")
+    );
+}
 
 function DettagliSeminario() {
     const { utente } = useOutletContext();
 
     const seminario = {
         id: 1,
-        dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
-        titolo: "Intelligenza artificiale: applicazioni e prospettive future",
-        descrizione: "Un seminario dedicato alla scoperta dell'intelligenza artificiale, delle sue principali applicazioni e delle prospettive di sviluppo.\n\nNon sono richieste conoscenze pregresse di programmazione.",
-        relatore: "Prof. Marco Rossi",
+        docente: "Prof. Marco Rossi",
         email: "marco.rossi@unimore.it",
-        disponibilita: [
-            { data: "15/12/2026", fasceOrarie: ["09:00 - 11:00", "14:00 - 16:00"] },
-            { data: "17/12/2026", fasceOrarie: ["10:00 - 12:00"] },
-            { data: "18/12/2026", fasceOrarie: ["09:00 - 12:00"] }
-        ],
+        dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
+        categoria: "Scienze e Ingegneria",
+        titolo: "Intelligenza artificiale: applicazioni e prospettive future",
+        descrizione_breve: "Un seminario dedicato alla scoperta dell'intelligenza artificiale e delle sue principali applicazioni.",
+        descrizione_dettagliata: "Un seminario dedicato alla scoperta dell'intelligenza artificiale, delle sue principali applicazioni e delle prospettive di sviluppo.\n\nNon sono richieste conoscenze pregresse di programmazione.",
+        requisiti: "",
+        durata: 120,
         modalita: ["In presenza"],
-        target: ["Terza", "Quarta", "Quinta"],
-        trailer: "/video/intelligenza-artificiale.mp4",
+        anni: [3, 4, 5],
+        limite_prenotazioni: 10,
+        video: "/video/intelligenza-artificiale.mp4",
 
+        disponibilita: [
+            {
+                data: "2026-12-15",
+                fasceOrarie: [
+                    {
+                        oraInizio: "09:00",
+                        prenotazione: null
+                    },
+                    {
+                        oraInizio: "14:00",
+                        prenotazione: {
+                            id: 1,
+                            scuola: "Liceo Scientifico Aldo Moro",
+                            numeroStudenti: 25
+                        }
+                    }
+                ]
+            },
+            {
+                data: "2026-12-17",
+                fasceOrarie: [
+                    {
+                        oraInizio: "10:00",
+                        prenotazione: null
+                    }
+                ]
+            },
+            {
+                data: "2026-12-18",
+                fasceOrarie: [
+                    {
+                        oraInizio: "09:00",
+                        prenotazione: null
+                    }
+                ]
+            }
+        ],
+
+        mediaRecensioni: 4.7,
+        numeroRecensioni: 3,
+
+        // Dati di esempio delle recensioni
         recensioni: [
             {
                 id: 1,
@@ -47,15 +113,23 @@ function DettagliSeminario() {
         ]
     };
 
-    const classi = seminario.target.length > 1
-    ? `${seminario.target.slice(0, -1).join(", ")} e ${seminario.target.at(-1)}`
-    : seminario.target[0];
+    const classi = seminario.anni.length > 1
+        ? `${seminario.anni.slice(0, -1).join(", ")} e ${seminario.anni.at(-1)}`
+        : seminario.anni[0];
 
-    const numeroRecensioni = seminario.recensioni.length;
+    // Mantiene soltanto le fasce non ancora prenotate
+    const disponibilitaDisponibili = seminario.disponibilita
+        .map(giorno => ({
+            ...giorno,
+            fasceOrarie: giorno.fasceOrarie.filter(
+                fascia => fascia.prenotazione === null
+            )
+        }))
+        .filter(giorno => giorno.fasceOrarie.length > 0);
 
-    const mediaRecensioni = numeroRecensioni > 0
-        ? seminario.recensioni.reduce((somma, recensione) => somma + recensione.voto, 0) / numeroRecensioni
-        : 0;
+    const numeroRecensioni = seminario.numeroRecensioni;
+
+    const mediaRecensioni = seminario.mediaRecensioni;
 
     return (
         <div className="page-content flex-column gap-2">
@@ -74,7 +148,7 @@ function DettagliSeminario() {
             <div className="grid-2">
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
                     <h2 className="color-granato">Descrizione</h2>
-                    <p className="color-grey">{seminario.descrizione}</p>
+                    <p className="color-grey">{seminario.descrizione_dettagliata}</p>
                 </div>
 
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
@@ -86,14 +160,14 @@ function DettagliSeminario() {
                         </div>
 
                         <div className="flex-column gap-05">
-                            <p className="info-value">{seminario.relatore}</p>
+                            <p className="info-value">{seminario.docente}</p>
                             <span className="info-label">{seminario.email}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {seminario.disponibilita.length > 0 ? (
+            {disponibilitaDisponibili.length > 0 ? (
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
                     <div className="flex-between flex-align-center">
                         <h2 className="color-granato">Disponibilità</h2>
@@ -105,18 +179,23 @@ function DettagliSeminario() {
                     </div>
 
                     <div className="flex-column gap-1">
-                        {seminario.disponibilita.map((giorno, index) => (
+                        {disponibilitaDisponibili.map((giorno, index) => (
                             <div
                                 key={index}
                                 className={`${index > 0 ? "border-top " : ""}flex-between flex-align-center gap-1`}
                             >
-                                <p className="info-value color-grey">{giorno.data}</p>
+                                <p className="info-value color-grey">
+                                    {formattaData(giorno.data)}
+                                </p>
 
                                 <div className="flex-align-center gap-1 flex-wrap">
                                     {giorno.fasceOrarie.map((fascia, i) => (
                                         <span key={i} className="color-grey">
                                             {i > 0 && " | "}
-                                            {fascia}
+                                            {fascia.oraInizio} - {calcolaOraFine(
+                                                fascia.oraInizio,
+                                                seminario.durata
+                                            )}
                                         </span>
                                     ))}
                                 </div>
@@ -134,20 +213,21 @@ function DettagliSeminario() {
                 </div>
             )}
 
-            {seminario.trailer && (
+            {seminario.video && (
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
                     <h2 className="color-granato">Trailer del seminario</h2>
 
                     <div className="video">
-                        <video src={seminario.trailer} controls />
+                        <video src={seminario.video} controls />
                     </div>
                 </div>
             )}
 
-            {seminario.disponibilita.length > 0 && utente === "Scuola" && (
+            {disponibilitaDisponibili.length > 0 && utente === "Scuola" && (
                 <Prenotazione
-                    disponibilita={seminario.disponibilita}
+                    disponibilita={disponibilitaDisponibili}
                     modalita={seminario.modalita}
+                    durata={seminario.durata}
                 />
             )}
 

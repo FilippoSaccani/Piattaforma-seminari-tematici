@@ -1,11 +1,41 @@
+
 import { useState } from "react";
 
-// Converte una data e un orario nel formato dd/mm/yyyy e HH:mm
-function convertiDataOra(data, orario) {
-    const [giorno, mese, anno] = data.split("/").map(Number);
-    const [ora, minuti] = orario.split(":").map(Number);
+// Converte una data e un orario nel formato Date
+function convertiDataOra(data, oraInizio, durata) {
+    const [anno, mese, giorno] = data.split("-").map(Number);
+    const [ore, minuti] = oraInizio.split(":").map(Number);
 
-    return new Date(anno, mese - 1, giorno, ora, minuti);
+    return new Date(
+        anno,
+        mese - 1,
+        giorno,
+        ore,
+        minuti + Number(durata)
+    );
+}
+
+// Calcola l'orario di fine
+function calcolaOraFine(oraInizio, durata) {
+    const [ore, minuti] = oraInizio.split(":").map(Number);
+
+    const minutiTotali = ore * 60 + minuti + Number(durata);
+
+    const oreFine = Math.floor(minutiTotali / 60);
+    const minutiFine = minutiTotali % 60;
+
+    return (
+        String(oreFine).padStart(2, "0") +
+        ":" +
+        String(minutiFine).padStart(2, "0")
+    );
+}
+
+// Converte una data da YYYY-MM-DD a DD/MM/YYYY
+function formattaData(data) {
+    const [anno, mese, giorno] = data.split("-");
+
+    return `${giorno}/${mese}/${anno}`;
 }
 
 function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
@@ -21,20 +51,36 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                 .map(fascia => {
                     const fine = convertiDataOra(
                         disponibilita.data,
-                        fascia.orario.split(" - ")[1]
+                        fascia.oraInizio,
+                        seminario.durata
+                    );
+
+                    const oraFine = calcolaOraFine(
+                        fascia.oraInizio,
+                        seminario.durata
                     );
 
                     return {
                         scuola: fascia.prenotazione.scuola,
                         data: disponibilita.data,
-                        orario: fascia.orario,
+                        oraInizio: fascia.oraInizio,
+                        orario: `${fascia.oraInizio} - ${oraFine}`,
                         conclusa: fine <= oggi
                     };
                 })
         )
         .sort((a, b) => {
-            const dataA = convertiDataOra(a.data, a.orario.split(" - ")[0]);
-            const dataB = convertiDataOra(b.data, b.orario.split(" - ")[0]);
+            const dataA = convertiDataOra(
+                a.data,
+                a.oraInizio,
+                0
+            );
+
+            const dataB = convertiDataOra(
+                b.data,
+                b.oraInizio,
+                0
+            );
 
             return dataA - dataB;
         });
@@ -42,32 +88,16 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
     // Conta le fasce future ancora disponibili
     const fasceDisponibili = seminario.disponibilita
         .flatMap(disponibilita =>
-            disponibilita.fasceOrarie
-                .filter(fascia => {
-                    const fine = convertiDataOra(
-                        disponibilita.data,
-                        fascia.orario.split(" - ")[1]
-                    );
+            disponibilita.fasceOrarie.filter(fascia => {
+                const fine = convertiDataOra(
+                    disponibilita.data,
+                    fascia.oraInizio,
+                    seminario.durata
+                );
 
-                    return fascia.prenotazione === null && fine > oggi;
-                })
+                return fascia.prenotazione === null && fine > oggi;
+            })
         );
-
-    // Verifica se esistono prenotazioni future
-    const haPrenotazioniFuture = prenotazioni.some(
-        prenotazione => !prenotazione.conclusa
-    );
-
-    // Calcola lo stato generale del seminario
-    let stato;
-
-    if (haPrenotazioniFuture) {
-        stato = "Prenotato";
-    } else if (fasceDisponibili.length > 0) {
-        stato = "Pubblicato";
-    } else {
-        stato = "Concluso";
-    }
 
     const prenotazioniVisibili = mostraTutte
         ? prenotazioni
@@ -91,18 +121,18 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                 </div>
 
                 <span className="background-cream color-granato width-fit padding-03-1 rounded-20">
-                    {stato}
+                    {seminario.stato}
                 </span>
             </div>
 
             {/* Descrizione */}
             <div>
                 <p className="info-label">Descrizione</p>
-                <p className="info-value">{seminario.descrizione}</p>
+                <p className="info-value">{seminario.descrizione_breve}</p>
             </div>
 
             {/* Disponibilità residue */}
-            {(stato === "Pubblicato" || stato === "Prenotato") && (
+            {(seminario.stato === "Pubblicato" || seminario.stato === "Prenotato") && (
                 <p className="info-label">
                     Fasce orarie disponibili:{" "}
                     <span className="info-value color-black">
@@ -162,7 +192,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                                     </span>
 
                                     <span className="info-label">
-                                        {prenotazione.data}
+                                        {formattaData(prenotazione.data)}
                                     </span>
 
                                     <span className="info-label">
@@ -174,7 +204,6 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                                             ? "Conclusa"
                                             : "In programma"}
                                     </span>
-                                    
                                 </div>
                             ))}
                         </div>
@@ -205,7 +234,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                         Dettagli
                     </button>
 
-                    {stato === "Pubblicato" && (
+                    {seminario.stato === "Pubblicato" && (
                         <>
                             <button
                                 type="button"

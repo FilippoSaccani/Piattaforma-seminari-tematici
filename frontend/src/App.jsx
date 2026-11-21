@@ -7,6 +7,7 @@ import DettagliSeminario from "./pages/DettagliSeminario";
 import Prenotazioni from "./pages/Prenotazioni";
 import IMieiSeminari from "./pages/IMieiSeminari";
 import AggiungiSeminario from "./pages/AggiungiSeminario";
+import ModificaSeminario from "./pages/ModificaSeminario";
 
 function App() {
     const utente = "Docente";
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/prenotazioni" element={<Prenotazioni />} />
                     <Route path="/miei-seminari" element={<IMieiSeminari />} />
                     <Route path="/aggiungi-seminario" element={<AggiungiSeminario />} />
+                    <Route path="/modifica-seminario/:id" element={<ModificaSeminario />} />
                 </Route>
             </Routes>
         </BrowserRouter>

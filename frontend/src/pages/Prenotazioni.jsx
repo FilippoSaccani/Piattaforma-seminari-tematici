@@ -15,15 +15,32 @@ function Prenotazioni() {
             id: 1,
             titolo: "Intelligenza artificiale e robotica",
             dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
-            data: "20/11/2026",
-            fasciaOraria: "10:00 - 12:00",
+            data: "2026-11-20",
+            oraInizio: "10:00",
+            durata: 120,
             numeroStudenti: 25,
             modalita: "In presenza",
             modalitaDisponibili: ["In presenza", "A distanza"],
             disponibilita: [
-                { data: "15/12/2026", fasceOrarie: ["09:00 - 11:00", "14:00 - 16:00"] },
-                { data: "17/12/2026", fasceOrarie: ["10:00 - 12:00"] },
-                { data: "18/12/2026", fasceOrarie: ["09:00 - 12:00"] }
+                {
+                    data: "2026-12-15",
+                    fasceOrarie: [
+                        { oraInizio: "09:00", prenotazione: null },
+                        { oraInizio: "14:00", prenotazione: null }
+                    ]
+                },
+                {
+                    data: "2026-12-17",
+                    fasceOrarie: [
+                        { oraInizio: "10:00", prenotazione: null }
+                    ]
+                },
+                {
+                    data: "2026-12-18",
+                    fasceOrarie: [
+                        { oraInizio: "09:00", prenotazione: null }
+                    ]
+                }
             ],
             stato: "Da confermare",
             recensione: null
@@ -32,15 +49,32 @@ function Prenotazioni() {
             id: 2,
             titolo: "Cybersecurity e protezione dei dati",
             dipartimento: "Dipartimento di Scienze e Metodi dell'Ingegneria",
-            data: "25/11/2026",
-            fasciaOraria: "14:00 - 16:00",
+            data: "2026-11-25",
+            oraInizio: "14:00",
+            durata: 120,
             numeroStudenti: 20,
             modalita: "In presenza",
             modalitaDisponibili: ["In presenza", "A distanza"],
             disponibilita: [
-                { data: "20/12/2026", fasceOrarie: ["09:00 - 11:00", "14:00 - 16:00"] },
-                { data: "17/12/2026", fasceOrarie: ["10:00 - 12:00"] },
-                { data: "18/12/2026", fasceOrarie: ["09:00 - 12:00"] }
+                {
+                    data: "2026-12-20",
+                    fasceOrarie: [
+                        { oraInizio: "09:00", prenotazione: null },
+                        { oraInizio: "14:00", prenotazione: null }
+                    ]
+                },
+                {
+                    data: "2026-12-17",
+                    fasceOrarie: [
+                        { oraInizio: "10:00", prenotazione: null }
+                    ]
+                },
+                {
+                    data: "2026-12-18",
+                    fasceOrarie: [
+                        { oraInizio: "09:00", prenotazione: null }
+                    ]
+                }
             ],
             stato: "Da confermare",
             recensione: null
@@ -49,15 +83,32 @@ function Prenotazioni() {
             id: 3,
             titolo: "Sviluppo di applicazioni web",
             dipartimento: "Dipartimento di Ingegneria Enzo Ferrari",
-            data: "28/11/2026",
-            fasciaOraria: "09:00 - 11:00",
+            data: "2026-11-28",
+            oraInizio: "09:00",
+            durata: 120,
             numeroStudenti: 30,
             modalita: "A distanza",
             modalitaDisponibili: ["A distanza"],
             disponibilita: [
-                { data: "15/12/2026", fasceOrarie: ["09:00 - 11:00", "14:00 - 16:00"] },
-                { data: "17/12/2026", fasceOrarie: ["10:00 - 12:00"] },
-                { data: "18/12/2026", fasceOrarie: ["09:00 - 12:00"] }
+                {
+                    data: "2026-12-15",
+                    fasceOrarie: [
+                        { oraInizio: "09:00", prenotazione: null },
+                        { oraInizio: "14:00", prenotazione: null }
+                    ]
+                },
+                {
+                    data: "2026-12-17",
+                    fasceOrarie: [
+                        { oraInizio: "10:00", prenotazione: null }
+                    ]
+                },
+                {
+                    data: "2026-12-18",
+                    fasceOrarie: [
+                        { oraInizio: "09:00", prenotazione: null }
+                    ]
+                }
             ],
             stato: "Da confermare",
             recensione: null
@@ -66,8 +117,9 @@ function Prenotazioni() {
             id: 4,
             titolo: "La transizione energetica",
             dipartimento: "Dipartimento di Scienze Fisiche, Informatiche e Matematiche",
-            data: "10/11/2026",
-            fasciaOraria: "09:00 - 11:00",
+            data: "2026-11-10",
+            oraInizio: "09:00",
+            durata: 120,
             numeroStudenti: 22,
             modalita: "In presenza",
             stato: "Da svolgere",
@@ -77,8 +129,9 @@ function Prenotazioni() {
             id: 5,
             titolo: "Comunicazione e social media",
             dipartimento: "Dipartimento di Comunicazione ed Economia",
-            data: "05/11/2026",
-            fasciaOraria: "14:00 - 16:00",
+            data: "2026-11-05",
+            oraInizio: "14:00",
+            durata: 120,
             numeroStudenti: 18,
             modalita: "A distanza",
             stato: "Da svolgere",
@@ -88,14 +141,16 @@ function Prenotazioni() {
             id: 6,
             titolo: "Seminario di sostenibilità",
             dipartimento: "Dipartimento di Scienze e Metodi dell'Ingegneria",
-            data: "05/10/2026",
-            fasciaOraria: "10:00 - 12:00",
+            data: "2026-10-05",
+            oraInizio: "10:00",
+            durata: 120,
             numeroStudenti: 20,
             modalita: "In presenza",
             stato: "Concluso",
             recensione: null
         }
     ]);
+
 
     const [testoRicerca, setTestoRicerca] = useState("");
     const [statoSelezionato, setStatoSelezionato] = useState("");
