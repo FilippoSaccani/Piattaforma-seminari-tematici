@@ -181,6 +181,7 @@ button:disabled {
 /*Bordi*/
 .border { border: 1px solid var(--bordo); }
 .border-granato { border: 1px solid var(--granato); }
+.border-red { border: 1px solid var(--rosso); }
 .border-top {
     border-top: 1px solid var(--bordo);
     padding-top: 1rem;

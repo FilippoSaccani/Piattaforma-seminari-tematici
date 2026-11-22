@@ -9,7 +9,39 @@ function Prenotazione({ disponibilita, modalita, durata }) {
     const [numeroStudenti, setNumeroStudenti] = useState(1);
     const [modalitaSelezionata, setModalitaSelezionata] = useState(modalita[0]);
 
+    const [mostraErrori, setMostraErrori] = useState(false);
+
+    function verificaValidita() {
+        const errori = {};
+
+        if (!dataSelezionata) {
+            errori.data = "Seleziona una data.";
+        }
+
+        if (dataSelezionata && !fasciaSelezionata) {
+            errori.fascia = "Seleziona una fascia oraria.";
+        }
+
+        if (
+            numeroStudenti === "" ||
+            !Number.isInteger(Number(numeroStudenti)) ||
+            Number(numeroStudenti) < 1
+        ) {
+            errori.numeroStudenti = "Inserisci un numero di studenti valido (almeno 1).";
+        }
+
+        return errori;
+    }
+
+    const errori = verificaValidita();
+
     function aggiungiAlCarrello() {
+        setMostraErrori(true);
+
+        if (Object.keys(errori).length > 0) {
+            return;
+        }
+
         const prenotazione = {
             data: dataSelezionata,
             oraInizio: fasciaSelezionata,
@@ -35,6 +67,7 @@ function Prenotazione({ disponibilita, modalita, durata }) {
                 durata={durata}
                 modalita={modalita}
                 modalitaSelezionata={modalitaSelezionata}
+                errori={mostraErrori ? errori : {}}
                 onChangeData={data => {
                     setDataSelezionata(data);
                     setFasciaSelezionata("");
@@ -47,7 +80,6 @@ function Prenotazione({ disponibilita, modalita, durata }) {
             <button
                 type="button"
                 className="background-red color-cream padding-05 rounded pointer hover"
-                disabled={!dataSelezionata || !fasciaSelezionata || numeroStudenti < 1}
                 onClick={aggiungiAlCarrello}
             >
                 Aggiungi al carrello

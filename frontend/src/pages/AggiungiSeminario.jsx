@@ -1,4 +1,4 @@
-
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import api from "../services/api";
@@ -7,6 +7,7 @@ import Titolo from "../components/Titolo";
 import FormSeminario from "../components/FormSeminario";
 
 function AggiungiSeminario() {
+    const navigate = useNavigate();
 
     const [categorie, setCategorie] = useState([]);
     const [dipartimenti, setDipartimenti] = useState([]);
@@ -49,7 +50,7 @@ function AggiungiSeminario() {
 
         // TODO: invio dei dati al backend tramite fetch
 
-        window.location.href = "/miei-seminari?stato=Pubblicati";
+        navigate("/miei-seminari?stato=Pubblicati");
     }
 
     return (
@@ -67,6 +68,7 @@ function AggiungiSeminario() {
                 dipartimenti={dipartimenti}
                 onSubmit={aggiungiSeminario}
                 testoPulsante="Aggiungi seminario"
+                onClickAnnulla={() => navigate("/miei-seminari")}
             />
 
         </div>

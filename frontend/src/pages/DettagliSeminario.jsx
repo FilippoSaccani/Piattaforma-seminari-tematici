@@ -112,7 +112,7 @@ function DettagliSeminario() {
                     <div className="flex-column gap-1">
                         {disponibilitaDisponibili.map((giorno, index) => (
                             <div
-                                key={index}
+                                key={giorno.data}
                                 className={`${index > 0 ? "border-top " : ""}flex-between flex-align-center gap-1`}
                             >
                                 <p className="info-value color-grey">
@@ -121,7 +121,7 @@ function DettagliSeminario() {
 
                                 <div className="flex-align-center gap-1 flex-wrap">
                                     {giorno.fasceOrarie.map((fascia, i) => (
-                                        <span key={i} className="color-grey">
+                                        <span key={fascia.oraInizio} className="color-grey">
                                             {i > 0 && " | "}
                                             {fascia.oraInizio} - {calcolaOraFine(
                                                 fascia.oraInizio,

@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
 
@@ -13,16 +12,12 @@ import Titolo from "../components/Titolo";
 import RiepilogoSeminari from "../components/RiepilogoSeminari";
 import CardSeminarioDocente from "../components/CardSeminarioDocente";
 import PopupConferma from "../components/PopupConferma";
-import ModificaSeminario from "./ModificaSeminario";
 
 function IMieiSeminari() {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     const [seminari, setSeminari] = useState([]);
-
-    useEffect(() => {
-        api.get("/miei-seminari").then(risposta => setSeminari(risposta.data));
-    }, []);
 
     const [testoRicerca, setTestoRicerca] = useState("");
 
@@ -30,8 +25,13 @@ function IMieiSeminari() {
         searchParams.get("stato") || ""
     );
 
-    const [seminarioDaModificare, setSeminarioDaModificare] = useState(null);
     const [seminarioDaEliminare, setSeminarioDaEliminare] = useState(null);
+
+    useEffect(() => {
+        api.get("/miei-seminari").then(risposta => {
+            console.log(risposta.data);
+            setSeminari(risposta.data)});
+    }, []);
 
     function convertiDataOra(data, oraInizio, durata) {
         const [anno, mese, giorno] = data.split("-").map(Number);
@@ -110,21 +110,7 @@ function IMieiSeminari() {
     });
 
     function modificaSeminario(seminario) {
-        setSeminarioDaModificare(seminario);
-    }
-
-    function salvaModifiche(seminarioModificato) {
-        setSeminari(precedenti =>
-            precedenti.map(seminario =>
-                seminario.id === seminarioModificato.id
-                    ? seminarioModificato
-                    : seminario
-            )
-        );
-
-        setSeminarioDaModificare(null);
-
-        // TODO: fetch PUT per aggiornare il seminario
+        navigate(`/modifica-seminario/${seminario.id}`);
     }
 
     function eliminaSeminario(seminario) {
@@ -144,91 +130,81 @@ function IMieiSeminari() {
     }
 
     return (
-        <>
-            {seminarioDaModificare ? (
-                <ModificaSeminario
-                    seminario={seminarioDaModificare}
-                    onSalva={salvaModifiche}
-                    onAnnulla={() => setSeminarioDaModificare(null)}
+        <div className="page-content flex-column gap-2">
+            <Titolo
+                titolo="I miei seminari"
+                sottotitolo="Gestisci i tuoi seminari, consulta le prenotazioni ricevute e tieni traccia delle attività svolte."
+            />
+
+            <button
+                type="button"
+                className="background-red color-cream padding-05-1 rounded pointer shadow hover flex-center gap-05"
+                onClick={() => navigate("/aggiungi-seminario")}
+            >
+                <i className="fa-solid fa-plus"></i>
+                Aggiungi seminario
+            </button>
+
+            {seminari.length === 0 ? (
+                <StatoVuoto
+                    titolo="Nessun seminario disponibile"
+                    descrizione="Non hai ancora caricato nessun seminario. Quando ne aggiungerai uno, potrai gestirlo da questa sezione."
+                    immagine={seminari_non_disponibili}
                 />
             ) : (
-                <div className="page-content flex-column gap-2">
-                    <Titolo
-                        titolo="I miei seminari"
-                        sottotitolo="Gestisci i tuoi seminari, consulta le prenotazioni ricevute e tieni traccia delle attività svolte."
+                <>
+                    <RiepilogoSeminari
+                        numeroSeminari={seminari.length}
+                        numeroPrenotazioni={numeroPrenotazioni}
+                        numeroConclusi={numeroConclusi}
                     />
 
-                    {seminari.length === 0 ? (
-                        <StatoVuoto
-                            titolo="Nessun seminario disponibile"
-                            descrizione="Non hai ancora caricato nessun seminario. Quando ne aggiungerai uno, potrai gestirlo da questa sezione."
-                            immagine={seminari_non_disponibili}
+                    <div className="flex gap-1 width-100">
+                        <BarraRicerca
+                            placeholder="Cerca i tuoi seminari..."
+                            value={testoRicerca}
+                            onChange={setTestoRicerca}
                         />
+
+                        <Filtro
+                            categorie={["Pubblicati", "Prenotati", "Conclusi"]}
+                            categoriaSelezionata={statoSelezionato}
+                            onChange={setStatoSelezionato}
+                            opzione="Tutti i seminari"
+                        />
+                    </div>
+
+                    {seminariFiltrati.length > 0 ? (
+                        seminariFiltrati.map(seminario => {
+                            const stato = calcolaStatoSeminario(seminario);
+
+                            return (
+                                <CardSeminarioDocente
+                                    key={seminario.id}
+                                    seminario={{ ...seminario, stato }}
+                                    onModifica={modificaSeminario}
+                                    onElimina={eliminaSeminario}
+                                />
+                            );
+                        })
                     ) : (
-                        <>
-                            <button
-                                type="button"
-                                className="background-red color-cream padding-05-1 rounded pointer shadow hover flex-center gap-05"
-                                onClick={() => window.location.href = "/aggiungi-seminario"}
-                            >
-                                <i className="fa-solid fa-plus"></i>
-                                Aggiungi seminario
-                            </button>
-
-                            <RiepilogoSeminari
-                                numeroSeminari={seminari.length}
-                                numeroPrenotazioni={numeroPrenotazioni}
-                                numeroConclusi={numeroConclusi}
-                            />
-
-                            <div className="flex gap-1 width-100">
-                                <BarraRicerca
-                                    placeholder="Cerca i tuoi seminari..."
-                                    value={testoRicerca}
-                                    onChange={setTestoRicerca}
-                                />
-
-                                <Filtro
-                                    categorie={["Pubblicati", "Prenotati", "Conclusi"]}
-                                    categoriaSelezionata={statoSelezionato}
-                                    onChange={setStatoSelezionato}
-                                    opzione="Tutti i seminari"
-                                />
-                            </div>
-
-                            {seminariFiltrati.length > 0 ? (
-                                seminariFiltrati.map(seminario => {
-                                    const stato = calcolaStatoSeminario(seminario);
-
-                                    return (
-                                        <CardSeminarioDocente
-                                            key={seminario.id}
-                                            seminario={{ ...seminario, stato }}
-                                            onModifica={modificaSeminario}
-                                            onElimina={eliminaSeminario}
-                                        />
-                                    );
-                                })
-                            ) : (
-                                <p className="color-grey">
-                                    Nessun seminario trovato.
-                                </p>
-                            )}
-                        </>
+                        <p className="color-grey">
+                            Nessun seminario trovato.
+                        </p>
                     )}
-
-                    {seminarioDaEliminare && (
-                        <PopupConferma
-                            titolo="Conferma eliminazione"
-                            messaggio={`Vuoi davvero eliminare il seminario "${seminarioDaEliminare.titolo}"?`}
-                            testoConferma="Elimina"
-                            onConferma={confermaEliminazione}
-                            onAnnulla={() => setSeminarioDaEliminare(null)}
-                        />
-                    )}
-                </div>
+                </>
             )}
-        </>
+
+            {seminarioDaEliminare && (
+                <PopupConferma
+                    titolo="Conferma eliminazione"
+                    messaggio={`Vuoi davvero eliminare il seminario "${seminarioDaEliminare.titolo}"?`}
+                    testoConferma="Elimina"
+                    onConferma={confermaEliminazione}
+                    onAnnulla={() => setSeminarioDaEliminare(null)}
+                />
+            )}
+        </div>
     );
 }
 

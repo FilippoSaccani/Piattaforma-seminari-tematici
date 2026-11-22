@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import api from "../services/api";
 import carrello_vuoto from "../assets/carrello_vuoto.png";
 
@@ -11,6 +13,8 @@ import StatoVuoto from "../components/StatoVuoto";
 import PopupConferma from "../components/PopupConferma";
 
 function Prenotazioni() {
+    const navigate = useNavigate();
+
     const [prenotazioni, setPrenotazioni] = useState([]);
 
     useEffect(() => {
@@ -140,7 +144,7 @@ function Prenotazioni() {
                     descrizione="Consulta i seminari disponibili per prenotarne di nuovi"
                     immagine={carrello_vuoto}
                     testoPulsante="Scopri i seminari"
-                    onClick={() => window.location.href = "/"}
+                    onClick={() => navigate("/")}
                 />
             ) : (
                 <>

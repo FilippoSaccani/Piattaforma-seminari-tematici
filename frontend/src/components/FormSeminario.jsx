@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 import GestioneDisponibilita from "../components/GestioneDisponibilita";
 import GestioneVideo from "../components/GestioneVideo";
@@ -8,8 +9,10 @@ function FormSeminario({
     categorie,
     dipartimenti,
     onSubmit,
-    testoPulsante
+    testoPulsante,
+    onClickAnnulla
 }) {
+    const [mostraErrori, setMostraErrori] = useState(false);
 
     function aggiornaCampo(event) {
         const { name, value } = event.target;
@@ -39,97 +42,163 @@ function FormSeminario({
     }
 
     function verificaValidita() {
+        const errori = {};
+
         const durata = Number(seminario.durata);
         const limite = Number(seminario.limite_prenotazioni);
 
-        // Verifica i campi obbligatori
-        if (
-            !seminario.dipartimento.trim() ||
-            !seminario.categoria.trim() ||
-            !seminario.titolo.trim() ||
-            !seminario.descrizione_breve.trim() ||
-            !seminario.descrizione_dettagliata.trim()
-        ) {
-            return false;
+        // Campi obbligatori
+        if (!seminario.dipartimento?.trim()) {
+            errori.dipartimento = "Seleziona un dipartimento.";
         }
 
-        // Verifica classi, modalità e valori numerici
-        if (
-            seminario.anni.length === 0 ||
-            seminario.modalita.length === 0 ||
-            !Number.isInteger(durata) ||
-            durata <= 0 ||
-            !Number.isInteger(limite) ||
-            limite <= 0
-        ) {
-            return false;
+        if (!seminario.categoria?.trim()) {
+            errori.categoria = "Seleziona una categoria.";
         }
 
-        // Verifica le disponibilità
+        if (!seminario.titolo?.trim()) {
+            errori.titolo = "Inserisci il titolo del seminario.";
+        }
+
+        if (!seminario.descrizione_breve?.trim()) {
+            errori.descrizione_breve = "Inserisci la descrizione breve.";
+        }
+
+        if (!seminario.descrizione_dettagliata?.trim()) {
+            errori.descrizione_dettagliata = "Inserisci la descrizione dettagliata.";
+        }
+
+        // Classi e modalità
+        if (seminario.anni.length === 0) {
+            errori.anni = "Seleziona almeno una classe destinataria.";
+        }
+
+        if (seminario.modalita.length === 0) {
+            errori.modalita = "Seleziona almeno una modalità.";
+        }
+
+        // Valori numerici
+        if (!Number.isInteger(durata) || durata < 30) {
+            errori.durata = "Inserisci una durata valida (almeno 30 minuti).";
+        }
+
+        if (!Number.isInteger(limite) || limite <= 0) {
+            errori.limite_prenotazioni = "Inserisci un limite di prenotazioni valido.";
+        }
+
+        // Disponibilità
         if (seminario.disponibilita.length === 0) {
-            return false;
+            errori.disponibilita = "Inserisci almeno una data di disponibilità.";
+        } else {
+            seminario.disponibilita.forEach((elemento, indiceData) => {
+                if (!elemento.data) {
+                    errori[`data_${indiceData}`] = "Inserisci una data.";
+                } else {
+                    const [anno, mese, giorno] = elemento.data.split("-").map(Number);
+                    const data = new Date(Date.UTC(anno, mese - 1, giorno));
+
+                    if (
+                        data.getUTCFullYear() !== anno ||
+                        data.getUTCMonth() !== mese - 1 ||
+                        data.getUTCDate() !== giorno
+                    ) {
+                        errori[`data_${indiceData}`] = "La data inserita non è valida.";
+                    }
+                }
+
+                if (!elemento.fasceOrarie || elemento.fasceOrarie.length === 0) {
+                    errori[`fasce_${indiceData}`] = "Aggiungi almeno una fascia oraria.";
+                    return;
+                }
+
+                
+                elemento.fasceOrarie.forEach((fascia, indiceFascia) => {
+                    const riferimento = `fascia_${indiceData}_${indiceFascia}`;
+
+                    if (!fascia.oraInizio || !/^([01]\d|2[0-3]):[0-5]\d$/.test(fascia.oraInizio)) {
+                        errori[riferimento] = "Inserisci un orario valido.";
+                        return;
+                    }
+
+                    const [ore, minuti] = fascia.oraInizio.split(":").map(Number);
+                    const minutiInizio = ore * 60 + minuti;
+                    const minutiFine = minutiInizio + durata;
+
+                    if (minutiInizio < 8 * 60) {
+                        errori[riferimento] = "L'orario deve iniziare dalle 08:00.";
+                    } else if (minutiFine > 18 * 60) {
+                        errori[riferimento] = "Il seminario deve terminare entro le 18:00.";
+                    }
+                });
+
+                // Controllo sovrapposizione tra le fasce della stessa data
+                if (durata > 0) {
+                    for (let i = 0; i < elemento.fasceOrarie.length; i++) {
+                        const oraInizio1 = elemento.fasceOrarie[i].oraInizio;
+
+                        if (!oraInizio1 || !/^([01]\d|2[0-3]):[0-5]\d$/.test(oraInizio1)) {
+                            continue;
+                        }
+
+                        const [ore1, minuti1] = oraInizio1.split(":").map(Number);
+                        const inizio1 = ore1 * 60 + minuti1;
+                        const fine1 = inizio1 + durata;
+
+                        for (let j = i + 1; j < elemento.fasceOrarie.length; j++) {
+                            const oraInizio2 = elemento.fasceOrarie[j].oraInizio;
+
+                            if (!oraInizio2 || !/^([01]\d|2[0-3]):[0-5]\d$/.test(oraInizio2)) {
+                                continue;
+                            }
+
+                            const [ore2, minuti2] = oraInizio2.split(":").map(Number);
+                            const inizio2 = ore2 * 60 + minuti2;
+                            const fine2 = inizio2 + durata;
+
+                            if (inizio1 < fine2 && fine1 > inizio2) {
+                                errori[`fascia_${indiceData}_${i}`] =
+                                    "Questa fascia oraria si sovrappone a un'altra.";
+                            }
+                        }
+                    }
+                }
+
+            });
         }
 
-        return seminario.disponibilita.every(elemento => {
-
-            // Verifica la data
-            if (!elemento.data) {
-                return false;
-            }
-
-            const [anno, mese, giorno] = elemento.data.split("-").map(Number);
-            const data = new Date(Date.UTC(anno, mese - 1, giorno));
-
-            if (
-                data.getUTCFullYear() !== anno ||
-                data.getUTCMonth() !== mese - 1 ||
-                data.getUTCDate() !== giorno
-            ) {
-                return false;
-            }
-
-            // Verifica che ci sia almeno una fascia oraria
-            if (
-                !elemento.fasceOrarie ||
-                elemento.fasceOrarie.length === 0
-            ) {
-                return false;
-            }
-
-            // Verifica tutte le fasce orarie
-            return elemento.fasceOrarie.every(fascia => {
-                if (
-                    !fascia.oraInizio ||
-                    !/^([01]\d|2[0-3]):[0-5]\d$/.test(fascia.oraInizio)
-                ) {
-                    return false;
-                }
-
-                const [ore, minuti] = fascia.oraInizio.split(":").map(Number);
-
-                const minutiInizio = ore * 60 + minuti;
-                const minutiFine = minutiInizio + durata;
-
-                // La fascia deve iniziare dalle 08:00
-                if (minutiInizio < 8 * 60) {
-                    return false;
-                }
-
-                // La fascia deve terminare entro le 19:00
-                if (minutiFine > 19 * 60) {
-                    return false;
-                }
-
-                return true;
-            });
-        });
+        return errori;
     }
 
-    const formValido = verificaValidita();
+    const errori = verificaValidita();
+
+    function gestisciSubmit(event) {
+    event.preventDefault();
+
+    setMostraErrori(true);
+
+    if (Object.keys(errori).length > 0) {
+        const primoErrore = Object.keys(errori)[0];
+
+        const primoCampoNonValido = event.currentTarget.elements.namedItem(primoErrore);
+
+        if (primoCampoNonValido) {
+            primoCampoNonValido.focus();
+            primoCampoNonValido.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        return;
+    }
+
+    onSubmit(event);
+}
 
     return (
         <form
-            onSubmit={onSubmit}
+            onSubmit={gestisciSubmit}
+            noValidate
             className="flex-column gap-2 background-white padding-1 border rounded shadow"
         >
 
@@ -177,7 +246,7 @@ function FormSeminario({
                             name="dipartimento"
                             value={seminario.dipartimento}
                             onChange={aggiornaCampo}
-                            className="border rounded padding-05-1"
+                            className={`border rounded padding-05-1 ${mostraErrori && errori.dipartimento ? "border-red" : ""}`}
                             required
                         >
                             <option value="">Seleziona un dipartimento</option>
@@ -188,6 +257,10 @@ function FormSeminario({
                                 </option>
                             ))}
                         </select>
+
+                        {mostraErrori && errori.dipartimento && (
+                            <span className="color-red">{errori.dipartimento}</span>
+                        )}
                     </div>
 
                     <div className="flex-column gap-05">
@@ -200,7 +273,7 @@ function FormSeminario({
                             name="categoria"
                             value={seminario.categoria}
                             onChange={aggiornaCampo}
-                            className="border rounded padding-05-1"
+                            className={`border rounded padding-05-1 ${mostraErrori && errori.categoria ? "border-red" : ""}`}
                             required
                         >
                             <option value="">Seleziona una categoria</option>
@@ -211,6 +284,10 @@ function FormSeminario({
                                 </option>
                             ))}
                         </select>
+
+                        {mostraErrori && errori.categoria && (
+                            <span className="color-red">{errori.categoria}</span>
+                        )}
                     </div>
 
                 </div>
@@ -227,9 +304,13 @@ function FormSeminario({
                         value={seminario.titolo}
                         onChange={aggiornaCampo}
                         placeholder="Es. Intelligenza artificiale: applicazioni e prospettive"
-                        className="border rounded padding-05-1"
+                        className={`border rounded padding-05-1 ${mostraErrori && errori.titolo ? "border-red" : ""}`}
                         required
                     />
+
+                    {mostraErrori && errori.titolo && (
+                        <span className="color-red">{errori.titolo}</span>
+                    )}
                 </div>
 
                 <div className="flex-column gap-05">
@@ -243,9 +324,13 @@ function FormSeminario({
                         value={seminario.descrizione_breve}
                         onChange={aggiornaCampo}
                         placeholder="Presenta in poche righe il tema del seminario e gli argomenti principali che verranno affrontati."
-                        className="border rounded padding-05-1"
+                        className={`border rounded padding-05-1 ${mostraErrori && errori.descrizione_breve ? "border-red" : ""}`}
                         required
                     />
+
+                    {mostraErrori && errori.descrizione_breve && (
+                        <span className="color-red">{errori.descrizione_breve}</span>
+                    )}
                 </div>
 
                 <div className="flex-column gap-05">
@@ -259,9 +344,13 @@ function FormSeminario({
                         value={seminario.descrizione_dettagliata}
                         onChange={aggiornaCampo}
                         placeholder="Approfondisci i contenuti, le attività previste e gli eventuali esempi pratici proposti durante il seminario."
-                        className="border rounded padding-05-1"
+                        className={`border rounded padding-05-1 ${mostraErrori && errori.descrizione_dettagliata ? "border-red" : ""}`}
                         required
                     />
+
+                    {mostraErrori && errori.descrizione_dettagliata && (
+                        <span className="color-red">{errori.descrizione_dettagliata}</span>
+                    )}
                 </div>
 
                 <div className="flex-column gap-05">
@@ -313,8 +402,11 @@ function FormSeminario({
                                     </label>
                                 ))}
                             </div>
-
                         </div>
+
+                        {mostraErrori && errori.anni && (
+                            <span className="color-red">{errori.anni}</span>
+                        )}
                     </div>
 
                     <div className="flex-column gap-05">
@@ -343,8 +435,11 @@ function FormSeminario({
                                 />
                                 A distanza
                             </label>
-
                         </div>
+
+                        {mostraErrori && errori.modalita && (
+                            <span className="color-red">{errori.modalita}</span>
+                        )}
                     </div>
 
                 </div>
@@ -365,9 +460,13 @@ function FormSeminario({
                             value={seminario.durata}
                             onChange={aggiornaCampo}
                             placeholder="Es. 60"
-                            className="border rounded padding-05-1"
+                            className={`border rounded padding-05-1 ${mostraErrori && errori.durata ? "border-red" : ""}`}
                             required
                         />
+
+                        {mostraErrori && errori.durata && (
+                            <span className="color-red">{errori.durata}</span>
+                        )}
                     </div>
 
                     <div className="flex-column gap-05">
@@ -387,17 +486,37 @@ function FormSeminario({
                             className="border rounded padding-05-1"
                             required
                         />
+
+                        {mostraErrori && errori.limite_prenotazioni && (
+                            <span className="color-red">{errori.limite_prenotazioni}</span>
+                        )}
                     </div>
 
                 </div>
 
             </div>
+            
+            <div className="flex-column gap-05">
+                <GestioneDisponibilita
+                    disponibilita={seminario.disponibilita}
+                    durata={seminario.durata}
+                    setSeminario={setSeminario}
+                />
 
-            <GestioneDisponibilita
-                disponibilita={seminario.disponibilita}
-                durata={seminario.durata}
-                setSeminario={setSeminario}
-            />
+                {mostraErrori && Object.entries(errori)
+                    .filter(([chiave]) =>
+                        chiave === "disponibilita" ||
+                        chiave.startsWith("data_") ||
+                        chiave.startsWith("fasce_") ||
+                        chiave.startsWith("fascia_")
+                    )
+                    .map(([chiave, messaggio]) => (
+                        <span key={chiave} className="color-red">
+                            {messaggio}
+                        </span>
+                    ))
+                }
+            </div>
 
             <GestioneVideo
                 video={seminario.video}
@@ -409,13 +528,24 @@ function FormSeminario({
                 }
             />
 
-            <button
-                type="submit"
-                disabled={!formValido}
-                className="background-red color-cream padding-05-1 rounded hover pointer"
-            >
-                {testoPulsante}
-            </button>
+            <div className="width-100 grid-2">
+                
+                <button
+                    type="button"
+                    className="border color-granato background-white rounded padding-05-1 hover pointer"
+                    onClick={onClickAnnulla}
+                >
+                    Annulla
+                </button>
+
+                <button
+                    type="submit"
+                    className="background-red color-cream padding-05-1 rounded hover pointer"
+                >
+                    {testoPulsante}
+                </button>                
+            </div>
+            
 
         </form>
     );

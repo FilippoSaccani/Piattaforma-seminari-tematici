@@ -5,11 +5,19 @@ api_bp = Blueprint("api", __name__)
 
 # Dati temporanei, in attesa del database
 
-UTENTE = {
+UTENTE_DOCENTE = {
     "ruolo": "Docente",
     "nome": "Marco Rossi",
     "email": "marco.rossi@unimore.it"
 }
+
+UTENTE_SCUOLA = {
+    "ruolo": "Scuola",
+    "nome": "Liceo Scientifico Aldo Moro",
+    "indirizzo": "Via XX Settembre 5, Reggio Emilia"
+}
+
+UTENTE = UTENTE_SCUOLA
 
 CATEGORIE = [
     "Scienze e Ingegneria",
@@ -54,6 +62,7 @@ SEMINARI = [
     }
 ]
 
+
 DETTAGLI_SEMINARIO = {
     "id": 1,
     "docente": "Prof. Marco Rossi",
@@ -72,13 +81,16 @@ DETTAGLI_SEMINARIO = {
 
     "disponibilita": [
         {
+            "id": 1,
             "data": "2026-12-15",
             "fasceOrarie": [
                 {
+                    "id": 1,
                     "oraInizio": "09:00",
                     "prenotazione": None
                 },
                 {
+                    "id": 2,
                     "oraInizio": "14:00",
                     "prenotazione": {
                         "id": 1,
@@ -89,18 +101,22 @@ DETTAGLI_SEMINARIO = {
             ]
         },
         {
+            "id": 2,
             "data": "2026-12-17",
             "fasceOrarie": [
                 {
+                    "id": 3,
                     "oraInizio": "10:00",
                     "prenotazione": None
                 }
             ]
         },
         {
+            "id": 3,
             "data": "2026-12-18",
             "fasceOrarie": [
                 {
+                    "id": 4,
                     "oraInizio": "09:00",
                     "prenotazione": None
                 }
@@ -135,6 +151,7 @@ DETTAGLI_SEMINARIO = {
         }
     ]
 }
+
 
 PRENOTAZIONI = [
     {
@@ -297,9 +314,11 @@ MIEI_SEMINARI = [
         "numeroRecensioni": 10,
         "disponibilita": [
             {
+                "id": 1,
                 "data": "2026-12-15",
                 "fasceOrarie": [
                     {
+                        "id": 1,
                         "oraInizio": "09:00",
                         "prenotazione": {
                             "id": 1,
@@ -308,15 +327,18 @@ MIEI_SEMINARI = [
                         }
                     },
                     {
+                        "id": 2,
                         "oraInizio": "14:00",
                         "prenotazione": None
                     }
                 ]
             },
             {
+                "id": 2,
                 "data": "2026-12-17",
                 "fasceOrarie": [
                     {
+                        "id": 3,
                         "oraInizio": "10:00",
                         "prenotazione": {
                             "id": 2,
@@ -347,9 +369,11 @@ MIEI_SEMINARI = [
         "numeroRecensioni": 8,
         "disponibilita": [
             {
+                "id": 3,
                 "data": "2026-10-10",
                 "fasceOrarie": [
                     {
+                        "id": 4,
                         "oraInizio": "09:00",
                         "prenotazione": {
                             "id": 3,
@@ -360,9 +384,11 @@ MIEI_SEMINARI = [
                 ]
             },
             {
+                "id": 4,
                 "data": "2026-12-20",
                 "fasceOrarie": [
                     {
+                        "id": 5,
                         "oraInizio": "14:00",
                         "prenotazione": None
                     }
@@ -389,13 +415,16 @@ MIEI_SEMINARI = [
         "numeroRecensioni": 0,
         "disponibilita": [
             {
+                "id": 5,
                 "data": "2026-12-18",
                 "fasceOrarie": [
                     {
+                        "id": 6,
                         "oraInizio": "09:00",
                         "prenotazione": None
                     },
                     {
+                        "id": 7,
                         "oraInizio": "14:00",
                         "prenotazione": None
                     }
@@ -422,9 +451,11 @@ MIEI_SEMINARI = [
         "numeroRecensioni": 5,
         "disponibilita": [
             {
+                "id": 6,
                 "data": "2026-11-10",
                 "fasceOrarie": [
                     {
+                        "id": 8,
                         "oraInizio": "09:00",
                         "prenotazione": {
                             "id": 4,
@@ -433,6 +464,7 @@ MIEI_SEMINARI = [
                         }
                     },
                     {
+                        "id": 9,
                         "oraInizio": "14:00",
                         "prenotazione": {
                             "id": 5,

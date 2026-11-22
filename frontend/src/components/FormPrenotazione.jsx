@@ -7,6 +7,7 @@ function FormPrenotazione({
     numeroStudenti,
     modalita,
     modalitaSelezionata,
+    errori = {},
     onChangeData,
     onChangeFascia,
     onChangeStudenti,
@@ -18,9 +19,7 @@ function FormPrenotazione({
 
     function calcolaOraFine(oraInizio) {
         const [ore, minuti] = oraInizio.split(":").map(Number);
-
         const minutiTotali = ore * 60 + minuti + Number(durata);
-
         const oreFine = Math.floor(minutiTotali / 60);
         const minutiFine = minutiTotali % 60;
 
@@ -33,7 +32,6 @@ function FormPrenotazione({
 
     function formattaData(data) {
         const [anno, mese, giorno] = data.split("-");
-
         return `${giorno}/${mese}/${anno}`;
     }
 
@@ -54,6 +52,10 @@ function FormPrenotazione({
                         </button>
                     ))}
                 </div>
+
+                {errori.data && (
+                    <span className="color-red">{errori.data}</span>
+                )}
             </div>
 
             {giornoSelezionato && (
@@ -72,6 +74,10 @@ function FormPrenotazione({
                             </button>
                         ))}
                     </div>
+
+                    {errori.fascia && (
+                        <span className="color-red">{errori.fascia}</span>
+                    )}
                 </div>
             )}
 
@@ -87,10 +93,23 @@ function FormPrenotazione({
                         min="1"
                         step="1"
                         value={numeroStudenti}
-                        onChange={e => onChangeStudenti(e.target.value)}
-                        className="border rounded padding-05-1"
+                        onChange={e => {
+                            const valore = e.target.value;
+
+                            if (
+                                valore === "" ||
+                                (Number.isInteger(Number(valore)) && Number(valore) >= 1)
+                            ) {
+                                onChangeStudenti(valore === "" ? "" : Number(valore));
+                            }
+                        }}
+                        className={`border rounded padding-05-1 ${errori.numeroStudenti ? "border-red" : ""}`}
                         required
                     />
+
+                    {errori.numeroStudenti && (
+                        <span className="color-red">{errori.numeroStudenti}</span>
+                    )}
                 </div>
 
                 {modalita.length > 1 && (

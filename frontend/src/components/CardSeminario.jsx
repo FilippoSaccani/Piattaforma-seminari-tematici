@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 function CardSeminario({
     id,
@@ -9,9 +10,9 @@ function CardSeminario({
     numeroRecensioni
 }) {
     return (
-        <div
+        <Link
+            to={`/dettagli-seminario/${id}`}
             className="shadow background-white border rounded padding-1 flex flex-column gap-1 pointer"
-            onClick={() => window.location.href = `/dettagli-seminario/${id}`}
         >
             <div className="flex-between flex-align-center">
                 <span className="background-red color-cream width-fit padding-01-04 rounded-20">
@@ -35,7 +36,7 @@ function CardSeminario({
                 <span className="info-label">Dipartimento</span>
                 <p className="info-value">{dipartimento}</p>
             </div>
-        </div>
+        </Link>
     );
 }
 

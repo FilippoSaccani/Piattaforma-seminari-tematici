@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 // Converte una data e un orario nel formato Date
 function convertiDataOra(data, oraInizio, durata) {
@@ -184,7 +184,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                         <div className="flex-column gap-1">
                             {prenotazioniVisibili.map((prenotazione, indice) => (
                                 <div
-                                    key={indice}
+                                    key={`${prenotazione.data}_${prenotazione.oraInizio}`}
                                     className="grid-4 border-top flex-align-center"
                                 >
                                     <span className="info-label">
@@ -226,13 +226,12 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
             <div className="flex-end width-100 flex-align-center border-top">
                 <div className="width-fit flex gap-1">
 
-                    <button
-                        type="button"
+                    <Link
+                        to={`/dettagli-seminario/${seminario.id}`}
                         className="background-red color-cream hover rounded padding-05 pointer"
-                        onClick={() => window.location.href = `/dettagli-seminario/${seminario.id}`}
                     >
                         Dettagli
-                    </button>
+                    </Link>
 
                     {seminario.stato === "Pubblicato" && (
                         <>

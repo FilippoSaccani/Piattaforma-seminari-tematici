@@ -10,10 +10,14 @@ function GestioneVideo({ video, setVideo }) {
             return;
         }
 
-        const url = URL.createObjectURL(video);
-        setAnteprima(url);
+        if (video instanceof File) {
+            const url = URL.createObjectURL(video);
+            setAnteprima(url);
 
-        return () => URL.revokeObjectURL(url);
+            return () => URL.revokeObjectURL(url);
+        }
+
+        setAnteprima(video);
     }, [video]);
 
     function selezionaVideo(event) {
@@ -65,21 +69,27 @@ function GestioneVideo({ video, setVideo }) {
 
                 <div className="video-preview-container">
 
-                    <video
-                        src={anteprima}
-                        controls
-                        className="video-preview"
-                    />
+                    {anteprima && (
+                        <video
+                            src={anteprima}
+                            controls
+                            className="video-preview"
+                        />
+                    )}
 
                     <div className="flex-between flex-align-center gap-1">
                         <div className="flex-column gap-05">
                             <p className="video-file-name">
-                                {video.name}
+                                {video instanceof File
+                                    ? video.name
+                                    : "Video già caricato"}
                             </p>
 
-                            <p className="info-label">
-                                {formattaDimensione(video.size)}
-                            </p>
+                            {video instanceof File && (
+                                <p className="info-label">
+                                    {formattaDimensione(video.size)}
+                                </p>
+                            )}
                         </div>
 
                         <button
@@ -90,17 +100,6 @@ function GestioneVideo({ video, setVideo }) {
                             Rimuovi
                         </button>
                     </div>
-
-                    <label className="video-change-button">
-                        Sostituisci video
-                        <input
-                            type="file"
-                            accept="video/mp4,video/webm"
-                            onChange={selezionaVideo}
-                            hidden
-                        />
-                    </label>
-
                 </div>
 
             ) : (

@@ -1,13 +1,23 @@
+import { useState } from "react";
+
 function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
+    const [errori, setErrori] = useState({});
+
     function aggiungiData() {
         setSeminario(precedente => ({
             ...precedente,
             disponibilita: [
                 ...precedente.disponibilita,
                 {
+                    id: null,
+                    idTemporaneo: crypto.randomUUID(),
                     data: "",
                     fasceOrarie: [
-                        { oraInizio: "" }
+                        {
+                            id: null,
+                            idTemporaneo: crypto.randomUUID(),
+                            oraInizio: ""
+                        }
                     ]
                 }
             ]
@@ -18,20 +28,41 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
         setSeminario(precedente => ({
             ...precedente,
             disponibilita: precedente.disponibilita.filter(
-                (elemento, indice) => indice !== indiceData
+                (_, indice) => indice !== indiceData
             )
         }));
-    }
 
-    function aggiornaData(indiceData, data) {
-        setSeminario(precedente => ({
-            ...precedente,
-            disponibilita: precedente.disponibilita.map((elemento, indice) =>
-                indice === indiceData
-                    ? { ...elemento, data: data }
-                    : elemento
-            )
-        }));
+        setErrori(precedente => {
+            const nuoviErrori = {};
+
+            Object.entries(precedente).forEach(([chiave, messaggio]) => {
+                if (chiave.startsWith("data_")) {
+                    const indice = Number(chiave.split("_")[1]);
+
+                    if (indice < indiceData) {
+                        nuoviErrori[chiave] = messaggio;
+                    } else if (indice > indiceData) {
+                        nuoviErrori[`data_${indice - 1}`] = messaggio;
+                    }
+                } else if (chiave.startsWith("fascia_")) {
+                    const [, indice] = chiave.split("_");
+                    const indiceFascia = Number(indice);
+
+                    if (indiceFascia < indiceData) {
+                        nuoviErrori[chiave] = messaggio;
+                    } else if (indiceFascia > indiceData) {
+                        nuoviErrori[chiave.replace(
+                            `fascia_${indiceFascia}_`,
+                            `fascia_${indiceFascia - 1}_`
+                        )] = messaggio;
+                    }
+                } else {
+                    nuoviErrori[chiave] = messaggio;
+                }
+            });
+
+            return nuoviErrori;
+        });
     }
 
     function aggiungiFascia(indiceData) {
@@ -43,7 +74,11 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
                         ...elemento,
                         fasceOrarie: [
                             ...elemento.fasceOrarie,
-                            { oraInizio: "" }
+                            {
+                                id: null,
+                                idTemporaneo: crypto.randomUUID(),
+                                oraInizio: ""
+                            }
                         ]
                     }
                     : elemento
@@ -59,12 +94,39 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
                     ? {
                         ...elemento,
                         fasceOrarie: elemento.fasceOrarie.filter(
-                            (fascia, indice) => indice !== indiceFascia
+                            (_, posizione) => posizione !== indiceFascia
                         )
                     }
                     : elemento
             )
         }));
+
+        setErrori(precedente => {
+            const nuoviErrori = {};
+
+            Object.entries(precedente).forEach(([chiave, messaggio]) => {
+                const corrispondenza = chiave.match(/^fascia_(\d+)_(\d+)$/);
+
+                if (corrispondenza) {
+                    const data = Number(corrispondenza[1]);
+                    const fascia = Number(corrispondenza[2]);
+
+                    if (data === indiceData) {
+                        if (fascia < indiceFascia) {
+                            nuoviErrori[chiave] = messaggio;
+                        } else if (fascia > indiceFascia) {
+                            nuoviErrori[`fascia_${data}_${fascia - 1}`] = messaggio;
+                        }
+                    } else {
+                        nuoviErrori[chiave] = messaggio;
+                    }
+                } else {
+                    nuoviErrori[chiave] = messaggio;
+                }
+            });
+
+            return nuoviErrori;
+        });
     }
 
     function calcolaDataMinima() {
@@ -78,13 +140,38 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
         return `${anno}-${mese}-${giorno}`;
     }
 
+    function impostaErroreFascia(indiceData, indiceFascia, messaggio) {
+        setErrori(precedente => {
+            const nuoviErrori = { ...precedente };
+
+            // Elimina gli eventuali errori precedenti delle fasce della stessa data
+            Object.keys(nuoviErrori).forEach(chiave => {
+                if (chiave.startsWith(`fascia_${indiceData}_`)) {
+                    delete nuoviErrori[chiave];
+                }
+            });
+
+            if (messaggio) {
+                nuoviErrori[`fascia_${indiceData}_${indiceFascia}`] = messaggio;
+            }
+
+            return nuoviErrori;
+        });
+    }
+
     function aggiornaData(indiceData, data) {
+        const riferimento = `data_${indiceData}`;
+
         if (data) {
             const [anno, mese, giorno] = data.split("-").map(Number);
             const dataSelezionata = new Date(anno, mese - 1, giorno);
 
             // Non permette di selezionare le domeniche
             if (dataSelezionata.getDay() === 0) {
+                setErrori(precedente => ({
+                    ...precedente,
+                    [riferimento]: "Non puoi selezionare una domenica."
+                }));
                 return;
             }
 
@@ -94,9 +181,19 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
             );
 
             if (dataEsistente) {
+                setErrori(precedente => ({
+                    ...precedente,
+                    [riferimento]: "Questa data è già stata inserita."
+                }));
                 return;
             }
         }
+
+        setErrori(precedente => {
+            const nuoviErrori = { ...precedente };
+            delete nuoviErrori[riferimento];
+            return nuoviErrori;
+        });
 
         setSeminario(precedente => ({
             ...precedente,
@@ -117,7 +214,21 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
             const ultimoOrario = 18 * 60 - Number(durata);
 
             // Verifica dei limiti orari
-            if (minutiInizio < 8 * 60 || minutiInizio > ultimoOrario) {
+            if (minutiInizio < 8 * 60) {
+                impostaErroreFascia(
+                    indiceData,
+                    indiceFascia,
+                    "L'orario deve iniziare dalle 08:00."
+                );
+                return;
+            }
+
+            if (minutiInizio > ultimoOrario) {
+                impostaErroreFascia(
+                    indiceData,
+                    indiceFascia,
+                    "Il seminario deve terminare entro le 18:00."
+                );
                 return;
             }
 
@@ -129,7 +240,8 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
                     return false;
                 }
 
-                const [oreEsistenti, minutiEsistenti] = fascia.oraInizio.split(":").map(Number);
+                const [oreEsistenti, minutiEsistenti] =
+                    fascia.oraInizio.split(":").map(Number);
 
                 const inizioEsistente = oreEsistenti * 60 + minutiEsistenti;
                 const fineEsistente = inizioEsistente + Number(durata);
@@ -139,9 +251,16 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
             });
 
             if (sovrapposta) {
+                impostaErroreFascia(
+                    indiceData,
+                    indiceFascia,
+                    "Questa fascia oraria si sovrappone a un'altra."
+                );
                 return;
             }
         }
+
+        impostaErroreFascia(indiceData, indiceFascia, null);
 
         setSeminario(precedente => ({
             ...precedente,
@@ -190,7 +309,7 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
             return "18:00";
         }
 
-        const minutiTotali = 19 * 60 - Number(durata);
+        const minutiTotali = 18 * 60 - Number(durata);
 
         const ore = Math.floor(minutiTotali / 60);
         const minuti = minutiTotali % 60;
@@ -207,7 +326,7 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
 
             {disponibilita.map((elemento, indiceData) => (
                 <div
-                    key={indiceData}
+                    key={elemento.id ?? elemento.idTemporaneo}
                     className="flex-column gap-1 border rounded padding-1"
                 >
 
@@ -236,6 +355,12 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
                             className="border rounded padding-05-1"
                             required
                         />
+
+                        {errori[`data_${indiceData}`] && (
+                            <span className="color-red">
+                                {errori[`data_${indiceData}`]}
+                            </span>
+                        )}
                     </div>
 
                     <div className="flex-column gap-1">
@@ -243,8 +368,8 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
                         <p>Fasce orarie</p>
 
                         {elemento.fasceOrarie.map((fascia, indiceFascia) => (
-                            <div key={indiceFascia} className="width-100 flex-between flex-align-end gap-1">
-                                <div key={indiceFascia} className="grid-2 width-80">
+                            <div key={fascia.id ?? fascia.idTemporaneo} className="width-100 flex-between flex-align-end gap-1">
+                                <div className="grid-2 width-80">
                                     <div className="flex-column gap-05">
                                         <label className="info-label">
                                             Ora di inizio
@@ -265,6 +390,12 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
                                             className="border rounded padding-05-1"
                                             required
                                         />
+
+                                        {errori[`fascia_${indiceData}_${indiceFascia}`] && (
+                                            <span className="color-red">
+                                                {errori[`fascia_${indiceData}_${indiceFascia}`]}
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="flex-column gap-05">

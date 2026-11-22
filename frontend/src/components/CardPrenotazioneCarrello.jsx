@@ -36,13 +36,19 @@ function CardPrenotazioneCarrello({
 }) {
     const [inModifica, setInModifica] = useState(false);
     const [datiModificati, setDatiModificati] = useState(seminario);
+    const [mostraErrori, setMostraErrori] = useState(false);
 
     // Mantiene soltanto le fasce ancora disponibili
     const disponibilitaDisponibili = seminario.disponibilita
         .map(giorno => ({
             ...giorno,
             fasceOrarie: giorno.fasceOrarie.filter(
-                fascia => fascia.prenotazione === null
+                fascia =>
+                    fascia.prenotazione === null ||
+                    (
+                        giorno.data === seminario.data &&
+                        fascia.oraInizio === seminario.oraInizio
+                    )
             )
         }))
         .filter(giorno => giorno.fasceOrarie.length > 0);
@@ -54,18 +60,50 @@ function CardPrenotazioneCarrello({
         }));
     }
 
+    function verificaValidita() {
+        const errori = {};
+
+        if (!datiModificati.data) {
+            errori.data = "Seleziona una data.";
+        }
+
+        if (datiModificati.data && !datiModificati.oraInizio) {
+            errori.fascia = "Seleziona una fascia oraria.";
+        }
+
+        if (
+            datiModificati.numeroStudenti === "" ||
+            !Number.isInteger(Number(datiModificati.numeroStudenti)) ||
+            Number(datiModificati.numeroStudenti) < 1
+        ) {
+            errori.numeroStudenti = "Inserisci un numero di studenti valido (almeno 1).";
+        }
+
+        return errori;
+    }
+
+    const errori = verificaValidita();
+
     function apriModifica() {
         setDatiModificati(seminario);
+        setMostraErrori(false);
         setInModifica(true);
     }
 
     function salvaModifiche() {
+        setMostraErrori(true);
+
+        if (Object.keys(errori).length > 0) {
+            return;
+        }
+
         onModifica(datiModificati);
         setInModifica(false);
     }
 
     function annullaModifiche() {
         setDatiModificati(seminario);
+        setMostraErrori(false);
         setInModifica(false);
     }
 
@@ -102,22 +140,22 @@ function CardPrenotazioneCarrello({
                     numeroStudenti={datiModificati.numeroStudenti}
                     modalita={seminario.modalitaDisponibili}
                     modalitaSelezionata={datiModificati.modalita}
+                    errori={mostraErrori ? errori : {}}
                     onChangeData={data => {
-                        const giorno = disponibilitaDisponibili.find(
-                            giorno => giorno.data === data
-                        );
-
                         setDatiModificati(precedenti => ({
                             ...precedenti,
                             data,
-                            oraInizio: giorno?.fasceOrarie[0]?.oraInizio || ""
+                            oraInizio: ""
                         }));
                     }}
                     onChangeFascia={oraInizio =>
                         aggiornaCampo("oraInizio", oraInizio)
                     }
                     onChangeStudenti={numeroStudenti =>
-                        aggiornaCampo("numeroStudenti", Number(numeroStudenti))
+                        aggiornaCampo(
+                            "numeroStudenti",
+                            numeroStudenti === "" ? "" : Number(numeroStudenti)
+                        )
                     }
                     onChangeModalita={valore =>
                         aggiornaCampo("modalita", valore)
