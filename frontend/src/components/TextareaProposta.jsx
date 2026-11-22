@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import Pulsante from "./Pulsante";
+
 function TextareaProposta() {
     const [proposta, setProposta] = useState("");
     const [inviata, setInviata] = useState(false);
@@ -37,13 +39,7 @@ function TextareaProposta() {
                 className="width-100 padding-1 border rounded"
             />
 
-            <button 
-                onClick={inviaProposta} 
-                className="padding-05-1 background-red color-cream rounded hover shadow"
-                {...(!proposta.trim() && { disabled: true })}
-            >
-                Invia proposta
-            </button>
+            <Pulsante testo="Invia proposta" onClick={inviaProposta} disabled={!proposta.trim()} />
 
             {inviata && (
                 <p className="successo">Proposta inviata correttamente!</p>

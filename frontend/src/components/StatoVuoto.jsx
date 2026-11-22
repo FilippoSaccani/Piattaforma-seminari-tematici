@@ -1,3 +1,5 @@
+import Pulsante from "./Pulsante";
+
 function StatoVuoto({
     titolo,
     descrizione,
@@ -20,13 +22,7 @@ function StatoVuoto({
             <img src={immagine} alt="" />
 
             {testoPulsante && (
-                <button
-                    type="button"
-                    className="background-red color-cream padding-05-1 rounded pointer hover"
-                    onClick={onClick}
-                >
-                    {testoPulsante}
-                </button>
+                <Pulsante testo={testoPulsante} onClick={onClick} />
             )}
         </div>
     );

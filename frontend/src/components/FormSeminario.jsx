@@ -1,7 +1,9 @@
+
 import { useState } from "react";
 
 import GestioneDisponibilita from "../components/GestioneDisponibilita";
 import GestioneVideo from "../components/GestioneVideo";
+import Pulsante from "../components/Pulsante";
 
 function calcolaDataMinima() {
     const domani = new Date();
@@ -25,8 +27,9 @@ function FormSeminario({
 }) {
     const [mostraErrori, setMostraErrori] = useState(false);
 
-    // Copia di partenza, per distinguere le date passate già salvate da quelle inserite o modificate
+    // Copia iniziale per distinguere le disponibilità già salvate da quelle nuove
     const [disponibilitaIniziale] = useState(seminario.disponibilita);
+
     const dataMinima = calcolaDataMinima();
 
     function aggiornaCampo(event) {
@@ -62,6 +65,11 @@ function FormSeminario({
         const durata = Number(seminario.durata);
         const limite = Number(seminario.limite_prenotazioni);
 
+        const durataValida =
+            Number.isInteger(durata) &&
+            durata >= 30 &&
+            durata % 5 === 0;
+
         // Campi obbligatori
         if (!seminario.dipartimento?.trim()) {
             errori.dipartimento = "Seleziona un dipartimento.";
@@ -93,10 +101,8 @@ function FormSeminario({
         }
 
         // Valori numerici
-        if (!Number.isInteger(durata) || durata < 30) {
-            errori.durata = "Inserisci una durata valida (almeno 30 minuti).";
-        } else if (durata % 5 !== 0) {
-            errori.durata = "La durata deve essere un multiplo di 5 minuti.";
+        if (!durataValida) {
+            errori.durata = "Inserisci una durata valida (almeno 30 minuti e multipla di 5).";
         }
 
         if (!Number.isInteger(limite) || limite <= 0) {
@@ -108,12 +114,21 @@ function FormSeminario({
             errori.disponibilita = "Inserisci almeno una data di disponibilità.";
         } else {
             seminario.disponibilita.forEach((elemento, indiceData) => {
-                const originale = disponibilitaIniziale.find(iniziale => iniziale.id === elemento.id);
+                const riferimentoData = `data_${indiceData}`;
+
+                // Cerca la disponibilità originale solo se ha un ID
+                const originale = elemento.id != null
+                    ? disponibilitaIniziale.find(
+                        iniziale => iniziale.id === elemento.id
+                    )
+                    : undefined;
+
                 const dataInvariata = originale?.data === elemento.data;
                 const dataPassata = elemento.data < dataMinima;
 
+                // Controllo della data
                 if (!elemento.data) {
-                    errori[`data_${indiceData}`] = "Inserisci una data.";
+                    errori[riferimentoData] = "Inserisci una data.";
                 } else {
                     const [anno, mese, giorno] = elemento.data.split("-").map(Number);
                     const data = new Date(Date.UTC(anno, mese - 1, giorno));
@@ -123,22 +138,38 @@ function FormSeminario({
                         data.getUTCMonth() !== mese - 1 ||
                         data.getUTCDate() !== giorno
                     ) {
-                        errori[`data_${indiceData}`] = "La data inserita non è valida.";
+                        errori[riferimentoData] = "La data inserita non è valida.";
+                    } else if (data.getUTCDay() === 0) {
+                        errori[riferimentoData] = "Non puoi selezionare una domenica.";
                     } else if (dataPassata && !dataInvariata) {
-                        errori[`data_${indiceData}`] = "La data deve essere successiva a oggi.";
+                        errori[riferimentoData] = "La data deve essere successiva a oggi.";
                     }
                 }
 
+                // Controllo delle date duplicate
+                const dataDuplicata = elemento.data && seminario.disponibilita.some(
+                    (altraDisponibilita, indice) =>
+                        indice !== indiceData &&
+                        altraDisponibilita.data === elemento.data
+                );
+
+                if (dataDuplicata && !errori[riferimentoData]) {
+                    errori[riferimentoData] = "Questa data è già stata inserita.";
+                }
+
+                // Controllo delle fasce orarie
                 if (!elemento.fasceOrarie || elemento.fasceOrarie.length === 0) {
                     errori[`fasce_${indiceData}`] = "Aggiungi almeno una fascia oraria.";
                     return;
                 }
 
-                
                 elemento.fasceOrarie.forEach((fascia, indiceFascia) => {
                     const riferimento = `fascia_${indiceData}_${indiceFascia}`;
 
-                    if (!fascia.oraInizio || !/^([01]\d|2[0-3]):[0-5]\d$/.test(fascia.oraInizio)) {
+                    if (
+                        !fascia.oraInizio ||
+                        !/^([01]\d|2[0-3]):[0-5]\d$/.test(fascia.oraInizio)
+                    ) {
                         errori[riferimento] = "Inserisci un orario valido.";
                         return;
                     }
@@ -149,23 +180,40 @@ function FormSeminario({
 
                     if (minutiInizio < 8 * 60) {
                         errori[riferimento] = "L'orario deve iniziare dalle 08:00.";
-                    } else if (minutiFine > 18 * 60) {
+                    } else if (
+                        durataValida &&
+                        minutiFine > 18 * 60
+                    ) {
                         errori[riferimento] = "Il seminario deve terminare entro le 18:00.";
-                    } else if (dataPassata && dataInvariata) {
-                        const fasciaOriginale = originale.fasceOrarie.find(iniziale => iniziale.id === fascia.id);
+                    }
 
-                        if (fasciaOriginale?.oraInizio !== fascia.oraInizio) {
-                            errori[riferimento] = "Puoi aggiungere o modificare orari solo nelle date successive a oggi.";
+                    // Nelle date passate non si possono aggiungere o modificare fasce
+                    if (dataPassata && dataInvariata) {
+                        const fasciaOriginale = fascia.id != null
+                            ? originale.fasceOrarie.find(
+                                iniziale => iniziale.id === fascia.id
+                            )
+                            : undefined;
+
+                        if (
+                            !fasciaOriginale ||
+                            fasciaOriginale.oraInizio !== fascia.oraInizio
+                        ) {
+                            errori[riferimento] =
+                                "Puoi aggiungere o modificare orari solo nelle date successive a oggi.";
                         }
                     }
                 });
 
-                // Controllo sovrapposizione tra le fasce della stessa data
-                if (durata > 0) {
+                // Controllo delle sovrapposizioni
+                if (durataValida) {
                     for (let i = 0; i < elemento.fasceOrarie.length; i++) {
                         const oraInizio1 = elemento.fasceOrarie[i].oraInizio;
 
-                        if (!oraInizio1 || !/^([01]\d|2[0-3]):[0-5]\d$/.test(oraInizio1)) {
+                        if (
+                            !oraInizio1 ||
+                            !/^([01]\d|2[0-3]):[0-5]\d$/.test(oraInizio1)
+                        ) {
                             continue;
                         }
 
@@ -176,7 +224,10 @@ function FormSeminario({
                         for (let j = i + 1; j < elemento.fasceOrarie.length; j++) {
                             const oraInizio2 = elemento.fasceOrarie[j].oraInizio;
 
-                            if (!oraInizio2 || !/^([01]\d|2[0-3]):[0-5]\d$/.test(oraInizio2)) {
+                            if (
+                                !oraInizio2 ||
+                                !/^([01]\d|2[0-3]):[0-5]\d$/.test(oraInizio2)
+                            ) {
                                 continue;
                             }
 
@@ -191,7 +242,6 @@ function FormSeminario({
                         }
                     }
                 }
-
             });
         }
 
@@ -201,28 +251,31 @@ function FormSeminario({
     const errori = verificaValidita();
 
     function gestisciSubmit(event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    setMostraErrori(true);
+        setMostraErrori(true);
 
-    if (Object.keys(errori).length > 0) {
-        const primoErrore = Object.keys(errori)[0];
+        if (Object.keys(errori).length > 0) {
+            const primoErrore = Object.keys(errori)[0];
 
-        const primoCampoNonValido = event.currentTarget.elements.namedItem(primoErrore);
+            // Il submit può provenire dal form oppure dal pulsante
+            const form = event.currentTarget.form || event.currentTarget;
 
-        if (primoCampoNonValido) {
-            primoCampoNonValido.focus();
-            primoCampoNonValido.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
+            const primoCampoNonValido = form.elements.namedItem(primoErrore);
+
+            if (primoCampoNonValido) {
+                primoCampoNonValido.focus();
+                primoCampoNonValido.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+            return;
         }
 
-        return;
+        onSubmit(event);
     }
-
-    onSubmit(event);
-}
 
     return (
         <form
@@ -512,7 +565,7 @@ function FormSeminario({
                             value={seminario.limite_prenotazioni}
                             onChange={aggiornaCampo}
                             placeholder="Es. 10"
-                            className="border rounded padding-05-1"
+                            className={`border rounded padding-05-1 ${mostraErrori && errori.limite_prenotazioni ? "border-red" : ""}`}
                             required
                         />
 
@@ -524,28 +577,21 @@ function FormSeminario({
                 </div>
 
             </div>
-            
+
             <div className="flex-column gap-05">
                 <GestioneDisponibilita
                     disponibilita={seminario.disponibilita}
                     durata={seminario.durata}
                     dataMinima={dataMinima}
                     setSeminario={setSeminario}
+                    errori={mostraErrori ? errori : {}}
                 />
 
-                {mostraErrori && Object.entries(errori)
-                    .filter(([chiave]) =>
-                        chiave === "disponibilita" ||
-                        chiave.startsWith("data_") ||
-                        chiave.startsWith("fasce_") ||
-                        chiave.startsWith("fascia_")
-                    )
-                    .map(([chiave, messaggio]) => (
-                        <span key={chiave} className="color-red">
-                            {messaggio}
-                        </span>
-                    ))
-                }
+                {mostraErrori && errori.disponibilita && (
+                    <span className="color-red">
+                        {errori.disponibilita}
+                    </span>
+                )}
             </div>
 
             <GestioneVideo
@@ -559,7 +605,7 @@ function FormSeminario({
             />
 
             <div className="width-100 grid-2">
-                
+
                 <button
                     type="button"
                     className="border color-granato background-white rounded padding-05-1 hover pointer"
@@ -568,15 +614,11 @@ function FormSeminario({
                     Annulla
                 </button>
 
-                <button
-                    type="submit"
-                    className="background-red color-cream padding-05-1 rounded hover pointer"
-                >
-                    {testoPulsante}
-                </button>                
+                <Pulsante
+                    testo={testoPulsante}
+                    onClick={gestisciSubmit}
+                />
             </div>
-            
-
         </form>
     );
 }

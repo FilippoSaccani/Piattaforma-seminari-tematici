@@ -42,7 +42,7 @@ function Navbar({ utente }) {
                         }
                     >
                         <i className={`fa-solid ${link.icona}`}></i>
-                        <h2>{link.nome}</h2>
+                        <span className="bold size-1-3">{link.nome}</span>
                     </NavLink>
                 ))}
             </div>

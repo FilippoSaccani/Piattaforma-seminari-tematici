@@ -1,29 +1,8 @@
-
 import { useState } from "react";
+import { formattaData, calcolaOraFine } from "../utils/date";
+
 import FormRecensione from "./FormRecensione";
-
-// Converte una data da YYYY-MM-DD a DD/MM/YYYY
-function formattaData(data) {
-    const [anno, mese, giorno] = data.split("-");
-
-    return `${giorno}/${mese}/${anno}`;
-}
-
-// Calcola l'orario di fine
-function calcolaOraFine(oraInizio, durata) {
-    const [ore, minuti] = oraInizio.split(":").map(Number);
-
-    const minutiTotali = ore * 60 + minuti + Number(durata);
-
-    const oreFine = Math.floor(minutiTotali / 60);
-    const minutiFine = minutiTotali % 60;
-
-    return (
-        String(oreFine).padStart(2, "0") +
-        ":" +
-        String(minutiFine).padStart(2, "0")
-    );
-}
+import Pulsante from "./Pulsante";
 
 function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
     const svolta = prenotazione.stato === "Concluso";
@@ -74,13 +53,7 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                         </div>
 
                         <div className="flex-end border-top">
-                            <button
-                                type="button"
-                                className="background-red color-cream padding-05 rounded pointer hover"
-                                onClick={() => setMostraRecensione(false)}
-                            >
-                                Torna ai dati
-                            </button>
+                            <Pulsante testo="Torna ai dati" onClick={() => setMostraRecensione(false)} />
                         </div>
                     </div>
                 </>
@@ -139,37 +112,15 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                     </div>
 
                     <div className="flex-end width-100 flex-align-center border-top">
-                        <div className="width-fit flex gap-1">
-
-                            {svolta ? (
-                                prenotazione.recensione ? (
-                                    <button
-                                        type="button"
-                                        className="pointer background-red color-cream padding-05 rounded hover"
-                                        onClick={() => setMostraRecensione(true)}
-                                    >
-                                        Visualizza recensione
-                                    </button>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        className="pointer background-red color-cream padding-05 rounded hover"
-                                        onClick={() => setMostraFormRecensione(true)}
-                                    >
-                                        Lascia recensione
-                                    </button>
-                                )
+                        {svolta ? (
+                            prenotazione.recensione ? (
+                                <Pulsante testo="Visualizza recensione" onClick={() => setMostraRecensione(true)} />
                             ) : (
-                                <button
-                                    type="button"
-                                    className="pointer background-red color-cream padding-05 rounded hover"
-                                    onClick={() => onDisdici(prenotazione)}
-                                >
-                                    Disdici prenotazione
-                                </button>
-                            )}
-
-                        </div>
+                                <Pulsante testo="Lascia recensione" onClick={() => setMostraFormRecensione(true)} />
+                            )
+                        ) : (
+                            <Pulsante testo="Disdici prenotazione" onClick={() => onDisdici(prenotazione)} />
+                        )}
                     </div>
                 </>
             )}

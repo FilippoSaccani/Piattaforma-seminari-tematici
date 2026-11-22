@@ -56,26 +56,26 @@ function Home() {
 
                         <div className="flex-align-center gap-1">
                             <Filtro
-                                categorie={categorie}
-                                categoriaSelezionata={categoriaSelezionata}
+                                opzioni={categorie}
+                                opzioneSelezionata={categoriaSelezionata}
                                 onChange={setCategoriaSelezionata}
-                                opzione="Tutte le categorie"
+                                testoPredefinito="Tutte le categorie"
                                 mostraAltro={utente === "Scuola"}
                             />
 
                             <Filtro
-                                categorie={dipartimenti}
-                                categoriaSelezionata={dipartimentoSelezionato}
+                                opzioni={dipartimenti}
+                                opzioneSelezionata={dipartimentoSelezionato}
                                 onChange={setDipartimentoSelezionato}
-                                opzione="Tutti i dipartimenti"
+                                testoPredefinito="Tutti i dipartimenti"
                             />
 
                             {utente === "Admin" && (
                                 <Filtro
-                                    categorie={["Disponibili", "Prenotati", "Conclusi"]}
-                                    categoriaSelezionata={statoSelezionato}
+                                    opzioni={["Disponibili", "Prenotati", "Conclusi"]}
+                                    opzioneSelezionata={statoSelezionato}
                                     onChange={setStatoSelezionato}
-                                    opzione="Tutti i seminari"
+                                    testoPredefinito="Tutti i seminari"
                                 />
                             )}
                         </div>

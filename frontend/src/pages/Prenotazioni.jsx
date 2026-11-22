@@ -11,6 +11,7 @@ import CardPrenotazioneScuola from "../components/CardPrenotazioneScuola";
 import CardPrenotazioneCarrello from "../components/CardPrenotazioneCarrello";
 import StatoVuoto from "../components/StatoVuoto";
 import PopupConferma from "../components/PopupConferma";
+import Pulsante from "../components/Pulsante";
 
 function Prenotazioni() {
     const navigate = useNavigate();
@@ -65,18 +66,6 @@ function Prenotazioni() {
         );
     }
 
-    function rimuoviSeminario(id) {
-        setPrenotazioni(precedenti =>
-            precedenti.filter(prenotazione => prenotazione.id !== id)
-        );
-
-        setSeminariSelezionati(precedenti =>
-            precedenti.filter(selezionato => selezionato !== id)
-        );
-
-        // TODO: fetch DELETE per rimuovere il seminario
-    }
-
     function modificaSeminario(modificato) {
         setPrenotazioni(precedenti =>
             precedenti.map(prenotazione =>
@@ -115,7 +104,13 @@ function Prenotazioni() {
             precedenti.filter(p => p.id !== prenotazioneDaDisdire.id)
         );
 
+        setSeminariSelezionati(precedenti =>
+            precedenti.filter(id => id !== prenotazioneDaDisdire.id)
+        );
+
         setPrenotazioneDaDisdire(null);
+
+        // TODO: fetch DELETE per disdire la prenotazione
     }
 
     function salvaRecensione(prenotazione, recensione) {
@@ -156,16 +151,16 @@ function Prenotazioni() {
                         />
 
                         <Filtro
-                            categorie={["Da confermare", "Da svolgere", "Conclusi"]}
-                            categoriaSelezionata={statoSelezionato}
+                            opzioni={["Da confermare", "Da svolgere", "Conclusi"]}
+                            opzioneSelezionata={statoSelezionato}
                             onChange={setStatoSelezionato}
-                            opzione="Tutte le prenotazioni"
+                            testoPredefinito="Tutte le prenotazioni"
                         />
                     </div>
 
                     {seminariDaConfermare.length > 0 && statoSelezionato === "Da confermare" && (
                         <>
-                            <label className="flex-align-center gap-05 bold width-fit">
+                            <label className="flex-align-center gap-05 bold size-1-3 width-fit">
                                 <input
                                     type="checkbox"
                                     className="background-white rounded-circle pointer seleziona-tutti"
@@ -186,7 +181,7 @@ function Prenotazioni() {
                                         seminario={prenotazione}
                                         selezionato={seminariSelezionati.includes(prenotazione.id)}
                                         onSeleziona={() => selezionaSeminario(prenotazione.id)}
-                                        onRimuovi={() => rimuoviSeminario(prenotazione.id)}
+                                        onRimuovi={() => disdiciPrenotazione(prenotazione)}
                                         onModifica={modificaSeminario}
                                         mostraSelezione={statoSelezionato === "Da confermare"}
                                     />
@@ -207,14 +202,7 @@ function Prenotazioni() {
                     </div>
 
                     {seminariDaConfermare.length > 0 && statoSelezionato === "Da confermare" && (
-                        <button
-                            type="button"
-                            className="background-red color-cream width-100 padding-05-1 rounded pointer shadow hover"
-                            onClick={confermaPrenotazioni}
-                            disabled={seminariSelezionati.length === 0}
-                        >
-                            Conferma prenotazioni
-                        </button>
+                        <Pulsante testo="Conferma prenotazioni" onClick={confermaPrenotazioni} disabled={seminariSelezionati.length === 0} />
                     )}
 
                     {prenotazioneDaDisdire && (

@@ -12,12 +12,15 @@ import Titolo from "../components/Titolo";
 import RiepilogoSeminari from "../components/RiepilogoSeminari";
 import CardSeminarioDocente from "../components/CardSeminarioDocente";
 import PopupConferma from "../components/PopupConferma";
+import Pulsante from "../components/Pulsante";
 
 function IMieiSeminari() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const [seminari, setSeminari] = useState([]);
+
+    const [statiSeminari, setStatiSeminari] = useState([]);
 
     const [testoRicerca, setTestoRicerca] = useState("");
 
@@ -29,54 +32,15 @@ function IMieiSeminari() {
 
     useEffect(() => {
         api.get("/miei-seminari").then(risposta => {
-            console.log(risposta.data);
-            setSeminari(risposta.data)});
+            setSeminari(risposta.data)
+        });
     }, []);
 
-    function convertiDataOra(data, oraInizio, durata) {
-        const [anno, mese, giorno] = data.split("-").map(Number);
-        const [ore, minuti] = oraInizio.split(":").map(Number);
-
-        return new Date(
-            anno,
-            mese - 1,
-            giorno,
-            ore,
-            minuti + Number(durata)
-        );
-    }
-
-    function calcolaStatoSeminario(seminario) {
-        const oggi = new Date();
-
-        const fasce = seminario.disponibilita.flatMap(disponibilita =>
-            disponibilita.fasceOrarie.map(fascia => {
-                const fine = convertiDataOra(
-                    disponibilita.data,
-                    fascia.oraInizio,
-                    seminario.durata
-                );
-
-                return {
-                    prenotata: fascia.prenotazione !== null,
-                    futura: fine > oggi
-                };
-            })
-        );
-
-        const haPrenotazioniFuture = fasce.some(
-            fascia => fascia.prenotata && fascia.futura
-        );
-
-        const haDisponibilitaFuture = fasce.some(
-            fascia => !fascia.prenotata && fascia.futura
-        );
-
-        if (haPrenotazioniFuture) return "Prenotato";
-        if (haDisponibilitaFuture) return "Pubblicato";
-
-        return "Concluso";
-    }
+    useEffect(() => {
+        api.get("/stati-seminari").then(risposta => {
+            setStatiSeminari(risposta.data);
+        });
+    }, []);
 
     const numeroPrenotazioni = seminari.reduce(
         (totale, seminario) =>
@@ -91,17 +55,15 @@ function IMieiSeminari() {
     );
 
     const numeroConclusi = seminari.filter(
-        seminario => calcolaStatoSeminario(seminario) === "Concluso"
+        seminario => seminario.stato === "Concluso"
     ).length;
 
     const seminariFiltrati = seminari.filter(seminario => {
-        const stato = calcolaStatoSeminario(seminario);
-
         const corrispondeStato =
             statoSelezionato === "" ||
-            (statoSelezionato === "Pubblicati" && stato === "Pubblicato") ||
-            (statoSelezionato === "Prenotati" && stato === "Prenotato") ||
-            (statoSelezionato === "Conclusi" && stato === "Concluso");
+            (statoSelezionato === "Pubblicati" && seminario.stato === "Pubblicato") ||
+            (statoSelezionato === "Prenotati" && seminario.stato === "Prenotato") ||
+            (statoSelezionato === "Conclusi" && seminario.stato === "Concluso");
 
         const corrispondeRicerca =
             seminario.titolo.toLowerCase().includes(testoRicerca.toLowerCase());
@@ -136,14 +98,7 @@ function IMieiSeminari() {
                 sottotitolo="Gestisci i tuoi seminari, consulta le prenotazioni ricevute e tieni traccia delle attività svolte."
             />
 
-            <button
-                type="button"
-                className="background-red color-cream padding-05-1 rounded pointer shadow hover flex-center gap-05"
-                onClick={() => navigate("/aggiungi-seminario")}
-            >
-                <i className="fa-solid fa-plus"></i>
-                Aggiungi seminario
-            </button>
+            <Pulsante testo="Aggiungi seminario" icona="fa-solid fa-plus" onClick={() => navigate("/aggiungi-seminario")} />
 
             {seminari.length === 0 ? (
                 <StatoVuoto
@@ -167,26 +122,26 @@ function IMieiSeminari() {
                         />
 
                         <Filtro
-                            categorie={["Pubblicati", "Prenotati", "Conclusi"]}
-                            categoriaSelezionata={statoSelezionato}
+                            opzioni={statiSeminari.map(stato => {
+                                if (stato === "Pubblicato") return "Pubblicati";
+                                if (stato === "Prenotato") return "Prenotati";
+                                return "Conclusi";
+                            })}
+                            opzioneSelezionata={statoSelezionato}
                             onChange={setStatoSelezionato}
-                            opzione="Tutti i seminari"
+                            testoPredefinito="Tutti i seminari"
                         />
                     </div>
 
                     {seminariFiltrati.length > 0 ? (
-                        seminariFiltrati.map(seminario => {
-                            const stato = calcolaStatoSeminario(seminario);
-
-                            return (
-                                <CardSeminarioDocente
-                                    key={seminario.id}
-                                    seminario={{ ...seminario, stato }}
-                                    onModifica={modificaSeminario}
-                                    onElimina={eliminaSeminario}
-                                />
-                            );
-                        })
+                        seminariFiltrati.map(seminario => (
+                            <CardSeminarioDocente
+                                key={seminario.id}
+                                seminario={seminario}
+                                onModifica={modificaSeminario}
+                                onElimina={eliminaSeminario}
+                            />
+                        ))
                     ) : (
                         <p className="color-grey">
                             Nessun seminario trovato.

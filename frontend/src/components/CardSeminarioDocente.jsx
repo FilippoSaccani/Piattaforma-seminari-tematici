@@ -1,42 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { formattaData, calcolaOraFine, convertiDataOra } from "../utils/date";
 
-// Converte una data e un orario nel formato Date
-function convertiDataOra(data, oraInizio, durata) {
-    const [anno, mese, giorno] = data.split("-").map(Number);
-    const [ore, minuti] = oraInizio.split(":").map(Number);
-
-    return new Date(
-        anno,
-        mese - 1,
-        giorno,
-        ore,
-        minuti + Number(durata)
-    );
-}
-
-// Calcola l'orario di fine
-function calcolaOraFine(oraInizio, durata) {
-    const [ore, minuti] = oraInizio.split(":").map(Number);
-
-    const minutiTotali = ore * 60 + minuti + Number(durata);
-
-    const oreFine = Math.floor(minutiTotali / 60);
-    const minutiFine = minutiTotali % 60;
-
-    return (
-        String(oreFine).padStart(2, "0") +
-        ":" +
-        String(minutiFine).padStart(2, "0")
-    );
-}
-
-// Converte una data da YYYY-MM-DD a DD/MM/YYYY
-function formattaData(data) {
-    const [anno, mese, giorno] = data.split("-");
-
-    return `${giorno}/${mese}/${anno}`;
-}
+import Pulsante from "./Pulsante";
 
 function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
     const [mostraTutte, setMostraTutte] = useState(false);
@@ -147,7 +113,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
 
                     {/* Titolo e recensioni */}
                     <div className="flex-between flex-align-center">
-                        <p className="bold color-red">
+                        <p className="bold size-1-3 color-red">
                             Prenotazioni ({prenotazioni.length})
                         </p>
 
@@ -156,7 +122,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                                 {seminario.numeroRecensioni > 0 ? (
                                     <>
                                         <i className="fa-solid fa-star stella"></i>
-                                        <span className="bold">
+                                        <span className="bold size-1-3">
                                             {seminario.mediaRecensioni.toFixed(1)}
                                         </span>
                                         <span className="info-label">
@@ -182,7 +148,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                         </div>
 
                         <div className="flex-column gap-1">
-                            {prenotazioniVisibili.map((prenotazione, indice) => (
+                            {prenotazioniVisibili.map(prenotazione => (
                                 <div
                                     key={`${prenotazione.data}_${prenotazione.oraInizio}`}
                                     className="grid-4 border-top flex-align-center"
@@ -211,13 +177,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
 
                     {/* Mostra tutte */}
                     {prenotazioni.length > 3 && (
-                        <button
-                            type="button"
-                            className="background-red color-cream hover rounded padding-05 pointer"
-                            onClick={() => setMostraTutte(!mostraTutte)}
-                        >
-                            {mostraTutte ? "Mostra meno" : "Mostra tutte"}
-                        </button>
+                        <Pulsante testo={mostraTutte ? "Mostra meno" : "Mostra tutte"} onClick={() => setMostraTutte(!mostraTutte)} />
                     )}
                 </div>
             )}
@@ -225,7 +185,6 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
             {/* Pulsanti */}
             <div className="flex-end width-100 flex-align-center border-top">
                 <div className="width-fit flex gap-1">
-
                     <Link
                         to={`/dettagli-seminario/${seminario.id}`}
                         className="background-red color-cream hover rounded padding-05 pointer"
@@ -235,21 +194,8 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
 
                     {seminario.stato === "Pubblicato" && (
                         <>
-                            <button
-                                type="button"
-                                className="background-red color-cream hover rounded padding-05 pointer"
-                                onClick={() => onModifica(seminario)}
-                            >
-                                Modifica
-                            </button>
-
-                            <button
-                                type="button"
-                                className="pointer background-red color-cream padding-05 rounded hover"
-                                onClick={() => onElimina(seminario)}
-                            >
-                                Elimina
-                            </button>
+                            <Pulsante testo="Modifica" onClick={() => onModifica(seminario)} />
+                            <Pulsante testo="Elimina" onClick={() => onElimina(seminario)} />
                         </>
                     )}
 

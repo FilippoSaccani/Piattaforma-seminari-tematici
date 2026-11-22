@@ -1,30 +1,9 @@
-
 import { useState } from "react";
+import { formattaData, calcolaOraFine } from "../utils/date";
+import { filtraDisponibilitaDisponibili } from "../utils/disponibilita";
 
 import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
-
-// Converte una data da YYYY-MM-DD a DD/MM/YYYY
-function formattaData(data) {
-    const [anno, mese, giorno] = data.split("-");
-
-    return `${giorno}/${mese}/${anno}`;
-}
-
-// Calcola l'orario di fine
-function calcolaOraFine(oraInizio, durata) {
-    const [ore, minuti] = oraInizio.split(":").map(Number);
-
-    const minutiTotali = ore * 60 + minuti + Number(durata);
-
-    const oreFine = Math.floor(minutiTotali / 60);
-    const minutiFine = minutiTotali % 60;
-
-    return (
-        String(oreFine).padStart(2, "0") +
-        ":" +
-        String(minutiFine).padStart(2, "0")
-    );
-}
+import Pulsante from "./Pulsante";
 
 function CardPrenotazioneCarrello({
     seminario,
@@ -38,20 +17,11 @@ function CardPrenotazioneCarrello({
     const [datiModificati, setDatiModificati] = useState(seminario);
     const [mostraErrori, setMostraErrori] = useState(false);
 
-    // Mantiene soltanto le fasce ancora disponibili
-    const disponibilitaDisponibili = seminario.disponibilita
-        .map(giorno => ({
-            ...giorno,
-            fasceOrarie: giorno.fasceOrarie.filter(
-                fascia =>
-                    fascia.prenotazione === null ||
-                    (
-                        giorno.data === seminario.data &&
-                        fascia.oraInizio === seminario.oraInizio
-                    )
-            )
-        }))
-        .filter(giorno => giorno.fasceOrarie.length > 0);
+    const disponibilitaDisponibili = filtraDisponibilitaDisponibili(
+        seminario.disponibilita,
+        seminario.data,
+        seminario.oraInizio
+    );
 
     function aggiornaCampo(campo, valore) {
         setDatiModificati(precedenti => ({
@@ -199,39 +169,13 @@ function CardPrenotazioneCarrello({
                 <div className="width-fit flex gap-1">
                     {inModifica ? (
                         <>
-                            <button
-                                type="button"
-                                className="pointer background-red color-cream padding-05 rounded hover"
-                                onClick={salvaModifiche}
-                            >
-                                Salva
-                            </button>
-
-                            <button
-                                type="button"
-                                className="pointer background-red color-cream padding-05 rounded hover"
-                                onClick={annullaModifiche}
-                            >
-                                Annulla
-                            </button>
+                            <Pulsante testo="Salva" onClick={salvaModifiche} />
+                            <Pulsante testo="Annulla" onClick={annullaModifiche} />
                         </>
                     ) : (
                         <>
-                            <button
-                                type="button"
-                                className="pointer background-red color-cream padding-05 rounded hover"
-                                onClick={apriModifica}
-                            >
-                                Modifica
-                            </button>
-
-                            <button
-                                type="button"
-                                className="pointer background-red color-cream padding-05 rounded hover"
-                                onClick={onRimuovi}
-                            >
-                                Rimuovi
-                            </button>
+                            <Pulsante testo="Modifica" onClick={apriModifica} />
+                            <Pulsante testo="Rimuovi" onClick={onRimuovi} />
                         </>
                     )}
                 </div>

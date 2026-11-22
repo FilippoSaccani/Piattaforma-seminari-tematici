@@ -1,3 +1,4 @@
+import { formattaData, calcolaOraFine } from "../utils/date";
 
 export const MAX_STUDENTI = 1000;
 
@@ -18,24 +19,6 @@ function FormPrenotazione({
     const giornoSelezionato = disponibilita.find(
         giorno => giorno.data === dataSelezionata
     );
-
-    function calcolaOraFine(oraInizio) {
-        const [ore, minuti] = oraInizio.split(":").map(Number);
-        const minutiTotali = ore * 60 + minuti + Number(durata);
-        const oreFine = Math.floor(minutiTotali / 60);
-        const minutiFine = minutiTotali % 60;
-
-        return (
-            String(oreFine).padStart(2, "0") +
-            ":" +
-            String(minutiFine).padStart(2, "0")
-        );
-    }
-
-    function formattaData(data) {
-        const [anno, mese, giorno] = data.split("-");
-        return `${giorno}/${mese}/${anno}`;
-    }
 
     return (
         <>
@@ -72,7 +55,7 @@ function FormPrenotazione({
                                 className={`padding-05-1 border rounded pointer ${fasciaSelezionata === fascia.oraInizio ? "background-cream color-granato border-granato" : "background-white"}`}
                                 onClick={() => onChangeFascia(fascia.oraInizio)}
                             >
-                                {fascia.oraInizio} - {calcolaOraFine(fascia.oraInizio)}
+                                {fascia.oraInizio} - {calcolaOraFine(fascia.oraInizio, durata)}
                             </button>
                         ))}
                     </div>

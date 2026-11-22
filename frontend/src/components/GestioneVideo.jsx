@@ -1,23 +1,17 @@
+import { useEffect, useRef } from "react";
 
-import { useState, useEffect } from "react";
+import Pulsante from "./Pulsante";
 
 function GestioneVideo({ video, setVideo }) {
-    const [anteprima, setAnteprima] = useState("");
+    const videoRef = useRef(null);
 
     useEffect(() => {
-        if (!video) {
-            setAnteprima("");
-            return;
-        }
-
         if (video instanceof File) {
             const url = URL.createObjectURL(video);
-            setAnteprima(url);
+            videoRef.current.src = url;
 
             return () => URL.revokeObjectURL(url);
         }
-
-        setAnteprima(video);
     }, [video]);
 
     function selezionaVideo(event) {
@@ -68,14 +62,12 @@ function GestioneVideo({ video, setVideo }) {
             {video ? (
 
                 <div className="video-preview-container">
-
-                    {anteprima && (
-                        <video
-                            src={anteprima}
-                            controls
-                            className="video-preview"
-                        />
-                    )}
+                    <video
+                        ref={videoRef}
+                        src={video instanceof File ? undefined : video}
+                        controls
+                        className="video-preview"
+                    />
 
                     <div className="flex-between flex-align-center gap-1">
                         <div className="flex-column gap-05">
@@ -91,14 +83,8 @@ function GestioneVideo({ video, setVideo }) {
                                 </p>
                             )}
                         </div>
-
-                        <button
-                            type="button"
-                            onClick={rimuoviVideo}
-                            className="background-red color-cream padding-05 rounded hover pointer"
-                        >
-                            Rimuovi
-                        </button>
+                        
+                        <Pulsante testo="Rimuovi" onClick={rimuoviVideo} />
                     </div>
                 </div>
 

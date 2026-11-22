@@ -1,15 +1,16 @@
-function Filtro({ categorie, categoriaSelezionata, onChange, opzione, mostraAltro = false }) {
+
+function Filtro({ opzioni, opzioneSelezionata, onChange, testoPredefinito, mostraAltro = false }) {
     return (
         <select
-            value={categoriaSelezionata}
-            onChange={(e) => onChange(e.target.value)}
+            value={opzioneSelezionata}
+            onChange={e => onChange(e.target.value)}
             className="padding-05-1 border width-fit background-white rounded"
         >
-           <option value="">{opzione}</option>
+            <option value="">{testoPredefinito}</option>
 
-            {categorie.map((cat) => (
-                <option key={cat} value={cat}>
-                    {cat}
+            {opzioni.map(valore => (
+                <option key={valore} value={valore}>
+                    {valore}
                 </option>
             ))}
 

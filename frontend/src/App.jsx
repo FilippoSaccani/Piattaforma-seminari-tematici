@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import api from "./services/api";
 
@@ -24,16 +24,53 @@ function App() {
         return null;
     }
 
+    function haAccesso(utente, ruoli) {
+        return ruoli.includes(utente);
+    }
+
     return (
         <BrowserRouter>
             <Routes>
                 <Route element={<MainLayout utente={utente} />}>
                     <Route path="/" element={<Home />} />
+
                     <Route path="/dettagli-seminario/:id" element={<DettagliSeminario />} />
-                    <Route path="/prenotazioni" element={<Prenotazioni />} />
-                    <Route path="/miei-seminari" element={<IMieiSeminari />} />
-                    <Route path="/aggiungi-seminario" element={<AggiungiSeminario />} />
-                    <Route path="/modifica-seminario/:id" element={<ModificaSeminario />} />
+
+                    <Route
+                        path="/prenotazioni"
+                        element={
+                            haAccesso(utente, ["Scuola"])
+                                ? <Prenotazioni />
+                                : <Navigate to="/" replace />
+                        }
+                    />
+
+                    <Route
+                        path="/miei-seminari"
+                        element={
+                            haAccesso(utente, ["Docente"])
+                                ? <IMieiSeminari />
+                                : <Navigate to="/" replace />
+                        }
+                    />
+
+                    <Route
+                        path="/aggiungi-seminario"
+                        element={
+                            haAccesso(utente, ["Docente"])
+                                ? <AggiungiSeminario />
+                                : <Navigate to="/" replace />
+                        }
+                    />
+
+                    <Route
+                        path="/modifica-seminario/:id"
+                        element={
+                            haAccesso(utente, ["Docente"])
+                                ? <ModificaSeminario />
+                                : <Navigate to="/" replace />
+                        }
+                    />
                 </Route>
             </Routes>
         </BrowserRouter>

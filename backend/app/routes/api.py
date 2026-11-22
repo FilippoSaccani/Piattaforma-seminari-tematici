@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import Blueprint, jsonify
 
 api_bp = Blueprint("api", __name__)
@@ -17,7 +18,7 @@ UTENTE_SCUOLA = {
     "indirizzo": "Via XX Settembre 5, Reggio Emilia"
 }
 
-UTENTE = UTENTE_SCUOLA
+UTENTE = UTENTE_DOCENTE
 
 CATEGORIE = [
     "Scienze e Ingegneria",
@@ -30,6 +31,23 @@ DIPARTIMENTI = [
     "Scienze e Metodi dell'Ingegneria",
     "Scienze fisiche, informatiche e matematiche",
     "Scienze chimiche e geologiche"
+]
+
+STATI_SEMINARI = [
+    "Pubblicato",
+    "Prenotato",
+    "Concluso"
+]
+
+STATI_PRENOTAZIONI = [
+    "Da confermare",
+    "Da svolgere",
+    "Concluso"
+]
+
+MODALITA_SEMINARIO = [
+    "In presenza",
+    "A distanza"
 ]
 
 SEMINARI = [
@@ -152,13 +170,11 @@ DETTAGLI_SEMINARIO = {
     ]
 }
 
-
 PRENOTAZIONI = [
     {
         "id": 1,
         "titolo": "Intelligenza artificiale e robotica",
-        "dipartimento": "Dipartimento di Ingegneria Enzo Ferrari",
-        "data": "2026-11-20",
+        "data": "2026-12-17",
         "oraInizio": "10:00",
         "durata": 120,
         "numeroStudenti": 25,
@@ -479,6 +495,35 @@ MIEI_SEMINARI = [
 ]
 
 
+# Funzioni di utilità
+def calcola_stato_seminario(seminario, adesso):
+    ha_prenotazioni_future = False
+    ha_disponibilita_future = False
+
+    for disponibilita in seminario["disponibilita"]:
+        data = datetime.strptime(disponibilita["data"], "%Y-%m-%d").date()
+
+        for fascia in disponibilita["fasceOrarie"]:
+            ora = datetime.strptime(fascia["oraInizio"], "%H:%M").time()
+
+            inizio = datetime.combine(data, ora)
+            fine = inizio + timedelta(minutes=seminario["durata"])
+
+            if fine > adesso:
+                if fascia["prenotazione"] is not None:
+                    ha_prenotazioni_future = True
+                else:
+                    ha_disponibilita_future = True
+
+    if ha_prenotazioni_future:
+        return "Prenotato"
+
+    if ha_disponibilita_future:
+        return "Pubblicato"
+
+    return "Concluso"
+
+
 # Endpoint
 
 @api_bp.get("/utente")
@@ -496,6 +541,21 @@ def dipartimenti():
     return jsonify(DIPARTIMENTI)
 
 
+@api_bp.get("/stati-seminari")
+def stati_seminari():
+    return jsonify(STATI_SEMINARI)
+
+
+@api_bp.get("/stati-prenotazioni")
+def stati_prenotazioni():
+    return jsonify(STATI_PRENOTAZIONI)
+
+
+@api_bp.get("/modalita-seminario")
+def modalita_seminario():
+    return jsonify(MODALITA_SEMINARIO)
+
+
 @api_bp.get("/seminari")
 def seminari():
     return jsonify(SEMINARI)
@@ -503,8 +563,14 @@ def seminari():
 
 @api_bp.get("/seminari/<int:id_seminario>")
 def dettagli_seminario(id_seminario):
-    # Per ora esiste un solo seminario di esempio, restituito per qualsiasi id
-    return jsonify(DETTAGLI_SEMINARIO)
+    adesso = datetime.now()
+
+    seminario = {
+        **DETTAGLI_SEMINARIO,
+        "stato": calcola_stato_seminario(DETTAGLI_SEMINARIO, adesso)
+    }
+
+    return jsonify(seminario)
 
 
 @api_bp.get("/prenotazioni")
@@ -514,4 +580,14 @@ def prenotazioni():
 
 @api_bp.get("/miei-seminari")
 def miei_seminari():
-    return jsonify(MIEI_SEMINARI)
+    adesso = datetime.now()
+
+    seminari_con_stato = [
+        {
+            **seminario,
+            "stato": calcola_stato_seminario(seminario, adesso)
+        }
+        for seminario in MIEI_SEMINARI
+    ]
+
+    return jsonify(seminari_con_stato)

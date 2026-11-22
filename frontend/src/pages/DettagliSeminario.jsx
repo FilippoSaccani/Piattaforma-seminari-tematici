@@ -1,34 +1,12 @@
-
 import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
+import { formattaData, calcolaOraFine } from "../utils/date";
+import { filtraDisponibilitaDisponibili } from "../utils/disponibilita";
 import api from "../services/api";
 
 import Titolo from "../components/Titolo";
 import Prenotazione from "../components/Prenotazione";
-
-// Converte una data da YYYY-MM-DD a DD/MM/YYYY
-function formattaData(data) {
-    const [anno, mese, giorno] = data.split("-");
-
-    return `${giorno}/${mese}/${anno}`;
-}
-
-// Calcola l'orario di fine
-function calcolaOraFine(oraInizio, durata) {
-    const [ore, minuti] = oraInizio.split(":").map(Number);
-
-    const minutiTotali = ore * 60 + minuti + Number(durata);
-
-    const oreFine = Math.floor(minutiTotali / 60);
-    const minutiFine = minutiTotali % 60;
-
-    return (
-        String(oreFine).padStart(2, "0") +
-        ":" +
-        String(minutiFine).padStart(2, "0")
-    );
-}
 
 function DettagliSeminario() {
     const { utente } = useOutletContext();
@@ -48,15 +26,9 @@ function DettagliSeminario() {
         ? `${seminario.anni.slice(0, -1).join(", ")} e ${seminario.anni.at(-1)}`
         : seminario.anni[0];
 
-    // Mantiene soltanto le fasce non ancora prenotate
-    const disponibilitaDisponibili = seminario.disponibilita
-        .map(giorno => ({
-            ...giorno,
-            fasceOrarie: giorno.fasceOrarie.filter(
-                fascia => fascia.prenotazione === null
-            )
-        }))
-        .filter(giorno => giorno.fasceOrarie.length > 0);
+    const disponibilitaDisponibili = filtraDisponibilitaDisponibili(
+        seminario.disponibilita
+    );
 
     const numeroRecensioni = seminario.numeroRecensioni;
 
@@ -195,8 +167,7 @@ function DettagliSeminario() {
                                     {[1, 2, 3, 4, 5].map(stella => (
                                         <i
                                             key={stella}
-                                            className={`fa-star ${stella <= recensione.voto ? "fa-solid" : "fa-regular"}`}
-                                            style={{ color: stella <= recensione.voto ? "#E5A000" : "#BDBDBD" }}
+                                            className={`fa-star ${stella <= recensione.voto ? "fa-solid stella" : "fa-regular color-grey"}`}
                                         ></i>
                                     ))}
                                 </div>

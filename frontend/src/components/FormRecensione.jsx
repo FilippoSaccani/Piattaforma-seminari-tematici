@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import Pulsante from "./Pulsante";
+
 function FormRecensione({ onInvia, onAnnulla }) {
 
     const [voto, setVoto] = useState(0);
@@ -56,15 +58,8 @@ function FormRecensione({ onInvia, onAnnulla }) {
                 >
                     Annulla
                 </button>
-
-                <button
-                    type="button"
-                    className="background-red color-cream rounded padding-05-1 pointer hover"
-                    onClick={inviaRecensione}
-                    disabled={voto === 0 || testo.trim() === ""}
-                >
-                    Invia
-                </button>
+                
+                <Pulsante testo="Invia" onClick={inviaRecensione} disabled={voto === 0 || testo.trim() === ""} />
             </div>
 
         </div>

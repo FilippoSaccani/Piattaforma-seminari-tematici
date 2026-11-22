@@ -1,20 +1,21 @@
 function RiepilogoSeminari({ numeroSeminari, numeroPrenotazioni, numeroConclusi }) {
+    const riepiloghi = [
+        { numero: numeroSeminari, testo: "Seminari pubblicati" },
+        { numero: numeroPrenotazioni, testo: "Prenotazioni" },
+        { numero: numeroConclusi, testo: "Conclusi" }
+    ];
+
     return (
         <div className="grid-3">
-            <div className="background-white border rounded padding-1 shadow flex-column gap-05 flex-center">
-                <h2 className="color-granato">{numeroSeminari}</h2>
-                <p className="info-label">Seminari pubblicati</p>
-            </div>
-
-            <div className="background-white border rounded padding-1 shadow flex-column gap-05 flex-center">
-                <h2 className="color-granato">{numeroPrenotazioni}</h2>
-                <p className="info-label">Prenotazioni</p>
-            </div>
-
-            <div className="background-white border rounded padding-1 shadow flex-column gap-05 flex-center">
-                <h2 className="color-granato">{numeroConclusi}</h2>
-                <p className="info-label">Conclusi</p>
-            </div>
+            {riepiloghi.map(riepilogo => (
+                <div
+                    key={riepilogo.testo}
+                    className="background-white border rounded padding-1 shadow flex-column gap-05 flex-center"
+                >
+                    <h2 className="color-granato">{riepilogo.numero}</h2>
+                    <p className="info-label">{riepilogo.testo}</p>
+                </div>
+            ))}
         </div>
     );
 }

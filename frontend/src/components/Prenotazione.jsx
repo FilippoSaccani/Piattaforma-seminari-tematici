@@ -1,8 +1,9 @@
-
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
 
 function Prenotazione({ disponibilita, modalita, durata }) {
+    const navigate = useNavigate();
 
     const [dataSelezionata, setDataSelezionata] = useState("");
     const [fasciaSelezionata, setFasciaSelezionata] = useState("");
@@ -52,7 +53,7 @@ function Prenotazione({ disponibilita, modalita, durata }) {
 
         console.log(prenotazione);
 
-        window.location.href = "/";
+        navigate("/");
     }
 
     return (
