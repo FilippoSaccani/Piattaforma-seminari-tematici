@@ -3,6 +3,17 @@ import { useState } from "react";
 import GestioneDisponibilita from "../components/GestioneDisponibilita";
 import GestioneVideo from "../components/GestioneVideo";
 
+function calcolaDataMinima() {
+    const domani = new Date();
+    domani.setDate(domani.getDate() + 1);
+
+    const anno = domani.getFullYear();
+    const mese = String(domani.getMonth() + 1).padStart(2, "0");
+    const giorno = String(domani.getDate()).padStart(2, "0");
+
+    return `${anno}-${mese}-${giorno}`;
+}
+
 function FormSeminario({
     seminario,
     setSeminario,
@@ -13,6 +24,10 @@ function FormSeminario({
     onClickAnnulla
 }) {
     const [mostraErrori, setMostraErrori] = useState(false);
+
+    // Copia di partenza, per distinguere le date passate già salvate da quelle inserite o modificate
+    const [disponibilitaIniziale] = useState(seminario.disponibilita);
+    const dataMinima = calcolaDataMinima();
 
     function aggiornaCampo(event) {
         const { name, value } = event.target;
@@ -80,6 +95,8 @@ function FormSeminario({
         // Valori numerici
         if (!Number.isInteger(durata) || durata < 30) {
             errori.durata = "Inserisci una durata valida (almeno 30 minuti).";
+        } else if (durata % 5 !== 0) {
+            errori.durata = "La durata deve essere un multiplo di 5 minuti.";
         }
 
         if (!Number.isInteger(limite) || limite <= 0) {
@@ -91,6 +108,10 @@ function FormSeminario({
             errori.disponibilita = "Inserisci almeno una data di disponibilità.";
         } else {
             seminario.disponibilita.forEach((elemento, indiceData) => {
+                const originale = disponibilitaIniziale.find(iniziale => iniziale.id === elemento.id);
+                const dataInvariata = originale?.data === elemento.data;
+                const dataPassata = elemento.data < dataMinima;
+
                 if (!elemento.data) {
                     errori[`data_${indiceData}`] = "Inserisci una data.";
                 } else {
@@ -103,6 +124,8 @@ function FormSeminario({
                         data.getUTCDate() !== giorno
                     ) {
                         errori[`data_${indiceData}`] = "La data inserita non è valida.";
+                    } else if (dataPassata && !dataInvariata) {
+                        errori[`data_${indiceData}`] = "La data deve essere successiva a oggi.";
                     }
                 }
 
@@ -128,6 +151,12 @@ function FormSeminario({
                         errori[riferimento] = "L'orario deve iniziare dalle 08:00.";
                     } else if (minutiFine > 18 * 60) {
                         errori[riferimento] = "Il seminario deve terminare entro le 18:00.";
+                    } else if (dataPassata && dataInvariata) {
+                        const fasciaOriginale = originale.fasceOrarie.find(iniziale => iniziale.id === fascia.id);
+
+                        if (fasciaOriginale?.oraInizio !== fascia.oraInizio) {
+                            errori[riferimento] = "Puoi aggiungere o modificare orari solo nelle date successive a oggi.";
+                        }
                     }
                 });
 
@@ -500,6 +529,7 @@ function FormSeminario({
                 <GestioneDisponibilita
                     disponibilita={seminario.disponibilita}
                     durata={seminario.durata}
+                    dataMinima={dataMinima}
                     setSeminario={setSeminario}
                 />
 

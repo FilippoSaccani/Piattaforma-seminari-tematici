@@ -1,4 +1,6 @@
 
+export const MAX_STUDENTI = 1000;
+
 function FormPrenotazione({
     disponibilita,
     durata,
@@ -91,17 +93,13 @@ function FormPrenotazione({
                         id="numeroStudenti"
                         type="number"
                         min="1"
+                        max={MAX_STUDENTI}
                         step="1"
                         value={numeroStudenti}
                         onChange={e => {
                             const valore = e.target.value;
 
-                            if (
-                                valore === "" ||
-                                (Number.isInteger(Number(valore)) && Number(valore) >= 1)
-                            ) {
-                                onChangeStudenti(valore === "" ? "" : Number(valore));
-                            }
+                            onChangeStudenti(valore === "" ? "" : Number(valore));
                         }}
                         className={`border rounded padding-05-1 ${errori.numeroStudenti ? "border-red" : ""}`}
                         required

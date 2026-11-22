@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
+function GestioneDisponibilita({ disponibilita, durata, dataMinima, setSeminario }) {
     const [errori, setErrori] = useState({});
 
     function aggiungiData() {
@@ -127,17 +127,6 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
 
             return nuoviErrori;
         });
-    }
-
-    function calcolaDataMinima() {
-        const domani = new Date();
-        domani.setDate(domani.getDate() + 1);
-
-        const anno = domani.getFullYear();
-        const mese = String(domani.getMonth() + 1).padStart(2, "0");
-        const giorno = String(domani.getDate()).padStart(2, "0");
-
-        return `${anno}-${mese}-${giorno}`;
     }
 
     function impostaErroreFascia(indiceData, indiceFascia, messaggio) {
@@ -347,7 +336,7 @@ function GestioneDisponibilita({ disponibilita, durata, setSeminario }) {
 
                         <input
                             type="date"
-                            min={calcolaDataMinima()}
+                            min={dataMinima}
                             value={elemento.data}
                             onChange={event =>
                                 aggiornaData(indiceData, event.target.value)

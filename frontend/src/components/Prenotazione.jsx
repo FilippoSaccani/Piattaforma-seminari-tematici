@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import FormPrenotazione from "./FormPrenotazione";
+import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
 
 function Prenotazione({ disponibilita, modalita, durata }) {
 
@@ -25,9 +25,10 @@ function Prenotazione({ disponibilita, modalita, durata }) {
         if (
             numeroStudenti === "" ||
             !Number.isInteger(Number(numeroStudenti)) ||
-            Number(numeroStudenti) < 1
+            Number(numeroStudenti) < 1 ||
+            Number(numeroStudenti) > MAX_STUDENTI
         ) {
-            errori.numeroStudenti = "Inserisci un numero di studenti valido (almeno 1).";
+            errori.numeroStudenti = `Inserisci un numero intero di studenti tra 1 e ${MAX_STUDENTI}.`;
         }
 
         return errori;

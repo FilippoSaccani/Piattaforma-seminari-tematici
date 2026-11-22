@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 
-import FormPrenotazione from "./FormPrenotazione";
+import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
 
 // Converte una data da YYYY-MM-DD a DD/MM/YYYY
 function formattaData(data) {
@@ -74,9 +74,10 @@ function CardPrenotazioneCarrello({
         if (
             datiModificati.numeroStudenti === "" ||
             !Number.isInteger(Number(datiModificati.numeroStudenti)) ||
-            Number(datiModificati.numeroStudenti) < 1
+            Number(datiModificati.numeroStudenti) < 1 ||
+            Number(datiModificati.numeroStudenti) > MAX_STUDENTI
         ) {
-            errori.numeroStudenti = "Inserisci un numero di studenti valido (almeno 1).";
+            errori.numeroStudenti = `Inserisci un numero intero di studenti tra 1 e ${MAX_STUDENTI}.`;
         }
 
         return errori;
