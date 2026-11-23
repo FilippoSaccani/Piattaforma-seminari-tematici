@@ -19,11 +19,13 @@ function Home() {
     const [categorie, setCategorie] = useState([]);
     const [dipartimenti, setDipartimenti] = useState([]);
     const [seminari, setSeminari] = useState([]);
+    const [statiSeminari, setStatiSeminari] = useState([]);
 
     useEffect(() => {
         api.get("/categorie").then(risposta => setCategorie(risposta.data));
         api.get("/dipartimenti").then(risposta => setDipartimenti(risposta.data));
         api.get("/seminari").then(risposta => setSeminari(risposta.data));
+        api.get("/stati-seminari").then(risposta => setStatiSeminari(risposta.data));
     }, []);
 
     const [testoRicerca, setTestoRicerca] = useState("");
@@ -72,7 +74,7 @@ function Home() {
 
                             {utente === "Admin" && (
                                 <Filtro
-                                    opzioni={["Disponibili", "Prenotati", "Conclusi"]}
+                                    opzioni={statiSeminari}
                                     opzioneSelezionata={statoSelezionato}
                                     onChange={setStatoSelezionato}
                                     testoPredefinito="Tutti i seminari"

@@ -1,6 +1,11 @@
 
 import Pulsante from "./Pulsante";
 
+// Una fascia già prenotata da una scuola non si può modificare né rimuovere
+function fasciaPrenotata(fascia) {
+    return Boolean(fascia.prenotazione);
+}
+
 function GestioneDisponibilita({
     disponibilita,
     durata,
@@ -159,10 +164,12 @@ function GestioneDisponibilita({
                     <div className="flex-between flex-align-center">
                         <h3>Data {indiceData + 1}</h3>
 
-                        <Pulsante
-                            testo="Rimuovi data"
-                            onClick={() => rimuoviData(indiceData)}
-                        />
+                        {!elemento.fasceOrarie.some(fasciaPrenotata) && (
+                            <Pulsante
+                                testo="Rimuovi data"
+                                onClick={() => rimuoviData(indiceData)}
+                            />
+                        )}
                     </div>
 
                     <div className="flex-column gap-05">
@@ -180,8 +187,15 @@ function GestioneDisponibilita({
                                 aggiornaData(indiceData, event.target.value)
                             }
                             className="border rounded padding-05-1"
+                            disabled={elemento.fasceOrarie.some(fasciaPrenotata)}
                             required
                         />
+
+                        {elemento.fasceOrarie.some(fasciaPrenotata) && (
+                            <span className="info-label">
+                                La data non si può modificare né rimuovere perché ha fasce orarie già prenotate.
+                            </span>
+                        )}
 
                         {errori[`data_${indiceData}`] && (
                             <span className="color-red">
@@ -223,8 +237,15 @@ function GestioneDisponibilita({
                                                 )
                                             }
                                             className="border rounded padding-05-1"
+                                            disabled={fasciaPrenotata(fascia)}
                                             required
                                         />
+
+                                        {fasciaPrenotata(fascia) && (
+                                            <span className="info-label">
+                                                Prenotata da {fascia.prenotazione.scuola}
+                                            </span>
+                                        )}
 
                                         {errori[`fascia_${indiceData}_${indiceFascia}`] && (
                                             <span className="color-red">
@@ -253,7 +274,7 @@ function GestioneDisponibilita({
                                     </div>
                                 </div>
 
-                                {elemento.fasceOrarie.length > 1 && (
+                                {elemento.fasceOrarie.length > 1 && !fasciaPrenotata(fascia) && (
                                     <Pulsante
                                         testo="Rimuovi fascia"
                                         onClick={() =>

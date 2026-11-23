@@ -29,6 +29,16 @@ function FormSeminario({
 
     // Copia iniziale per distinguere le disponibilità già salvate da quelle nuove
     const [disponibilitaIniziale] = useState(seminario.disponibilita);
+    const [durataIniziale] = useState(seminario.durata);
+
+    // Fasce già prenotate da una scuola al momento dell'apertura del form
+    const fascePrenotate = disponibilitaIniziale.flatMap(giorno =>
+        giorno.fasceOrarie
+            .filter(fascia => fascia.prenotazione)
+            .map(fascia => ({ id: fascia.id, data: giorno.data, oraInizio: fascia.oraInizio }))
+    );
+
+    const haPrenotazioni = fascePrenotate.length > 0;
 
     const dataMinima = calcolaDataMinima();
 
@@ -103,6 +113,8 @@ function FormSeminario({
         // Valori numerici
         if (!durataValida) {
             errori.durata = "Inserisci una durata valida (almeno 30 minuti e multipla di 5).";
+        } else if (haPrenotazioni && durata !== Number(durataIniziale)) {
+            errori.durata = "La durata non si può modificare perché il seminario ha già delle prenotazioni.";
         }
 
         if (!Number.isInteger(limite) || limite <= 0) {
@@ -243,6 +255,21 @@ function FormSeminario({
                     }
                 }
             });
+        }
+
+        // Le fasce già prenotate devono restare invariate
+        const fascePrenotateIntatte = fascePrenotate.every(prenotata =>
+            seminario.disponibilita.some(giorno =>
+                giorno.data === prenotata.data &&
+                giorno.fasceOrarie.some(fascia =>
+                    fascia.id === prenotata.id &&
+                    fascia.oraInizio === prenotata.oraInizio
+                )
+            )
+        );
+
+        if (!fascePrenotateIntatte) {
+            errori.disponibilita = "Le fasce orarie già prenotate non si possono modificare né rimuovere.";
         }
 
         return errori;
@@ -543,8 +570,15 @@ function FormSeminario({
                             onChange={aggiornaCampo}
                             placeholder="Es. 60"
                             className={`border rounded padding-05-1 ${mostraErrori && errori.durata ? "border-red" : ""}`}
+                            disabled={haPrenotazioni}
                             required
                         />
+
+                        {haPrenotazioni && (
+                            <span className="info-label">
+                                La durata non si può modificare perché il seminario ha già delle prenotazioni.
+                            </span>
+                        )}
 
                         {mostraErrori && errori.durata && (
                             <span className="color-red">{errori.durata}</span>

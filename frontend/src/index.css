@@ -214,6 +214,11 @@ textarea {
     height: 1.5rem;
 }
 
+.seleziona-tutti:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .seleziona-tutti:checked::after {
     content: "✓";
     display: flex;

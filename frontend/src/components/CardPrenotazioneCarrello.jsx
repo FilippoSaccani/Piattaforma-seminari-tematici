@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formattaData, calcolaOraFine } from "../utils/date";
-import { filtraDisponibilitaDisponibili } from "../utils/disponibilita";
+import { filtraDisponibilitaDisponibili, rispettaPreavviso, GIORNI_PREAVVISO } from "../utils/disponibilita";
 
 import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
 import Pulsante from "./Pulsante";
@@ -23,6 +23,8 @@ function CardPrenotazioneCarrello({
         seminario.oraInizio
     );
 
+    const confermabile = rispettaPreavviso(seminario.data, seminario.oraInizio);
+
     function aggiornaCampo(campo, valore) {
         setDatiModificati(precedenti => ({
             ...precedenti,
@@ -33,12 +35,23 @@ function CardPrenotazioneCarrello({
     function verificaValidita() {
         const errori = {};
 
+        const giornoSelezionato = disponibilitaDisponibili.find(
+            giorno => giorno.data === datiModificati.data
+        );
+
+        // La data e la fascia devono essere tra quelle ancora prenotabili
         if (!datiModificati.data) {
             errori.data = "Seleziona una data.";
-        }
-
-        if (datiModificati.data && !datiModificati.oraInizio) {
+        } else if (!giornoSelezionato) {
+            errori.data = "Seleziona una delle date disponibili.";
+        } else if (!datiModificati.oraInizio) {
             errori.fascia = "Seleziona una fascia oraria.";
+        } else if (
+            !giornoSelezionato.fasceOrarie.some(
+                fascia => fascia.oraInizio === datiModificati.oraInizio
+            )
+        ) {
+            errori.fascia = "Seleziona una delle fasce orarie disponibili.";
         }
 
         if (
@@ -91,8 +104,10 @@ function CardPrenotazioneCarrello({
                     <input
                         type="checkbox"
                         className="background-white rounded-circle pointer seleziona-tutti"
-                        checked={selezionato}
+                        checked={selezionato && confermabile}
                         onChange={onSeleziona}
+                        disabled={!confermabile}
+                        aria-label={`Seleziona ${seminario.titolo}`}
                     />
                 ) : (
                     <span className="background-cream color-granato width-fit height-fit padding-03-1 rounded-20 flex gap-05 flex-align-center">
@@ -163,6 +178,13 @@ function CardPrenotazioneCarrello({
                         <p className="info-value">{seminario.modalita}</p>
                     </div>
                 </div>
+            )}
+
+            {!confermabile && !inModifica && (
+                <p className="color-red">
+                    Non è più possibile confermare questa prenotazione: va confermata almeno {GIORNI_PREAVVISO} giorni
+                    prima del seminario. Modificala scegliendo un'altra data oppure rimuovila.
+                </p>
             )}
 
             <div className="flex-end width-100 flex-align-center border-top">

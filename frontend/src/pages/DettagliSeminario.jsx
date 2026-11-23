@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { formattaData, calcolaOraFine } from "../utils/date";
-import { filtraDisponibilitaDisponibili } from "../utils/disponibilita";
+import { filtraDisponibilitaDisponibili, GIORNI_PREAVVISO } from "../utils/disponibilita";
 import api from "../services/api";
 
 import Titolo from "../components/Titolo";
@@ -33,6 +33,9 @@ function DettagliSeminario() {
     const numeroRecensioni = seminario.numeroRecensioni;
 
     const mediaRecensioni = seminario.mediaRecensioni;
+
+    const messaggioPreavviso =
+        `Le prenotazioni devono essere effettuate con almeno ${GIORNI_PREAVVISO} giorni di anticipo.`;
 
     return (
         <div className="page-content flex-column gap-2">
@@ -105,14 +108,17 @@ function DettagliSeminario() {
                             </div>
                         ))}
                     </div>
+
+                    <p className="info-label">{messaggioPreavviso}</p>
                 </div>
             ) : (
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
                     <h2 className="color-granato">Disponibilità</h2>
                     <p className="color-grey">
-                        Tutte le date e le fasce orarie previste per questo seminario sono state prenotate.
-                        Al momento non è possibile effettuare nuove prenotazioni.
+                        Al momento non ci sono date disponibili per prenotare questo seminario.
                     </p>
+
+                    <p className="info-label">{messaggioPreavviso}</p>
                 </div>
             )}
 

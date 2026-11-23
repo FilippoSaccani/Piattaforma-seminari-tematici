@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import api from "../services/api";
+import { rispettaPreavviso } from "../utils/disponibilita";
 import carrello_vuoto from "../assets/carrello_vuoto.png";
 
 import BarraRicerca from "../components/BarraRicerca";
@@ -34,9 +35,14 @@ function Prenotazioni() {
         prenotazione => prenotazione.stato === "Da confermare"
     );
 
+    // Solo le prenotazioni che rispettano ancora il preavviso si possono confermare
+    const seminariConfermabili = seminariDaConfermare.filter(
+        prenotazione => rispettaPreavviso(prenotazione.data, prenotazione.oraInizio)
+    );
+
     const tuttiSelezionati =
-        seminariDaConfermare.length > 0 &&
-        seminariSelezionati.length === seminariDaConfermare.length;
+        seminariConfermabili.length > 0 &&
+        seminariSelezionati.length === seminariConfermabili.length;
 
     const prenotazioniFiltrate = prenotazioni.filter(prenotazione => {
         const corrispondeStato =
@@ -54,7 +60,7 @@ function Prenotazioni() {
         setSeminariSelezionati(
             tuttiSelezionati
                 ? []
-                : seminariDaConfermare.map(seminario => seminario.id)
+                : seminariConfermabili.map(seminario => seminario.id)
         );
     }
 
@@ -79,11 +85,16 @@ function Prenotazioni() {
     }
 
     function confermaPrenotazioni() {
-        if (seminariSelezionati.length === 0) return;
+        // Ricontrolla il preavviso al momento della conferma
+        const daConfermare = seminariConfermabili
+            .map(prenotazione => prenotazione.id)
+            .filter(id => seminariSelezionati.includes(id));
+
+        if (daConfermare.length === 0) return;
 
         setPrenotazioni(precedenti =>
             precedenti.map(prenotazione =>
-                seminariSelezionati.includes(prenotazione.id)
+                daConfermare.includes(prenotazione.id)
                     ? { ...prenotazione, stato: "Da svolgere" }
                     : prenotazione
             )
@@ -207,9 +218,17 @@ function Prenotazioni() {
 
                     {prenotazioneDaDisdire && (
                         <PopupConferma
-                            titolo="Conferma disdetta"
-                            messaggio={`Vuoi davvero disdire la prenotazione di "${prenotazioneDaDisdire.titolo}"?`}
-                            testoConferma="Disdici"
+                            {...(prenotazioneDaDisdire.stato === "Da confermare"
+                                ? {
+                                    titolo: "Rimuovi dal carrello",
+                                    messaggio: `Vuoi davvero rimuovere "${prenotazioneDaDisdire.titolo}" dal carrello?`,
+                                    testoConferma: "Rimuovi"
+                                }
+                                : {
+                                    titolo: "Conferma disdetta",
+                                    messaggio: `Vuoi davvero disdire la prenotazione di "${prenotazioneDaDisdire.titolo}"?`,
+                                    testoConferma: "Disdici"
+                                })}
                             onConferma={confermaDisdetta}
                             onAnnulla={() => setPrenotazioneDaDisdire(null)}
                         />

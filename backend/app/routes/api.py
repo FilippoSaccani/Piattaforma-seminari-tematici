@@ -18,7 +18,7 @@ UTENTE_SCUOLA = {
     "indirizzo": "Via XX Settembre 5, Reggio Emilia"
 }
 
-UTENTE = UTENTE_DOCENTE
+UTENTE = UTENTE_SCUOLA
 
 CATEGORIE = [
     "Scienze e Ingegneria",
@@ -58,7 +58,8 @@ SEMINARI = [
         "categoria": "Scienze e Ingegneria",
         "dipartimento": "DIEF",
         "mediaRecensioni": 4.5,
-        "numeroRecensioni": 10
+        "numeroRecensioni": 10,
+        "stato": "Prenotato"
     },
     {
         "id": 2,
@@ -67,7 +68,8 @@ SEMINARI = [
         "categoria": "Scienze e Ingegneria",
         "dipartimento": "Scienze e Metodi dell'Ingegneria",
         "mediaRecensioni": 4.2,
-        "numeroRecensioni": 8
+        "numeroRecensioni": 8,
+        "stato": "Pubblicato"
     },
     {
         "id": 3,
@@ -76,7 +78,8 @@ SEMINARI = [
         "categoria": "Società e Cultura",
         "dipartimento": "Scienze chimiche e geologiche",
         "mediaRecensioni": 0,
-        "numeroRecensioni": 0
+        "numeroRecensioni": 0,
+        "stato": "Concluso"
     }
 ]
 
