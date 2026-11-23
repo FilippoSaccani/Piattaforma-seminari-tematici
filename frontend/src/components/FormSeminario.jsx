@@ -248,8 +248,13 @@ function FormSeminario({
                             const fine2 = inizio2 + durata;
 
                             if (inizio1 < fine2 && fine1 > inizio2) {
-                                errori[`fascia_${indiceData}_${i}`] =
-                                    "Questa fascia oraria si sovrappone a un'altra.";
+                                // Segnala l'errore sulle fasce che il docente può modificare
+                                [i, j].forEach(indice => {
+                                    if (!elemento.fasceOrarie[indice].prenotazione) {
+                                        errori[`fascia_${indiceData}_${indice}`] =
+                                            "Questa fascia oraria si sovrappone a un'altra.";
+                                    }
+                                });
                             }
                         }
                     }

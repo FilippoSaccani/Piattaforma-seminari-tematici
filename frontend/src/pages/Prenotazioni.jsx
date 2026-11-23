@@ -177,6 +177,7 @@ function Prenotazioni() {
                                     className="background-white rounded-circle pointer seleziona-tutti"
                                     checked={tuttiSelezionati}
                                     onChange={selezionaTutti}
+                                    disabled={seminariConfermabili.length === 0}
                                 />
                                 Seleziona tutti
                             </label>
