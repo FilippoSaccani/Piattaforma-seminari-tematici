@@ -5,6 +5,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
 
 import api from "../services/api";
+import { fasciaOccupata } from "../utils/disponibilita";
 
 import StatoVuoto from "../components/StatoVuoto";
 import BarraRicerca from "../components/BarraRicerca";
@@ -41,13 +42,12 @@ function IMieiSeminari() {
         });
     }, []);
 
+    // Prenotazioni ricevute, escluse quelle disdette
     const numeroPrenotazioni = seminari.reduce(
         (totale, seminario) =>
             totale + seminario.disponibilita.reduce(
                 (totaleDate, disponibilita) =>
-                    totaleDate + disponibilita.fasceOrarie.filter(
-                        fascia => fascia.prenotazione !== null
-                    ).length,
+                    totaleDate + disponibilita.fasceOrarie.filter(fasciaOccupata).length,
                 0
             ),
         0
@@ -58,9 +58,9 @@ function IMieiSeminari() {
     ).length;
 
     const riepiloghi = [
-        { numero: seminari.length, testo: "Seminari pubblicati" },
-        { numero: numeroPrenotazioni, testo: "Prenotazioni" },
-        { numero: numeroConclusi, testo: "Conclusi" }
+        { numero: seminari.length, testo: "Seminari totali" },
+        { numero: numeroPrenotazioni, testo: "Prenotazioni ricevute" },
+        { numero: numeroConclusi, testo: "Seminari conclusi" }
     ];
 
     const seminariFiltrati = seminari.filter(seminario => {

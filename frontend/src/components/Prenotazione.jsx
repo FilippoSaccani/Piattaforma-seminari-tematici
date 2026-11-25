@@ -1,6 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import api from "../services/api";
+import { trovaSovrapposizione } from "../utils/disponibilita";
+
 import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
+import PopupConferma from "./PopupConferma";
 
 function Prenotazione({ disponibilita, modalita, durata }) {
     const navigate = useNavigate();
@@ -11,6 +16,14 @@ function Prenotazione({ disponibilita, modalita, durata }) {
     const [modalitaSelezionata, setModalitaSelezionata] = useState(modalita[0]);
 
     const [mostraErrori, setMostraErrori] = useState(false);
+    const [aggiunto, setAggiunto] = useState(false);
+
+    // Prenotazioni della scuola, per evitare due seminari nello stesso orario
+    const [prenotazioniScuola, setPrenotazioniScuola] = useState([]);
+
+    useEffect(() => {
+        api.get("/prenotazioni").then(risposta => setPrenotazioniScuola(risposta.data));
+    }, []);
 
     function verificaValidita() {
         const errori = {};
@@ -21,6 +34,15 @@ function Prenotazione({ disponibilita, modalita, durata }) {
 
         if (dataSelezionata && !fasciaSelezionata) {
             errori.fascia = "Seleziona una fascia oraria.";
+        }
+
+        const sovrapposizione = trovaSovrapposizione(
+            { data: dataSelezionata, oraInizio: fasciaSelezionata, durata },
+            prenotazioniScuola
+        );
+
+        if (sovrapposizione) {
+            errori.fascia = `In questo orario hai già "${sovrapposizione.titolo}". Scegli un'altra fascia.`;
         }
 
         if (
@@ -47,7 +69,7 @@ function Prenotazione({ disponibilita, modalita, durata }) {
         // TODO: inviare la prenotazione al backend con i campi
         // data, oraInizio, numeroStudenti e modalita
 
-        navigate("/");
+        setAggiunto(true);
     }
 
     return (
@@ -80,6 +102,17 @@ function Prenotazione({ disponibilita, modalita, durata }) {
             >
                 Aggiungi al carrello
             </button>
+
+            {aggiunto && (
+                <PopupConferma
+                    titolo="Aggiunto al carrello"
+                    messaggio="Il seminario è nel carrello. Per completare la prenotazione confermalo dalla pagina Prenotazioni."
+                    testoConferma="Vai al carrello"
+                    testoAnnulla="Continua a cercare"
+                    onConferma={() => navigate("/prenotazioni")}
+                    onAnnulla={() => navigate("/")}
+                />
+            )}
 
         </div>
     );

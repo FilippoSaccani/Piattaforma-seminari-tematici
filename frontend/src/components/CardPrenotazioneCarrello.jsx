@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { formattaData, calcolaOraFine } from "../utils/date";
-import { filtraDisponibilitaDisponibili, rispettaPreavviso, GIORNI_PREAVVISO } from "../utils/disponibilita";
+import {
+    filtraDisponibilitaDisponibili,
+    rispettaPreavviso,
+    trovaSovrapposizione,
+    giorniPreavviso
+} from "../utils/disponibilita";
 
 import FormPrenotazione, { MAX_STUDENTI } from "./FormPrenotazione";
 import Pulsante from "./Pulsante";
@@ -11,7 +16,7 @@ function CardPrenotazioneCarrello({
     onSeleziona,
     onRimuovi,
     onModifica,
-    mostraSelezione = true
+    altrePrenotazioni = []
 }) {
     const [inModifica, setInModifica] = useState(false);
     const [datiModificati, setDatiModificati] = useState(seminario);
@@ -23,7 +28,11 @@ function CardPrenotazioneCarrello({
         seminario.oraInizio
     );
 
-    const confermabile = rispettaPreavviso(seminario.data, seminario.oraInizio);
+    // Prenotazione della scuola nello stesso orario, se c'è
+    const sovrapposizione = trovaSovrapposizione(seminario, altrePrenotazioni);
+
+    const rispettaIlPreavviso = rispettaPreavviso(seminario.data, seminario.oraInizio);
+    const confermabile = rispettaIlPreavviso && !sovrapposizione;
 
     function aggiornaCampo(campo, valore) {
         setDatiModificati(precedenti => ({
@@ -52,6 +61,15 @@ function CardPrenotazioneCarrello({
             )
         ) {
             errori.fascia = "Seleziona una delle fasce orarie disponibili.";
+        } else {
+            const sovrapposizioneModificata = trovaSovrapposizione(
+                { ...datiModificati, durata: seminario.durata },
+                altrePrenotazioni
+            );
+
+            if (sovrapposizioneModificata) {
+                errori.fascia = `In questo orario hai già "${sovrapposizioneModificata.titolo}". Scegli un'altra fascia.`;
+            }
         }
 
         if (
@@ -100,21 +118,14 @@ function CardPrenotazioneCarrello({
                     <p className="color-grey">{seminario.dipartimento}</p>
                 </div>
 
-                {mostraSelezione ? (
-                    <input
-                        type="checkbox"
-                        className="background-white rounded-circle pointer seleziona-tutti"
-                        checked={selezionato && confermabile}
-                        onChange={onSeleziona}
-                        disabled={!confermabile}
-                        aria-label={`Seleziona ${seminario.titolo}`}
-                    />
-                ) : (
-                    <span className="background-cream color-granato width-fit height-fit padding-03-1 rounded-20 flex gap-05 flex-align-center">
-                        <i className="fa-solid fa-list-check"></i>
-                        Da confermare
-                    </span>
-                )}
+                <input
+                    type="checkbox"
+                    className="background-white rounded-circle pointer seleziona-tutti"
+                    checked={selezionato && confermabile}
+                    onChange={onSeleziona}
+                    disabled={!confermabile}
+                    aria-label={`Seleziona ${seminario.titolo}`}
+                />
             </div>
 
             {inModifica ? (
@@ -180,9 +191,16 @@ function CardPrenotazioneCarrello({
                 </div>
             )}
 
-            {!confermabile && !inModifica && (
+            {sovrapposizione && !inModifica && (
                 <p className="color-red">
-                    Non è più possibile confermare questa prenotazione: va confermata almeno {GIORNI_PREAVVISO} giorni
+                    Non puoi confermare questa prenotazione perché nello stesso orario hai già
+                    "{sovrapposizione.titolo}". Modificala scegliendo un'altra fascia oppure rimuovila.
+                </p>
+            )}
+
+            {!rispettaIlPreavviso && !inModifica && (
+                <p className="color-red">
+                    Non è più possibile confermare questa prenotazione: va confermata almeno {giorniPreavviso()} giorni
                     prima del seminario. Modificala scegliendo un'altra data oppure rimuovila.
                 </p>
             )}

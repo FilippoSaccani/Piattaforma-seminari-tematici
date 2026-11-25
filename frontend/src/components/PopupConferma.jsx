@@ -5,6 +5,7 @@ function PopupConferma({
     titolo,
     messaggio,
     testoConferma = "Conferma",
+    testoAnnulla = "Annulla",
     onConferma,
     onAnnulla
 }) {
@@ -80,7 +81,7 @@ function PopupConferma({
                         className="background-white color-granato border rounded padding-05-1 pointer hover"
                         onClick={onAnnulla}
                     >
-                        Annulla
+                        {testoAnnulla}
                     </button>
 
                     <Pulsante testo={testoConferma} onClick={onConferma} />

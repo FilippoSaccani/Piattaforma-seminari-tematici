@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { formattaData, calcolaOraFine } from "../utils/date";
-import { filtraDisponibilitaDisponibili, GIORNI_PREAVVISO } from "../utils/disponibilita";
+import { filtraDisponibilitaDisponibili, giorniPreavviso } from "../utils/disponibilita";
 import api from "../services/api";
 
 import Titolo from "../components/Titolo";
@@ -58,7 +58,7 @@ function DettagliSeminario() {
     const mediaRecensioni = seminario.mediaRecensioni;
 
     const messaggioPreavviso =
-        `Le prenotazioni devono essere effettuate con almeno ${GIORNI_PREAVVISO} giorni di anticipo.`;
+        `Le prenotazioni devono essere effettuate con almeno ${giorniPreavviso()} giorni di anticipo.`;
 
     return (
         <div className="page-content flex-column gap-2">
@@ -78,6 +78,13 @@ function DettagliSeminario() {
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">Descrizione</h2>
                     <p className="color-grey">{seminario.descrizione_dettagliata}</p>
+
+                    {seminario.requisiti?.trim() && (
+                        <div>
+                            <p className="info-label">Requisiti</p>
+                            <p className="info-value">{seminario.requisiti}</p>
+                        </div>
+                    )}
                 </div>
 
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">

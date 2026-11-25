@@ -85,6 +85,17 @@ MODALITA_SEMINARIO = [
 ]
 
 
+# Impostazioni della piattaforma (in futuro modificabili dall'amministrazione)
+
+IMPOSTAZIONI = {
+    # Giorni di anticipo minimo con cui una scuola può prenotare o confermare una fascia
+    "giorniPreavvisoPrenotazione": 14,
+
+    # Giorni di anticipo minimo con cui una scuola può disdire una prenotazione
+    "giorniTermineDisdetta": 2
+}
+
+
 # Funzioni per scrivere i dati in modo compatto
 
 def fascia(id_fascia, ora_inizio, prenotazione=None):
@@ -677,6 +688,11 @@ def prenotazioni_scuola(scuola, adesso):
 def utente():
     # Il frontend indica nell'header X-Ruolo il ruolo scelto con il selettore
     return jsonify(UTENTI.get(request.headers.get("X-Ruolo"), UTENTE))
+
+
+@api_bp.get("/impostazioni")
+def impostazioni():
+    return jsonify(IMPOSTAZIONI)
 
 
 @api_bp.get("/categorie")

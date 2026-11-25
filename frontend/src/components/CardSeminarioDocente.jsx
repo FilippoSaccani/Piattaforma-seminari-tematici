@@ -163,11 +163,12 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                         Dettagli
                     </Link>
 
+                    {/* La modifica è sempre possibile: il form blocca le fasce già prenotate */}
+                    <Pulsante testo="Modifica" onClick={() => onModifica(seminario)} />
+
+                    {/* Si eliminano solo i seminari senza prenotazioni da svolgere */}
                     {seminario.stato === "Pubblicato" && (
-                        <>
-                            <Pulsante testo="Modifica" onClick={() => onModifica(seminario)} />
-                            <Pulsante testo="Elimina" onClick={() => onElimina(seminario)} />
-                        </>
+                        <Pulsante testo="Elimina" onClick={() => onElimina(seminario)} />
                     )}
 
                 </div>
