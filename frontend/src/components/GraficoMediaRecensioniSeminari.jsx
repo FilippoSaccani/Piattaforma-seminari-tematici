@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
     Chart as ChartJS,
@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 
 import Filtro from "./Filtro";
+import { annoAccademico, annoAccademicoCorrente } from "../utils/date";
 
 ChartJS.register(
     CategoryScale,
@@ -18,58 +19,28 @@ ChartJS.register(
     Tooltip
 );
 
-function GraficoMediaRecensioniSeminari() {
-    const [recensioni, setRecensioni] = useState([]);
-    const [seminari, setSeminari] = useState([]);
-    const [dipartimenti, setDipartimenti] = useState([]);
-    const [categorie, setCategorie] = useState([]);
-
-    const [annoSelezionato, setAnnoSelezionato] = useState("");
+function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, categorie }) {
+    // Di default si vede l'anno accademico in corso
+    const [annoCorrente] = useState(annoAccademicoCorrente);
+    const [annoSelezionato, setAnnoSelezionato] = useState(annoCorrente);
     const [dipartimentoSelezionato, setDipartimentoSelezionato] = useState("");
     const [categoriaSelezionata, setCategoriaSelezionata] = useState("");
 
-    const [caricamento, setCaricamento] = useState(true);
-
-    useEffect(() => {
-        Promise.all([
-            fetch("/api/recensioni"),
-            fetch("/api/miei-seminari"),
-            fetch("/api/dipartimenti"),
-            fetch("/api/categorie")
-        ])
-            .then(risposte => {
-                if (risposte.some(r => !r.ok)) {
-                    throw new Error("Errore nel recupero dei dati");
-                }
-
-                return Promise.all(risposte.map(r => r.json()));
-            })
-            .then(([recensioniApi, seminariApi, dipartimentiApi, categorieApi]) => {
-                setRecensioni(recensioniApi);
-                setSeminari(seminariApi);
-                setDipartimenti(dipartimentiApi);
-                setCategorie(categorieApi);
-            })
-            .catch(errore => console.error(errore))
-            .finally(() => setCaricamento(false));
-    }, []);
-
-    // Calcolo della media per seminario e anno
+    // Calcolo della media per seminario e anno accademico
     const medie = {};
 
     recensioni.forEach(recensione => {
-        const seminario = seminari.find(
-            s => Number(s.id) === Number(recensione.idSeminario)
-        );
+        const seminario = seminari.find(s => s.id === recensione.idSeminario);
 
         if (seminario) {
-            const chiave = `${seminario.id}-${recensione.anno}`;
+            const anno = annoAccademico(recensione.data);
+            const chiave = `${seminario.id}-${anno}`;
 
             if (!medie[chiave]) {
                 medie[chiave] = {
                     idSeminario: seminario.id,
                     seminario: seminario.titolo,
-                    anno: recensione.anno,
+                    anno,
                     dipartimento: seminario.dipartimento,
                     categoria: seminario.categoria,
                     somma: 0,
@@ -88,10 +59,11 @@ function GraficoMediaRecensioniSeminari() {
     }));
 
     // Applicazione dei filtri
-    const anni = [...new Set(dati.map(r => r.anno))];
+    // Anni accademici con recensioni, più quello in corso, dal più recente
+    const anni = [...new Set([annoCorrente, ...dati.map(r => r.anno)])].sort().reverse();
 
     const recensioniFiltrate = dati.filter(r =>
-        (annoSelezionato === "" || r.anno === annoSelezionato) &&
+        r.anno === annoSelezionato &&
         (dipartimentoSelezionato === "" || r.dipartimento === dipartimentoSelezionato) &&
         (categoriaSelezionata === "" || r.categoria === categoriaSelezionata)
     );
@@ -142,10 +114,6 @@ function GraficoMediaRecensioniSeminari() {
         }
     };
 
-    if (caricamento) {
-        return <p>Caricamento delle statistiche...</p>;
-    }
-
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1">
             <h3>Media recensioni per seminario</h3>
@@ -155,7 +123,6 @@ function GraficoMediaRecensioniSeminari() {
                     opzioni={anni}
                     opzioneSelezionata={annoSelezionato}
                     onChange={setAnnoSelezionato}
-                    testoPredefinito="Tutti gli anni"
                 />
 
                 <Filtro
@@ -178,7 +145,7 @@ function GraficoMediaRecensioniSeminari() {
                     <Bar data={datiGrafico} options={opzioni} />
                 </div>
             ) : (
-                <p className="color-grigio text-center">
+                <p className="color-grey">
                     Non sono presenti recensioni per i filtri selezionati.
                 </p>
             )}

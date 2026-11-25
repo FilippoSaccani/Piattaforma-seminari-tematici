@@ -6,7 +6,9 @@ function Filtro({ opzioni, opzioneSelezionata, onChange, testoPredefinito, mostr
             onChange={e => onChange(e.target.value)}
             className="padding-05-1 border width-fit background-white rounded"
         >
-            <option value="">{testoPredefinito}</option>
+            {testoPredefinito && (
+                <option value="">{testoPredefinito}</option>
+            )}
 
             {opzioni.map(valore => (
                 <option key={valore} value={valore}>

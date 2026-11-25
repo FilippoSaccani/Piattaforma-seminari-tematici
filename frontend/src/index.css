@@ -105,6 +105,7 @@ body, #root {
 .flex-between { display: flex; justify-content: space-between; }
 .flex-end { display: flex; justify-content: flex-end; }
 .flex-align-end { display: flex; align-items: flex-end; }
+.flex-align-baseline { display: flex; align-items: baseline; }
 
 
 /*Grid*/
@@ -196,6 +197,10 @@ button:disabled {
 /*Evidenze*/
 .pointer { cursor: pointer; }
 .shadow { box-shadow: 0 1px 3px rgb(128 128 128 / 0.30); }
+
+/* Le schede bianche si sollevano leggermente al passaggio del mouse */
+.background-white.shadow { transition: box-shadow 0.2s; }
+.background-white.shadow:hover { box-shadow: 0 4px 12px rgb(128 128 128 / 0.35); }
 
 
 /*Immagini*/
@@ -389,6 +394,16 @@ textarea {
 .recensioni-lista {
     max-height: 22rem;
     overflow-y: auto;
+}
+
+
+/*Selettore del ruolo*/
+.selettore-ruolo {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 5;
+    align-items: flex-end;
 }
 
 

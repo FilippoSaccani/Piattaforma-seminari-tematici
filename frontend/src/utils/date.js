@@ -5,6 +5,24 @@ export function formattaData(data) {
     return `${giorno}/${mese}/${anno}`;
 }
 
+// Mese (da 1 a 12) in cui inizia l'anno accademico
+const MESE_INIZIO_ANNO_ACCADEMICO = 9;
+
+// Restituisce l'anno accademico di una data YYYY-MM-DD, per esempio "2025/2026"
+export function annoAccademico(data) {
+    const [anno, mese] = data.split("-").map(Number);
+    const annoInizio = mese >= MESE_INIZIO_ANNO_ACCADEMICO ? anno : anno - 1;
+
+    return `${annoInizio}/${annoInizio + 1}`;
+}
+
+// Restituisce l'anno accademico in corso
+export function annoAccademicoCorrente() {
+    const oggi = new Date();
+
+    return annoAccademico(`${oggi.getFullYear()}-${oggi.getMonth() + 1}-${oggi.getDate()}`);
+}
+
 // Calcola l'orario di fine
 export function calcolaOraFine(oraInizio, durata) {
     const [ore, minuti] = oraInizio.split(":").map(Number);

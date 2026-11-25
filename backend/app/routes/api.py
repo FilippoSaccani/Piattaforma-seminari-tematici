@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 api_bp = Blueprint("api", __name__)
 
@@ -21,6 +21,13 @@ UTENTE_ADMIN = {
 }
 
 UTENTE = UTENTE_DOCENTE
+
+# Utenti tra cui si può scegliere nel prototipo con il selettore del ruolo
+UTENTI = {
+    "Docente": UTENTE_DOCENTE,
+    "Scuola": UTENTE_SCUOLA,
+    "Admin": UTENTE_ADMIN
+}
 
 CATEGORIE = [
     "Scienze e Ingegneria",
@@ -156,21 +163,21 @@ DETTAGLI_SEMINARIO = {
             "scuola": "Liceo Scientifico Aldo Moro",
             "voto": 5,
             "testo": "Seminario molto interessante e ben organizzato. Gli studenti hanno apprezzato particolarmente gli esempi pratici.",
-            "anno": 2026
+            "data": "2026-03-12"
         },
         {
             "id": 2,
             "scuola": "Istituto Tecnico Blaise Pascal",
             "voto": 4,
             "testo": "Un'esperienza formativa interessante, che ha permesso di approfondire argomenti affrontati durante le lezioni.",
-            "anno": 2025
+            "data": "2025-11-20"
         },
         {
             "id": 3,
             "scuola": "Liceo delle Scienze Applicate",
             "voto": 5,
             "testo": "Relatore molto preparato e contenuti spiegati in modo chiaro e coinvolgente.",
-            "anno": 2025
+            "data": "2025-04-08"
         }
     ]
 }
@@ -315,6 +322,7 @@ PRENOTAZIONI = [
     }
 ]
 
+# "disdette" contiene le date delle fasce che erano state prenotate e poi disdette
 MIEI_SEMINARI = [
     {
         "id": 1,
@@ -333,6 +341,7 @@ MIEI_SEMINARI = [
         "video": None,
         "mediaRecensioni": 4.5,
         "numeroRecensioni": 10,
+        "disdette": [{"data": "2026-12-15"}],
         "disponibilita": [
             {
                 "id": 1,
@@ -388,6 +397,7 @@ MIEI_SEMINARI = [
         "video": None,
         "mediaRecensioni": 4.2,
         "numeroRecensioni": 8,
+        "disdette": [],
         "disponibilita": [
             {
                 "id": 3,
@@ -434,6 +444,7 @@ MIEI_SEMINARI = [
         "video": None,
         "mediaRecensioni": 0,
         "numeroRecensioni": 0,
+        "disdette": [],
         "disponibilita": [
             {
                 "id": 5,
@@ -470,6 +481,7 @@ MIEI_SEMINARI = [
         "video": None,
         "mediaRecensioni": 4.8,
         "numeroRecensioni": 5,
+        "disdette": [{"data": "2026-04-14"}],
         "disponibilita": [
             {
                 "id": 6,
@@ -499,22 +511,26 @@ MIEI_SEMINARI = [
     }
 ]
 
+# "data" è il giorno in cui si è svolto il seminario recensito
 RECENSIONI = [
     # Intelligenza artificiale (id seminario 1)
-    {"id": 1, "idSeminario": 1, "voto": 5, "anno": "2024/2025"},
-    {"id": 2, "idSeminario": 1, "voto": 4, "anno": "2024/2025"},
-    {"id": 3, "idSeminario": 1, "voto": 5, "anno": "2025/2026"},
-    {"id": 4, "idSeminario": 1, "voto": 4, "anno": "2025/2026"},
+    {"id": 1, "idSeminario": 1, "voto": 5, "data": "2025-03-14"},
+    {"id": 2, "idSeminario": 1, "voto": 4, "data": "2025-05-10"},
+    {"id": 3, "idSeminario": 1, "voto": 5, "data": "2025-11-10"},
+    {"id": 4, "idSeminario": 1, "voto": 4, "data": "2026-04-22"},
 
     # Robotica (id seminario 2)
-    {"id": 5, "idSeminario": 2, "voto": 4, "anno": "2024/2025"},
-    {"id": 6, "idSeminario": 2, "voto": 5, "anno": "2025/2026"},
-    {"id": 7, "idSeminario": 2, "voto": 4, "anno": "2025/2026"},
+    {"id": 5, "idSeminario": 2, "voto": 4, "data": "2025-02-18"},
+    {"id": 6, "idSeminario": 2, "voto": 5, "data": "2025-10-21"},
+    {"id": 7, "idSeminario": 2, "voto": 4, "data": "2026-05-10"},
+    {"id": 8, "idSeminario": 2, "voto": 5, "data": "2026-10-10"},
 
     # Sicurezza informatica (id seminario 4)
-    {"id": 8, "idSeminario": 4, "voto": 5, "anno": "2024/2025"},
-    {"id": 9, "idSeminario": 4, "voto": 5, "anno": "2025/2026"},
-    {"id": 10, "idSeminario": 4, "voto": 4, "anno": "2025/2026"}
+    {"id": 9, "idSeminario": 4, "voto": 5, "data": "2025-04-03"},
+    {"id": 10, "idSeminario": 4, "voto": 5, "data": "2026-01-15"},
+    {"id": 11, "idSeminario": 4, "voto": 4, "data": "2026-03-20"},
+    {"id": 12, "idSeminario": 4, "voto": 5, "data": "2026-11-10"},
+    {"id": 13, "idSeminario": 4, "voto": 4, "data": "2026-11-10"}
 ]
 
 PROPOSTE = [
@@ -566,7 +582,8 @@ def calcola_stato_seminario(seminario, adesso):
 
 @api_bp.get("/utente")
 def utente():
-    return jsonify(UTENTE)
+    # Il frontend indica nell'header X-Ruolo il ruolo scelto con il selettore
+    return jsonify(UTENTI.get(request.headers.get("X-Ruolo"), UTENTE))
 
 
 @api_bp.get("/categorie")
