@@ -5,6 +5,7 @@ import GestioneDisponibilita from "../components/GestioneDisponibilita";
 import GestioneVideo from "../components/GestioneVideo";
 import Pulsante from "../components/Pulsante";
 import { fasciaOccupata, giorniPreavviso } from "../utils/disponibilita";
+import { convertiDataOra } from "../utils/date";
 
 // Prima data utile per nuove disponibilità: le scuole devono poter prenotare con il preavviso minimo
 function calcolaDataMinima() {
@@ -41,6 +42,25 @@ function FormSeminario({
     );
 
     const haPrenotazioni = fascePrenotate.length > 0;
+
+    // Modalità scelte dalle scuole nelle prenotazioni ancora da svolgere: non si possono togliere
+    const [adesso] = useState(() => new Date());
+
+    const modalitaPrenotate = new Set(
+        disponibilitaIniziale.flatMap(giorno =>
+            giorno.fasceOrarie
+                .filter(fascia =>
+                    fasciaOccupata(fascia) &&
+                    convertiDataOra(giorno.data, fascia.oraInizio, Number(durataIniziale)) > adesso
+                )
+                .map(fascia => fascia.prenotazione.modalita)
+        )
+    );
+
+    // Una modalità è bloccata se è già selezionata e usata da una prenotazione da svolgere
+    function modalitaBloccata(modalita) {
+        return modalitaPrenotate.has(modalita) && seminario.modalita.includes(modalita);
+    }
 
     const dataMinima = calcolaDataMinima();
 
@@ -110,6 +130,8 @@ function FormSeminario({
 
         if (seminario.modalita.length === 0) {
             errori.modalita = "Seleziona almeno una modalità.";
+        } else if ([...modalitaPrenotate].some(modalita => !seminario.modalita.includes(modalita))) {
+            errori.modalita = "Non puoi togliere una modalità scelta in prenotazioni ancora da svolgere.";
         }
 
         // Valori numerici
@@ -539,6 +561,7 @@ function FormSeminario({
                                     type="checkbox"
                                     checked={seminario.modalita.includes("In presenza")}
                                     onChange={() => aggiornaModalita("In presenza")}
+                                    disabled={modalitaBloccata("In presenza")}
                                     className="checkbox-custom"
                                 />
                                 In presenza
@@ -549,11 +572,18 @@ function FormSeminario({
                                     type="checkbox"
                                     checked={seminario.modalita.includes("A distanza")}
                                     onChange={() => aggiornaModalita("A distanza")}
+                                    disabled={modalitaBloccata("A distanza")}
                                     className="checkbox-custom"
                                 />
                                 A distanza
                             </label>
                         </div>
+
+                        {modalitaPrenotate.size > 0 && (
+                            <span className="info-label">
+                                Le modalità scelte dalle scuole nelle prenotazioni ancora da svolgere non si possono togliere.
+                            </span>
+                        )}
 
                         {mostraErrori && errori.modalita && (
                             <span className="color-red">{errori.modalita}</span>

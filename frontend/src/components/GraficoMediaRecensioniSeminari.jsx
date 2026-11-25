@@ -19,12 +19,14 @@ ChartJS.register(
     Tooltip
 );
 
-function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, categorie }) {
+// Se si passa l'elenco dei docenti compare anche il filtro per docente (statistiche dell'amministrazione)
+function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, categorie, docenti = null }) {
     // Di default si vede l'anno accademico in corso
     const [annoCorrente] = useState(annoAccademicoCorrente);
     const [annoSelezionato, setAnnoSelezionato] = useState(annoCorrente);
     const [dipartimentoSelezionato, setDipartimentoSelezionato] = useState("");
     const [categoriaSelezionata, setCategoriaSelezionata] = useState("");
+    const [docenteSelezionato, setDocenteSelezionato] = useState("");
 
     // Calcolo della media per seminario e anno accademico
     const medie = {};
@@ -43,6 +45,7 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
                     anno,
                     dipartimento: seminario.dipartimento,
                     categoria: seminario.categoria,
+                    docente: seminario.docente,
                     somma: 0,
                     numero: 0
                 };
@@ -65,7 +68,8 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
     const recensioniFiltrate = dati.filter(r =>
         r.anno === annoSelezionato &&
         (dipartimentoSelezionato === "" || r.dipartimento === dipartimentoSelezionato) &&
-        (categoriaSelezionata === "" || r.categoria === categoriaSelezionata)
+        (categoriaSelezionata === "" || r.categoria === categoriaSelezionata) &&
+        (docenteSelezionato === "" || r.docente === docenteSelezionato)
     );
 
     const datiGrafico = {
@@ -136,6 +140,15 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
                     onChange={setCategoriaSelezionata}
                     testoPredefinito="Tutte le categorie"
                 />
+
+                {docenti && (
+                    <Filtro
+                        opzioni={docenti}
+                        opzioneSelezionata={docenteSelezionato}
+                        onChange={setDocenteSelezionato}
+                        testoPredefinito="Tutti i docenti"
+                    />
+                )}
             </div>
 
             {recensioniFiltrate.length > 0 ? (

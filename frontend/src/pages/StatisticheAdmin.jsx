@@ -52,8 +52,8 @@ function StatisticheAdmin() {
             <Riepilogo
                 riepiloghi={[
                     {
-                        numero: statistiche.riepilogo.seminariPubblicati,
-                        testo: "Seminari pubblicati"
+                        numero: statistiche.riepilogo.seminariAttivi,
+                        testo: "Seminari attivi"
                     },
                     {
                         numero: statistiche.riepilogo.seminariConclusi,
@@ -99,6 +99,7 @@ function StatisticheAdmin() {
                     recensioni={recensioni}
                     dipartimenti={valoriDistinti(seminari, "dipartimento")}
                     categorie={valoriDistinti(seminari, "categoria")}
+                    docenti={valoriDistinti(seminari, "docente")}
                 />
             </div>
 
