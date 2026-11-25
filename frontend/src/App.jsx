@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -11,7 +10,8 @@ import Prenotazioni from "./pages/Prenotazioni";
 import IMieiSeminari from "./pages/IMieiSeminari";
 import AggiungiSeminario from "./pages/AggiungiSeminario";
 import ModificaSeminario from "./pages/ModificaSeminario";
-import Statistiche from "./pages/Statistiche";
+import StatisticheDocente from "./pages/StatisticheDocente";
+import StatisticheAdmin from "./pages/StatisticheAdmin";
 
 function App() {
     const [utente, setUtente] = useState(null);
@@ -80,10 +80,19 @@ function App() {
                     />
 
                     <Route
-                        path="/statistiche"
+                        path="/docente/statistiche"
                         element={
                             haAccesso(utente, ["Docente"])
-                                ? <Statistiche />
+                                ? <StatisticheDocente />
+                                : <Navigate to="/" replace />
+                        }
+                    />
+
+                    <Route
+                        path="/admin/statistiche"
+                        element={
+                            haAccesso(utente, ["Admin"])
+                                ? <StatisticheAdmin />
                                 : <Navigate to="/" replace />
                         }
                     />

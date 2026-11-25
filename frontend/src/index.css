@@ -198,10 +198,6 @@ button:disabled {
 .pointer { cursor: pointer; }
 .shadow { box-shadow: 0 1px 3px rgb(128 128 128 / 0.30); }
 
-/* Le schede bianche si sollevano leggermente al passaggio del mouse */
-.background-white.shadow { transition: box-shadow 0.2s; }
-.background-white.shadow:hover { box-shadow: 0 4px 12px rgb(128 128 128 / 0.35); }
-
 
 /*Immagini*/
 img { width: 20rem; }
@@ -391,7 +387,7 @@ textarea {
 
 
 /*Recensioni*/
-.recensioni-lista {
+.altezza-lista-fissa {
     max-height: 22rem;
     overflow-y: auto;
 }

@@ -10,12 +10,12 @@ const linkUtenti = {
     Docente: [
         { nome: "Home", icona: "fa-house", href: "/" },
         { nome: "I miei seminari", icona: "fa-file-lines", href: "/miei-seminari" },
-        { nome: "Statistiche", icona: "fa-chart-line", href: "/statistiche" }
+        { nome: "Statistiche", icona: "fa-chart-line", href: "/docente/statistiche" }
     ],
 
     Admin: [
         { nome: "Home", icona: "fa-house", href: "/" },
-        { nome: "Statistiche", icona: "fa-chart-line", href: "/statistiche-generali" }
+        { nome: "Statistiche", icona: "fa-chart-line", href: "/admin/statistiche" }
     ]
 };
 

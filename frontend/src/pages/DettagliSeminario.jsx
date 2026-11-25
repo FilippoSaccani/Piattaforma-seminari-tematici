@@ -194,7 +194,7 @@ function DettagliSeminario() {
                         Non sono ancora presenti recensioni per questo seminario.
                     </p>
                 ) : (
-                    <div className="recensioni-lista flex-column gap-1">
+                    <div className="altezza-lista-fissa flex-column gap-1">
                         {seminario.recensioni.map((recensione, index) => (
                             <div
                                 key={recensione.id}
