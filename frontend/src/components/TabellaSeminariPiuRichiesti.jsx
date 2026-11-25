@@ -6,7 +6,7 @@ import Pulsante from "./Pulsante";
 
 function TabellaSeminariPiuRichiesti({ seminari, dipartimenti, categorie }) {
     const [mostraTutte, setMostraTutte] = useState(false);
-    const [ordinamento, setOrdinamento] = useState("Decrescente");
+    const [ordinamento, setOrdinamento] = useState("Dal più richiesto");
     const [dipartimentoSelezionato, setDipartimentoSelezionato] = useState("");
     const [categoriaSelezionata, setCategoriaSelezionata] = useState("");
 
@@ -19,7 +19,7 @@ function TabellaSeminariPiuRichiesti({ seminari, dipartimenti, categorie }) {
                 seminario.categoria === categoriaSelezionata)
         )
         .sort((a, b) =>
-            ordinamento === "Decrescente"
+            ordinamento === "Dal più richiesto"
                 ? b.prenotazioni - a.prenotazioni
                 : a.prenotazioni - b.prenotazioni
         );
@@ -32,7 +32,7 @@ function TabellaSeminariPiuRichiesti({ seminari, dipartimenti, categorie }) {
         <div className="flex-column gap-1">
             <div className="flex-align-center gap-1">
                 <Filtro
-                    opzioni={["Decrescente", "Crescente"]}
+                    opzioni={["Dal più richiesto", "Dal meno richiesto"]}
                     opzioneSelezionata={ordinamento}
                     onChange={setOrdinamento}
                 />
@@ -96,7 +96,7 @@ function TabellaSeminariPiuRichiesti({ seminari, dipartimenti, categorie }) {
 
             {seminariFiltrati.length > 5 && (
                 <Pulsante
-                    testo={mostraTutte ? "Mostra meno" : "Mostra tutte"}
+                    testo={mostraTutte ? "Mostra meno" : "Mostra tutti"}
                     onClick={() => setMostraTutte(!mostraTutte)}
                 />
             )}
