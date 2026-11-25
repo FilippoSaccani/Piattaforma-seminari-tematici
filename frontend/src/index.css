@@ -155,6 +155,7 @@ h1 { font-size: 2rem; }
 .background-red { background-color: var(--rosso); }
 .background-granato { background-color: var(--granato); }
 .background-white { background-color: var(--bianco); }
+.background-light-grey { background-color: #EEEEEE; }
 
 .color-cream { color: var(--crema); }
 .color-granato, h1 { color: var(--granato); }

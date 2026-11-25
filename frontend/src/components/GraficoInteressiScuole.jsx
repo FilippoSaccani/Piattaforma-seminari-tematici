@@ -13,13 +13,6 @@ const DIMENSIONE_MINIMA = 50;
 // Spazio lasciato tra le parole e il bordo del grafico
 const MARGINE = 8;
 
-/*
- * Versione corretta del grafico a nuvola di parole:
- * - se il grafico non ha spazio (per esempio mentre si apre "Ispeziona" di Chrome)
- *   non calcola la disposizione, che altrimenti entra in un ciclo infinito e blocca la pagina;
- * - misura le parole come vengono disegnate e le centra nel riquadro,
- *   così quelle lunghe non escono dai bordi.
- */
 class NuvolaDiParole extends WordCloudController {
     static id = "nuvolaDiParole";
     static defaults = WordCloudController.defaults;

@@ -43,7 +43,7 @@ function GraficoStatoPrenotazioni({ anno, completati, prenotati, disdette }) {
             {
                 label: "Disdette",
                 data: [percentuali[2]],
-                backgroundColor: "#63666A",
+                backgroundColor: "#B0B0B0",
                 borderSkipped: false
             }
         ]

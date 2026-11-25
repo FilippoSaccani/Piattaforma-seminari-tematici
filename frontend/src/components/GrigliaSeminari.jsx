@@ -46,9 +46,13 @@ function GrigliaSeminari({
         );
     }
 
+    const seminariOrdinati = [...seminariFiltrati].sort((a, b) =>
+        (a.stato === "Concluso") - (b.stato === "Concluso")
+    );
+
     return (
         <div className="grid-3 width-100">
-            {seminariFiltrati.map((seminario) => (
+            {seminariOrdinati.map((seminario) => (
                 <CardSeminario
                     key={seminario.id}
                     {...seminario}
