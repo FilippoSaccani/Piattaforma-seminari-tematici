@@ -3,7 +3,7 @@ import { formattaData } from "../utils/date";
 
 function ProposteScuole({ proposte }) {
     return (
-        <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+        <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
             <div className="flex-column gap-05">
                 <div className="flex-align-center gap-05">
                     <h2 className="color-granato">Proposte ricevute</h2>

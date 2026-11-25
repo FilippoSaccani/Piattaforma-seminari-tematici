@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import api from "../services/api";
-import { annoAccademicoCorrente, formattaData } from "../utils/date";
+import { annoAccademicoCorrente } from "../utils/date";
 import { calcolaMediaRecensioni, contaPrenotazioni, valoriDistinti } from "../utils/statistiche";
 
 import Titolo from "../components/Titolo";
@@ -12,7 +12,7 @@ import GraficoMediaRecensioniSeminari from "../components/GraficoMediaRecensioni
 import GraficoInteressiScuole from "../components/GraficoInteressiScuole";
 import ProposteScuole from "../components/ProposteScuole";
 
-function Statistiche() {
+function StatisticheDocente() {
     const [proposte, setProposte] = useState([]);
     const [seminari, setSeminari] = useState([]);
     const [recensioni, setRecensioni] = useState([]);
@@ -53,7 +53,7 @@ function Statistiche() {
     const { totali, prenotazioniAnnoCorrente } = statistiche;
 
     const riepiloghi = [
-        { numero: totali.completati, testo: "Seminari completati" },
+        { numero: totali.completati, testo: "Incontri svolti" },
         {
             numero: totali.completati + totali.prenotati + totali.disdette,
             testo: "Prenotazioni ricevute"
@@ -129,4 +129,4 @@ function Statistiche() {
     );
 }
 
-export default Statistiche;
+export default StatisticheDocente;

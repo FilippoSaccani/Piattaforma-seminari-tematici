@@ -15,16 +15,8 @@ function ModificaSeminario() {
     const [seminario, setSeminario] = useState(null);
 
     useEffect(() => {
-        api.get(`/seminari/${id}`).then(risposta => {
-            // Si possono modificare solo i seminari pubblicati e non ancora prenotati
-            if (risposta.data.stato !== "Pubblicato") {
-                navigate("/miei-seminari", { replace: true });
-                return;
-            }
-
-            setSeminario(risposta.data);
-        });
-    }, [id, navigate]);
+        api.get(`/seminari/${id}`).then(risposta => setSeminario(risposta.data));
+    }, [id]);
 
     function salvaModifiche(event) {
         event.preventDefault();

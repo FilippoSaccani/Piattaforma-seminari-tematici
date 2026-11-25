@@ -4,15 +4,16 @@ import { useState } from "react";
 import GestioneDisponibilita from "../components/GestioneDisponibilita";
 import GestioneVideo from "../components/GestioneVideo";
 import Pulsante from "../components/Pulsante";
-import { fasciaOccupata } from "../utils/disponibilita";
+import { fasciaOccupata, giorniPreavviso } from "../utils/disponibilita";
 
+// Prima data utile per nuove disponibilità: le scuole devono poter prenotare con il preavviso minimo
 function calcolaDataMinima() {
-    const domani = new Date();
-    domani.setDate(domani.getDate() + 1);
+    const primaData = new Date();
+    primaData.setDate(primaData.getDate() + giorniPreavviso());
 
-    const anno = domani.getFullYear();
-    const mese = String(domani.getMonth() + 1).padStart(2, "0");
-    const giorno = String(domani.getDate()).padStart(2, "0");
+    const anno = primaData.getFullYear();
+    const mese = String(primaData.getMonth() + 1).padStart(2, "0");
+    const giorno = String(primaData.getDate()).padStart(2, "0");
 
     return `${anno}-${mese}-${giorno}`;
 }
@@ -137,7 +138,8 @@ function FormSeminario({
                     : undefined;
 
                 const dataInvariata = originale?.data === elemento.data;
-                const dataPassata = elemento.data < dataMinima;
+                // Data già passata o troppo vicina per essere prenotata dalle scuole
+                const dataNonPrenotabile = elemento.data < dataMinima;
 
                 // Controllo della data
                 if (!elemento.data) {
@@ -154,8 +156,9 @@ function FormSeminario({
                         errori[riferimentoData] = "La data inserita non è valida.";
                     } else if (data.getUTCDay() === 0) {
                         errori[riferimentoData] = "Non puoi selezionare una domenica.";
-                    } else if (dataPassata && !dataInvariata) {
-                        errori[riferimentoData] = "La data deve essere successiva a oggi.";
+                    } else if (dataNonPrenotabile && !dataInvariata) {
+                        errori[riferimentoData] =
+                            `La data deve essere almeno ${giorniPreavviso()} giorni dopo oggi, così le scuole fanno in tempo a prenotare.`;
                     }
                 }
 
@@ -200,8 +203,8 @@ function FormSeminario({
                         errori[riferimento] = "Il seminario deve terminare entro le 18:00.";
                     }
 
-                    // Nelle date passate non si possono aggiungere o modificare fasce
-                    if (dataPassata && dataInvariata) {
+                    // Nelle date non più prenotabili non si possono aggiungere o modificare fasce
+                    if (dataNonPrenotabile && dataInvariata) {
                         const fasciaOriginale = fascia.id != null
                             ? originale.fasceOrarie.find(
                                 iniziale => iniziale.id === fascia.id
@@ -213,7 +216,7 @@ function FormSeminario({
                             fasciaOriginale.oraInizio !== fascia.oraInizio
                         ) {
                             errori[riferimento] =
-                                "Puoi aggiungere o modificare orari solo nelle date successive a oggi.";
+                                `Puoi aggiungere o modificare orari solo nelle date ad almeno ${giorniPreavviso()} giorni da oggi.`;
                         }
                     }
                 });

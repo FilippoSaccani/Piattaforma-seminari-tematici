@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import api, { impostaRuolo } from "./services/api";
+import { salvaImpostazioni } from "./utils/disponibilita";
 
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
@@ -15,9 +16,16 @@ import StatisticheAdmin from "./pages/StatisticheAdmin";
 
 function App() {
     const [utente, setUtente] = useState(null);
+    const [impostazioniCaricate, setImpostazioniCaricate] = useState(false);
 
     useEffect(() => {
         api.get("/utente").then(risposta => setUtente(risposta.data.ruolo));
+
+        // Preavviso e termine di disdetta sono decisi dal server
+        api.get("/impostazioni").then(risposta => {
+            salvaImpostazioni(risposta.data);
+            setImpostazioniCaricate(true);
+        });
     }, []);
 
     // Cambia il tipo di utente dal selettore del prototipo
@@ -26,8 +34,8 @@ function App() {
         api.get("/utente").then(risposta => setUtente(risposta.data.ruolo));
     }
 
-    // Attende il ruolo dell'utente prima di mostrare le pagine
-    if (!utente) {
+    // Attende il ruolo dell'utente e le impostazioni prima di mostrare le pagine
+    if (!utente || !impostazioniCaricate) {
         return null;
     }
 

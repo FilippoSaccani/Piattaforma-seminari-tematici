@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { formattaData, calcolaOraFine } from "../utils/date";
+import { disdettaPossibile, giorniTermineDisdetta } from "../utils/disponibilita";
 
 import FormRecensione from "./FormRecensione";
 import Pulsante from "./Pulsante";
 
 function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
     const svolta = prenotazione.stato === "Concluso";
+    const disdicibile = disdettaPossibile(prenotazione.data, prenotazione.oraInizio);
 
     const [mostraFormRecensione, setMostraFormRecensione] = useState(false);
     const [mostraRecensione, setMostraRecensione] = useState(false);
@@ -111,6 +113,13 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                         </div>
                     </div>
 
+                    {!svolta && !disdicibile && (
+                        <p className="info-label">
+                            Non è più possibile disdire: la disdetta va fatta almeno {giorniTermineDisdetta()} giorni
+                            prima del seminario.
+                        </p>
+                    )}
+
                     <div className="flex-end width-100 flex-align-center border-top">
                         {svolta ? (
                             prenotazione.recensione ? (
@@ -119,7 +128,11 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                                 <Pulsante testo="Lascia recensione" onClick={() => setMostraFormRecensione(true)} />
                             )
                         ) : (
-                            <Pulsante testo="Disdici prenotazione" onClick={() => onDisdici(prenotazione)} />
+                            <Pulsante
+                                testo="Disdici prenotazione"
+                                onClick={() => onDisdici(prenotazione)}
+                                disabled={!disdicibile}
+                            />
                         )}
                     </div>
                 </>
