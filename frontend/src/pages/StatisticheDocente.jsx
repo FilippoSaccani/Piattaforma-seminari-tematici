@@ -90,12 +90,18 @@ function StatisticheDocente() {
                     <p className="color-grey">Consulta le statistiche di attività e il gradimento delle scuole.</p>
                 </div>
 
-                <GraficoStatoPrenotazioni
-                    anno={statistiche.annoCorrente}
-                    completati={prenotazioniAnnoCorrente.completati}
-                    prenotati={prenotazioniAnnoCorrente.prenotati}
-                    disdette={prenotazioniAnnoCorrente.disdette}
-                />
+                <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+                    <div className="flex-column gap-05">
+                        <h3>Stato delle prenotazioni</h3>
+                        <p className="info-label">Anno accademico {statistiche.annoCorrente}</p>
+                    </div>
+
+                    <GraficoStatoPrenotazioni
+                        completati={prenotazioniAnnoCorrente.completati}
+                        prenotati={prenotazioniAnnoCorrente.prenotati}
+                        disdette={prenotazioniAnnoCorrente.disdette}
+                    />
+                </div>
 
                 <GraficoRecensioniAnnue
                     seminari={seminari}
@@ -104,12 +110,16 @@ function StatisticheDocente() {
                     categorie={categorie}
                 />
 
-                <GraficoMediaRecensioniSeminari
-                    seminari={seminari}
-                    recensioni={recensioni}
-                    dipartimenti={dipartimenti}
-                    categorie={categorie}
-                />
+                <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+                    <h3>Media recensioni per seminario</h3>
+                    
+                    <GraficoMediaRecensioniSeminari
+                        seminari={seminari}
+                        recensioni={recensioni}
+                        dipartimenti={dipartimenti}
+                        categorie={categorie}
+                    />
+                </div>
             </div>
 
             <GraficoInteressiScuole />
