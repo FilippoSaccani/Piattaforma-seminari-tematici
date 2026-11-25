@@ -20,7 +20,7 @@ function TextareaProposta() {
     return (
         <div className="width-100 flex flex-column gap-1 padding-1 border rounded background-white shadow">
 
-            <div className="flex flex-column gap-05">
+            <div className="flex-column gap-05">
                 <h3 className="color-granato">Non trovi quello che cerchi?</h3>
                 <p className="color-grey">
                     Suggerisci una nuova categoria o un seminario che

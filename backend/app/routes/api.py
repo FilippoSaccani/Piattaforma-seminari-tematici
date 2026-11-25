@@ -4,8 +4,6 @@ from flask import Blueprint, jsonify
 api_bp = Blueprint("api", __name__)
 
 
-# Dati temporanei, in attesa del database
-
 UTENTE_DOCENTE = {
     "ruolo": "Docente",
     "nome": "Marco Rossi",
@@ -18,7 +16,11 @@ UTENTE_SCUOLA = {
     "indirizzo": "Via XX Settembre 5, Reggio Emilia"
 }
 
-UTENTE = UTENTE_SCUOLA
+UTENTE_ADMIN = {
+    "ruolo": "Admin"
+}
+
+UTENTE = UTENTE_DOCENTE
 
 CATEGORIE = [
     "Scienze e Ingegneria",
@@ -497,6 +499,39 @@ MIEI_SEMINARI = [
     }
 ]
 
+RECENSIONI = [
+    # Intelligenza artificiale (id seminario 1)
+    {"id": 1, "idSeminario": 1, "voto": 5, "anno": "2024/2025"},
+    {"id": 2, "idSeminario": 1, "voto": 4, "anno": "2024/2025"},
+    {"id": 3, "idSeminario": 1, "voto": 5, "anno": "2025/2026"},
+    {"id": 4, "idSeminario": 1, "voto": 4, "anno": "2025/2026"},
+
+    # Robotica (id seminario 2)
+    {"id": 5, "idSeminario": 2, "voto": 4, "anno": "2024/2025"},
+    {"id": 6, "idSeminario": 2, "voto": 5, "anno": "2025/2026"},
+    {"id": 7, "idSeminario": 2, "voto": 4, "anno": "2025/2026"},
+
+    # Sicurezza informatica (id seminario 4)
+    {"id": 8, "idSeminario": 4, "voto": 5, "anno": "2024/2025"},
+    {"id": 9, "idSeminario": 4, "voto": 5, "anno": "2025/2026"},
+    {"id": 10, "idSeminario": 4, "voto": 4, "anno": "2025/2026"}
+]
+
+PROPOSTE = [
+    {
+        "id": 1,
+        "scuola": "Istituto Blaise Pascal",
+        "testo": "Sarebbe interessante approfondire il tema della cybersecurity.",
+        "data": "2026-11-20"
+    },
+    {
+        "id": 2,
+        "scuola": "Liceo Scientifico Aldo Moro",
+        "testo": "Proponiamo un seminario dedicato all'intelligenza artificiale.",
+        "data": "2026-11-22"
+    }
+]
+
 
 # Funzioni di utilità
 def calcola_stato_seminario(seminario, adesso):
@@ -594,3 +629,11 @@ def miei_seminari():
     ]
 
     return jsonify(seminari_con_stato)
+
+@api_bp.get("/recensioni")
+def recensioni():
+    return jsonify(RECENSIONI)
+
+@api_bp.get("/proposte")
+def proposte():
+    return jsonify(PROPOSTE)

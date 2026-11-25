@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
@@ -9,7 +10,7 @@ import StatoVuoto from "../components/StatoVuoto";
 import BarraRicerca from "../components/BarraRicerca";
 import Filtro from "../components/Filtro";
 import Titolo from "../components/Titolo";
-import RiepilogoSeminari from "../components/RiepilogoSeminari";
+import Riepilogo from "../components/Riepilogo";
 import CardSeminarioDocente from "../components/CardSeminarioDocente";
 import PopupConferma from "../components/PopupConferma";
 import Pulsante from "../components/Pulsante";
@@ -19,9 +20,7 @@ function IMieiSeminari() {
     const navigate = useNavigate();
 
     const [seminari, setSeminari] = useState([]);
-
     const [statiSeminari, setStatiSeminari] = useState([]);
-
     const [testoRicerca, setTestoRicerca] = useState("");
 
     const [statoSelezionato, setStatoSelezionato] = useState(
@@ -32,7 +31,7 @@ function IMieiSeminari() {
 
     useEffect(() => {
         api.get("/miei-seminari").then(risposta => {
-            setSeminari(risposta.data)
+            setSeminari(risposta.data);
         });
     }, []);
 
@@ -57,6 +56,12 @@ function IMieiSeminari() {
     const numeroConclusi = seminari.filter(
         seminario => seminario.stato === "Concluso"
     ).length;
+
+    const riepiloghi = [
+        { numero: seminari.length, testo: "Seminari pubblicati" },
+        { numero: numeroPrenotazioni, testo: "Prenotazioni" },
+        { numero: numeroConclusi, testo: "Conclusi" }
+    ];
 
     const seminariFiltrati = seminari.filter(seminario => {
         const corrispondeStato =
@@ -98,7 +103,11 @@ function IMieiSeminari() {
                 sottotitolo="Gestisci i tuoi seminari, consulta le prenotazioni ricevute e tieni traccia delle attività svolte."
             />
 
-            <Pulsante testo="Aggiungi seminario" icona="fa-solid fa-plus" onClick={() => navigate("/aggiungi-seminario")} />
+            <Pulsante
+                testo="Aggiungi seminario"
+                icona="fa-solid fa-plus"
+                onClick={() => navigate("/aggiungi-seminario")}
+            />
 
             {seminari.length === 0 ? (
                 <StatoVuoto
@@ -108,11 +117,7 @@ function IMieiSeminari() {
                 />
             ) : (
                 <>
-                    <RiepilogoSeminari
-                        numeroSeminari={seminari.length}
-                        numeroPrenotazioni={numeroPrenotazioni}
-                        numeroConclusi={numeroConclusi}
-                    />
+                    <Riepilogo riepiloghi={riepiloghi} classe="grid-3" />
 
                     <div className="flex gap-1 width-100">
                         <BarraRicerca

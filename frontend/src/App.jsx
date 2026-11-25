@@ -11,6 +11,7 @@ import Prenotazioni from "./pages/Prenotazioni";
 import IMieiSeminari from "./pages/IMieiSeminari";
 import AggiungiSeminario from "./pages/AggiungiSeminario";
 import ModificaSeminario from "./pages/ModificaSeminario";
+import Statistiche from "./pages/Statistiche";
 
 function App() {
     const [utente, setUtente] = useState(null);
@@ -68,6 +69,15 @@ function App() {
                         element={
                             haAccesso(utente, ["Docente"])
                                 ? <ModificaSeminario />
+                                : <Navigate to="/" replace />
+                        }
+                    />
+
+                    <Route
+                        path="/statistiche"
+                        element={
+                            haAccesso(utente, ["Docente"])
+                                ? <Statistiche />
                                 : <Navigate to="/" replace />
                         }
                     />

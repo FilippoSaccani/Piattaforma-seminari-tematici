@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { formattaData, calcolaOraFine, convertiDataOra } from "../utils/date";
 
 import Pulsante from "./Pulsante";
+import TabellaPrenotazioni from "./TabellaPrenotazioni";
 
 function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
     const [mostraTutte, setMostraTutte] = useState(false);
@@ -73,6 +74,15 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
         prenotazione => prenotazione.conclusa
     ).length;
 
+    const prenotazioniTabella = prenotazioni.map(prenotazione => ({
+        ...prenotazione,
+        stato: prenotazione.disdetta
+            ? "Disdetta"
+            : prenotazione.conclusa
+                ? "Conclusa"
+                : "In programma"
+    }));
+
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1">
 
@@ -138,47 +148,10 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                         )}
                     </div>
 
-                    {/* Tabella prenotazioni */}
-                    <div className="flex-column gap-1">
-                        <div className="grid-4 flex-align-center">
-                            <p className="info-value">Scuola</p>
-                            <p className="info-value">Data</p>
-                            <p className="info-value">Orario</p>
-                            <p className="info-value">Stato</p>
-                        </div>
-
-                        <div className="flex-column gap-1">
-                            {prenotazioniVisibili.map(prenotazione => (
-                                <div
-                                    key={`${prenotazione.data}_${prenotazione.oraInizio}`}
-                                    className="grid-4 border-top flex-align-center"
-                                >
-                                    <span className="info-label">
-                                        {prenotazione.scuola}
-                                    </span>
-
-                                    <span className="info-label">
-                                        {formattaData(prenotazione.data)}
-                                    </span>
-
-                                    <span className="info-label">
-                                        {prenotazione.orario}
-                                    </span>
-
-                                    <span className="info-label">
-                                        {prenotazione.conclusa
-                                            ? "Conclusa"
-                                            : "In programma"}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Mostra tutte */}
-                    {prenotazioni.length > 3 && (
-                        <Pulsante testo={mostraTutte ? "Mostra meno" : "Mostra tutte"} onClick={() => setMostraTutte(!mostraTutte)} />
-                    )}
+                    <TabellaPrenotazioni
+                        prenotazioni={prenotazioniTabella}
+                        formattaData={formattaData}
+                    />
                 </div>
             )}
 
