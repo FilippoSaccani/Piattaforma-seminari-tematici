@@ -47,12 +47,7 @@ function Prenotazioni() {
         seminariConfermabili.length > 0 &&
         seminariSelezionati.length === seminariConfermabili.length;
 
-    // Prenotazioni già confermate, filtrate per stato e ricerca
-    const prenotazioniConfermate = prenotazioni.filter(
-        prenotazione => prenotazione.stato !== "Da confermare"
-    );
-
-    const prenotazioniFiltrate = prenotazioniConfermate.filter(prenotazione => {
+    const prenotazioniFiltrate = prenotazioni.filter(prenotazione => {
         const corrispondeStato =
             statoSelezionato === "" ||
             (statoSelezionato === "Conclusi" && prenotazione.stato === "Concluso") ||
@@ -171,93 +166,69 @@ function Prenotazioni() {
                 />
             ) : (
                 <>
-                    {/* Carrello: prenotazioni da confermare, sempre visibili */}
-                    {seminariDaConfermare.length > 0 && (
-                        <div className="flex-column gap-1">
-                            <div className="flex-between flex-align-center gap-1">
-                                <div className="flex-column gap-05">
-                                    <h2 className="color-granato">
-                                        Carrello ({seminariDaConfermare.length})
-                                    </h2>
-                                    <p className="info-label">
-                                        Seleziona le prenotazioni e confermale: finché non sono confermate restano nel carrello.
-                                    </p>
-                                </div>
+                    <div className="flex gap-1 width-100">
+                        <BarraRicerca
+                            placeholder="Cerca seminari prenotati..."
+                            value={testoRicerca}
+                            onChange={setTestoRicerca}
+                        />
 
-                                <label className="flex-align-center gap-05 bold width-fit">
-                                    <input
-                                        type="checkbox"
-                                        className="background-white rounded-circle pointer seleziona-tutti"
-                                        checked={tuttiSelezionati}
-                                        onChange={selezionaTutti}
-                                        disabled={seminariConfermabili.length === 0}
-                                    />
-                                    Seleziona tutti
-                                </label>
-                            </div>
+                        <Filtro
+                            opzioni={["Da confermare", "Da svolgere", "Conclusi"]}
+                            opzioneSelezionata={statoSelezionato}
+                            onChange={setStatoSelezionato}
+                            testoPredefinito="Tutte le prenotazioni"
+                        />
+                    </div>
 
-                            {seminariDaConfermare.map(prenotazione => (
-                                <CardPrenotazioneCarrello
-                                    key={prenotazione.id}
-                                    seminario={prenotazione}
-                                    selezionato={seminariSelezionati.includes(prenotazione.id)}
-                                    onSeleziona={() => selezionaSeminario(prenotazione.id)}
-                                    onRimuovi={() => disdiciPrenotazione(prenotazione)}
-                                    onModifica={modificaSeminario}
-                                    altrePrenotazioni={prenotazioni}
+                    {seminariDaConfermare.length > 0 && statoSelezionato === "Da confermare" && (
+                        <>
+                            <label className="flex-align-center gap-05 bold size-1-3 width-fit">
+                                <input
+                                    type="checkbox"
+                                    className="background-white rounded-circle pointer seleziona-tutti"
+                                    checked={tuttiSelezionati}
+                                    onChange={selezionaTutti}
+                                    disabled={seminariConfermabili.length === 0}
                                 />
-                            ))}
-
-                            <Pulsante
-                                testo="Conferma prenotazioni"
-                                onClick={confermaPrenotazioni}
-                                disabled={seminariSelezionati.length === 0}
-                            />
-                        </div>
+                                Seleziona tutti
+                            </label>
+                        </>
                     )}
 
-                    {/* Prenotazioni confermate */}
-                    <div className="flex-column gap-1">
-                        <h2 className="color-granato">Prenotazioni confermate</h2>
-
-                        {prenotazioniConfermate.length === 0 ? (
-                            <p className="color-grey">
-                                Non hai ancora prenotazioni confermate.
-                            </p>
-                        ) : (
-                            <>
-                                <div className="flex gap-1 width-100">
-                                    <BarraRicerca
-                                        placeholder="Cerca seminari prenotati..."
-                                        value={testoRicerca}
-                                        onChange={setTestoRicerca}
+                    <div className="width-100 flex-column gap-1">
+                        {prenotazioniFiltrate.length > 0 ? (
+                            prenotazioniFiltrate.map(prenotazione => (
+                                prenotazione.stato === "Da confermare" ? (
+                                    <CardPrenotazioneCarrello
+                                        key={prenotazione.id}
+                                        seminario={prenotazione}
+                                        selezionato={seminariSelezionati.includes(prenotazione.id)}
+                                        onSeleziona={() => selezionaSeminario(prenotazione.id)}
+                                        onRimuovi={() => disdiciPrenotazione(prenotazione)}
+                                        onModifica={modificaSeminario}
+                                        mostraSelezione={statoSelezionato === "Da confermare"}
+                                        altrePrenotazioni={prenotazioni}
                                     />
-
-                                    <Filtro
-                                        opzioni={["Da svolgere", "Conclusi"]}
-                                        opzioneSelezionata={statoSelezionato}
-                                        onChange={setStatoSelezionato}
-                                        testoPredefinito="Tutte le prenotazioni"
-                                    />
-                                </div>
-
-                                {prenotazioniFiltrate.length > 0 ? (
-                                    prenotazioniFiltrate.map(prenotazione => (
-                                        <CardPrenotazioneScuola
-                                            key={prenotazione.id}
-                                            prenotazione={prenotazione}
-                                            onDisdici={disdiciPrenotazione}
-                                            onRecensisci={salvaRecensione}
-                                        />
-                                    ))
                                 ) : (
-                                    <p className="color-grey">
-                                        Nessuna prenotazione trovata.
-                                    </p>
-                                )}
-                            </>
+                                    <CardPrenotazioneScuola
+                                        key={prenotazione.id}
+                                        prenotazione={prenotazione}
+                                        onDisdici={disdiciPrenotazione}
+                                        onRecensisci={salvaRecensione}
+                                    />
+                                )
+                            ))
+                        ) : (
+                            <p className="color-grey">
+                                Nessuna prenotazione trovata.
+                            </p>
                         )}
                     </div>
+
+                    {seminariDaConfermare.length > 0 && statoSelezionato === "Da confermare" && (
+                        <Pulsante testo="Conferma prenotazioni" onClick={confermaPrenotazioni} disabled={seminariSelezionati.length === 0} />
+                    )}
 
                     {prenotazioneDaDisdire && (
                         <PopupConferma

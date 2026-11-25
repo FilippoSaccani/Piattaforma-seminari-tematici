@@ -16,6 +16,7 @@ function CardPrenotazioneCarrello({
     onSeleziona,
     onRimuovi,
     onModifica,
+    mostraSelezione = true,
     altrePrenotazioni = []
 }) {
     const [inModifica, setInModifica] = useState(false);
@@ -118,14 +119,21 @@ function CardPrenotazioneCarrello({
                     <p className="color-grey">{seminario.dipartimento}</p>
                 </div>
 
-                <input
-                    type="checkbox"
-                    className="background-white rounded-circle pointer seleziona-tutti"
-                    checked={selezionato && confermabile}
-                    onChange={onSeleziona}
-                    disabled={!confermabile}
-                    aria-label={`Seleziona ${seminario.titolo}`}
-                />
+                {mostraSelezione ? (
+                    <input
+                        type="checkbox"
+                        className="background-white rounded-circle pointer seleziona-tutti"
+                        checked={selezionato && confermabile}
+                        onChange={onSeleziona}
+                        disabled={!confermabile}
+                        aria-label={`Seleziona ${seminario.titolo}`}
+                    />
+                ) : (
+                    <span className="background-cream color-granato width-fit height-fit padding-03-1 rounded-20 flex gap-05 flex-align-center">
+                        <i className="fa-solid fa-list-check"></i>
+                        Da confermare
+                    </span>
+                )}
             </div>
 
             {inModifica ? (
