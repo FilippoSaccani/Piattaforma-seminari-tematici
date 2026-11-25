@@ -20,7 +20,7 @@ UTENTE_ADMIN = {
     "ruolo": "Admin"
 }
 
-UTENTE = UTENTE_DOCENTE
+UTENTE = UTENTE_ADMIN
 
 CATEGORIE = [
     "Scienze e Ingegneria",
@@ -110,16 +110,17 @@ DETTAGLI_SEMINARIO = {
                 {
                     "id": 1,
                     "oraInizio": "09:00",
-                    "prenotazione": None
+                    "prenotazione": {
+                        "id": 1,
+                        "scuola": "Liceo Scientifico Aldo Moro",
+                        "numeroStudenti": 25,
+                        "disdetta": False
+                    }
                 },
                 {
                     "id": 2,
                     "oraInizio": "14:00",
-                    "prenotazione": {
-                        "id": 1,
-                        "scuola": "Liceo Scientifico Aldo Moro",
-                        "numeroStudenti": 25
-                    }
+                    "prenotazione": None
                 }
             ]
         },
@@ -130,7 +131,12 @@ DETTAGLI_SEMINARIO = {
                 {
                     "id": 3,
                     "oraInizio": "10:00",
-                    "prenotazione": None
+                    "prenotazione": {
+                        "id": 2,
+                        "scuola": "Istituto Blaise Pascal",
+                        "numeroStudenti": 20,
+                        "disdetta": True
+                    }
                 }
             ]
         },
@@ -174,6 +180,7 @@ DETTAGLI_SEMINARIO = {
         }
     ]
 }
+
 
 PRENOTAZIONI = [
     {
@@ -315,6 +322,7 @@ PRENOTAZIONI = [
     }
 ]
 
+
 MIEI_SEMINARI = [
     {
         "id": 1,
@@ -344,7 +352,8 @@ MIEI_SEMINARI = [
                         "prenotazione": {
                             "id": 1,
                             "scuola": "Liceo Scientifico Aldo Moro",
-                            "numeroStudenti": 25
+                            "numeroStudenti": 25,
+                            "disdetta": False
                         }
                     },
                     {
@@ -364,8 +373,20 @@ MIEI_SEMINARI = [
                         "prenotazione": {
                             "id": 2,
                             "scuola": "Istituto Blaise Pascal",
-                            "numeroStudenti": 20
+                            "numeroStudenti": 20,
+                            "disdetta": True
                         }
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "data": "2026-12-18",
+                "fasceOrarie": [
+                    {
+                        "id": 4,
+                        "oraInizio": "09:00",
+                        "prenotazione": None
                     }
                 ]
             }
@@ -389,21 +410,6 @@ MIEI_SEMINARI = [
         "mediaRecensioni": 4.2,
         "numeroRecensioni": 8,
         "disponibilita": [
-            {
-                "id": 3,
-                "data": "2026-10-10",
-                "fasceOrarie": [
-                    {
-                        "id": 4,
-                        "oraInizio": "09:00",
-                        "prenotazione": {
-                            "id": 3,
-                            "scuola": "Istituto Tecnico Fermi",
-                            "numeroStudenti": 22
-                        }
-                    }
-                ]
-            },
             {
                 "id": 4,
                 "data": "2026-12-20",
@@ -437,17 +443,17 @@ MIEI_SEMINARI = [
         "disponibilita": [
             {
                 "id": 5,
-                "data": "2026-12-18",
+                "data": "2026-10-18",
                 "fasceOrarie": [
                     {
                         "id": 6,
                         "oraInizio": "09:00",
-                        "prenotazione": None
-                    },
-                    {
-                        "id": 7,
-                        "oraInizio": "14:00",
-                        "prenotazione": None
+                        "prenotazione": {
+                            "id": 6,
+                            "scuola": "Liceo delle Scienze Applicate",
+                            "numeroStudenti": 22,
+                            "disdetta": False
+                        }
                     }
                 ]
             }
@@ -481,7 +487,8 @@ MIEI_SEMINARI = [
                         "prenotazione": {
                             "id": 4,
                             "scuola": "Istituto Tecnico Einaudi",
-                            "numeroStudenti": 24
+                            "numeroStudenti": 24,
+                            "disdetta": False
                         }
                     },
                     {
@@ -490,7 +497,8 @@ MIEI_SEMINARI = [
                         "prenotazione": {
                             "id": 5,
                             "scuola": "Liceo Scientifico Aldo Moro",
-                            "numeroStudenti": 20
+                            "numeroStudenti": 20,
+                            "disdetta": False
                         }
                     }
                 ]
@@ -498,6 +506,7 @@ MIEI_SEMINARI = [
         ]
     }
 ]
+
 
 RECENSIONI = [
     # Intelligenza artificiale (id seminario 1)
@@ -603,12 +612,23 @@ def seminari():
 def dettagli_seminario(id_seminario):
     adesso = datetime.now()
 
-    seminario = {
-        **DETTAGLI_SEMINARIO,
-        "stato": calcola_stato_seminario(DETTAGLI_SEMINARIO, adesso)
+    seminario = next(
+        (s for s in MIEI_SEMINARI if s["id"] == id_seminario),
+        None
+    )
+
+    if seminario is None:
+        return jsonify({"errore": "Seminario non trovato"}), 404
+
+    if id_seminario == DETTAGLI_SEMINARIO["id"]:
+        seminario = DETTAGLI_SEMINARIO
+
+    seminario_con_stato = {
+        **seminario,
+        "stato": calcola_stato_seminario(seminario, adesso)
     }
 
-    return jsonify(seminario)
+    return jsonify(seminario_con_stato)
 
 
 @api_bp.get("/prenotazioni")
@@ -623,7 +643,8 @@ def miei_seminari():
     seminari_con_stato = [
         {
             **seminario,
-            "stato": calcola_stato_seminario(seminario, adesso)
+            "stato": calcola_stato_seminario(seminario, adesso),
+            "recensioni": seminario.get("recensioni", [])
         }
         for seminario in MIEI_SEMINARI
     ]

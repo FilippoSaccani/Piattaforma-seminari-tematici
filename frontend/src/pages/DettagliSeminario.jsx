@@ -7,6 +7,7 @@ import api from "../services/api";
 
 import Titolo from "../components/Titolo";
 import Prenotazione from "../components/Prenotazione";
+import TabellaPrenotazioni from "../components/TabellaPrenotazioni";
 
 function DettagliSeminario() {
     const { utente } = useOutletContext();
@@ -28,6 +29,28 @@ function DettagliSeminario() {
 
     const disponibilitaDisponibili = filtraDisponibilitaDisponibili(
         seminario.disponibilita
+    );
+
+    const prenotazioni = seminario.disponibilita.flatMap(giorno =>
+        giorno.fasceOrarie
+            .filter(fascia => fascia.prenotazione)
+            .map(fascia => {
+                const dataFine = new Date(
+                    `${giorno.data}T${fascia.oraInizio}`
+                );
+                dataFine.setMinutes(dataFine.getMinutes() + seminario.durata);
+
+                return {
+                    ...fascia.prenotazione,
+                    data: giorno.data,
+                    orario: `${fascia.oraInizio} - ${calcolaOraFine(fascia.oraInizio, seminario.durata)}`,
+                    stato: fascia.prenotazione.disdetta
+                        ? "Disdetta"
+                        : dataFine < new Date()
+                            ? "Conclusa"
+                            : "In programma"
+                };
+            })
     );
 
     const numeroRecensioni = seminario.numeroRecensioni;
@@ -119,6 +142,19 @@ function DettagliSeminario() {
                     </p>
 
                     <p className="info-label">{messaggioPreavviso}</p>
+                </div>
+            )}
+
+            {utente === "Admin" && prenotazioni.length > 0 && (
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                    <h2 className="color-granato">
+                        Prenotazioni ({prenotazioni.length})
+                    </h2>
+
+                    <TabellaPrenotazioni
+                        prenotazioni={prenotazioni}
+                        formattaData={formattaData}
+                    />
                 </div>
             )}
 
