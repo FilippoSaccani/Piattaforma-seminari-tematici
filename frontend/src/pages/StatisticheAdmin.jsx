@@ -56,12 +56,12 @@ function StatisticheAdmin() {
                         testo: "Seminari pubblicati"
                     },
                     {
-                        numero: statistiche.riepilogo.docentiAttivi,
-                        testo: "Docenti attivi"
-                    },
-                    {
                         numero: statistiche.riepilogo.seminariConclusi,
                         testo: "Seminari conclusi"
+                    },
+                    {
+                        numero: statistiche.riepilogo.docentiAttivi,
+                        testo: "Docenti attivi"
                     },
                     {
                         numero: statistiche.riepilogo.studentiCoinvolti,
