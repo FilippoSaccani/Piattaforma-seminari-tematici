@@ -1,6 +1,7 @@
 
 import Pulsante from "./Pulsante";
 import { fasciaOccupata } from "../utils/disponibilita";
+import { calcolaOraFine } from "../utils/date";
 
 function GestioneDisponibilita({
     disponibilita,
@@ -104,31 +105,6 @@ function GestioneDisponibilita({
                     : giorno
             )
         }));
-    }
-
-    function calcolaOraFine(oraInizio) {
-        if (!oraInizio || !durata || Number(durata) <= 0) {
-            return "";
-        }
-
-        const [ore, minuti] = oraInizio.split(":");
-
-        const minutiTotali =
-            Number(ore) * 60 +
-            Number(minuti) +
-            Number(durata);
-
-        if (minutiTotali >= 1440) {
-            return "";
-        }
-
-        const oreFine = Math.floor(minutiTotali / 60);
-        const minutiFine = minutiTotali % 60;
-
-        const oreFormattate = oreFine < 10 ? "0" + oreFine : oreFine;
-        const minutiFormattati = minutiFine < 10 ? "0" + minutiFine : minutiFine;
-
-        return oreFormattate + ":" + minutiFormattati;
     }
 
     function calcolaUltimoOrarioInizio() {
@@ -261,7 +237,7 @@ function GestioneDisponibilita({
                                         <input
                                             id={`ora_fine_${indiceData}_${indiceFascia}`}
                                             type="text"
-                                            value={calcolaOraFine(fascia.oraInizio)}
+                                            value={calcolaOraFine(fascia.oraInizio, durata)}
                                             placeholder="Calcolata automaticamente"
                                             className="border rounded padding-05-1 background-light color-grey"
                                             readOnly

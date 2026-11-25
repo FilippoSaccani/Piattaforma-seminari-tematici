@@ -21,7 +21,7 @@ function ModificaSeminario() {
     function salvaModifiche(event) {
         event.preventDefault();
 
-        navigate("/miei-seminari?stato=Pubblicati");
+        navigate("/miei-seminari");
     }
 
     if (!seminario) return null;

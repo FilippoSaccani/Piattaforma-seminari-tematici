@@ -6,6 +6,7 @@ import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
 
 import api from "../services/api";
 import { fasciaOccupata } from "../utils/disponibilita";
+import { convertiDataOra } from "../utils/date";
 
 import StatoVuoto from "../components/StatoVuoto";
 import BarraRicerca from "../components/BarraRicerca";
@@ -85,6 +86,25 @@ function IMieiSeminari() {
     }
 
     function confermaEliminazione() {
+        const haStorico =
+            seminarioDaEliminare.disponibilita.some(disponibilita =>
+                disponibilita.fasceOrarie.some(fascia =>
+                    fascia.prenotazione &&
+                    !fascia.prenotazione.disdetta &&
+                    convertiDataOra(
+                        disponibilita.data,
+                        fascia.oraInizio,
+                        seminarioDaEliminare.durata
+                    ) <= new Date()
+                )
+            ) ||
+            seminarioDaEliminare.numeroRecensioni > 0;
+
+        if (haStorico) {
+            setSeminarioDaEliminare(null);
+            return;
+        }
+
         setSeminari(precedenti =>
             precedenti.filter(seminario =>
                 seminario.id !== seminarioDaEliminare.id

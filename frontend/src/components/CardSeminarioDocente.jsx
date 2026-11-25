@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formattaData, convertiDataOra } from "../utils/date";
-import { elencoPrenotazioni, fasciaOccupata } from "../utils/disponibilita";
+import { elencoPrenotazioni, fasciaOccupata, rispettaPreavviso } from "../utils/disponibilita";
 
 import Pulsante from "./Pulsante";
 import TabellaPrenotazioni from "./TabellaPrenotazioni";
@@ -15,21 +15,29 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
 
     // Conta le fasce future ancora disponibili
     const fasceDisponibili = seminario.disponibilita
-        .flatMap(disponibilita =>
-            disponibilita.fasceOrarie.filter(fascia => {
-                const fine = convertiDataOra(
-                    disponibilita.data,
-                    fascia.oraInizio,
-                    seminario.durata
-                );
+    .flatMap(disponibilita =>
+        disponibilita.fasceOrarie.filter(fascia => {
+            const fine = convertiDataOra(
+                disponibilita.data,
+                fascia.oraInizio,
+                seminario.durata
+            );
 
-                return !fasciaOccupata(fascia) && fine > oggi;
-            })
-        );
+            return (
+                !fasciaOccupata(fascia) &&
+                fine > oggi &&
+                rispettaPreavviso(disponibilita.data, fascia.oraInizio)
+            );
+        })
+    );
 
     const numeroPrenotazioniConcluse = prenotazioni.filter(
         prenotazione => prenotazione.conclusa && !prenotazione.disdetta
     ).length;
+
+    const haStorico =
+        numeroPrenotazioniConcluse > 0 ||
+        seminario.numeroRecensioni > 0;
 
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
@@ -117,8 +125,11 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                     <Pulsante testo="Modifica" onClick={() => onModifica(seminario)} />
 
                     {/* Si eliminano solo i seminari senza prenotazioni da svolgere */}
-                    {seminario.stato === "Pubblicato" && (
-                        <Pulsante testo="Elimina" onClick={() => onElimina(seminario)} />
+                    {seminario.stato === "Pubblicato" && !haStorico && (
+                        <Pulsante
+                            testo="Elimina"
+                            onClick={() => onElimina(seminario)}
+                        />
                     )}
 
                 </div>
