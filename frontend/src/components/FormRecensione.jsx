@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import Pulsante from "./Pulsante";
 
@@ -6,6 +6,9 @@ function FormRecensione({ onInvia, onAnnulla }) {
 
     const [voto, setVoto] = useState(0);
     const [testo, setTesto] = useState("");
+
+    // Id unico, così più form aperti insieme non si confondono
+    const idTesto = useId();
 
     function inviaRecensione() {
         if (voto === 0 || testo.trim() === "") return;
@@ -38,10 +41,10 @@ function FormRecensione({ onInvia, onAnnulla }) {
             </div>
 
             <div className="flex-column gap-05">
-                <label htmlFor="testo">La tua recensione</label>
+                <label htmlFor={idTesto}>La tua recensione</label>
 
                 <textarea
-                    id="testo"
+                    id={idTesto}
                     className="width-100 border rounded padding-05"
                     rows="4"
                     placeholder="Raccontaci la tua esperienza..."

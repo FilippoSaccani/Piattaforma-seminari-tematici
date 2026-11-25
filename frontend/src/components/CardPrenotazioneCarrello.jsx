@@ -92,7 +92,7 @@ function CardPrenotazioneCarrello({
     }
 
     return (
-        <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+        <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
 
             <div className="flex-between flex-align-center">
                 <div className="flex-column gap-05">

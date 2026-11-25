@@ -8,7 +8,7 @@ function StatoVuoto({
     onClick = () => {}
 }) {
     return (
-        <div className="flex-column flex-align-center gap-2 background-white rounded padding-1 shadow">
+        <div className="flex-column flex-align-center gap-2 background-white rounded padding-1 shadow shadow-hover">
             <div className="flex-column gap-05 flex-align-center">
                 <h2 className="color-granato">
                     {titolo}

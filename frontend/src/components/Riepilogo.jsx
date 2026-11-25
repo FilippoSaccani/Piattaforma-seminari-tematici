@@ -5,7 +5,7 @@ function Riepilogo({ riepiloghi, classe }) {
             {riepiloghi.map(riepilogo => (
                 <div
                     key={riepilogo.testo}
-                    className="background-white border rounded padding-1 shadow flex-column gap-05 flex-center"
+                    className="background-white border rounded padding-1 shadow flex-column gap-05 flex-center shadow-hover"
                 >
                     <div className="flex-align-baseline gap-025">
                         <h2 className="color-granato">{riepilogo.numero}</h2>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import api from "../services/api";
+import { useCategorieDipartimenti } from "../hooks/useCategorieDipartimenti";
 
 import seminari_non_disponibili from "../assets/seminari_non_disponibili.png";
 
@@ -16,14 +17,11 @@ import GrigliaSeminari from "../components/GrigliaSeminari";
 function Home() {
     const { utente } = useOutletContext();
 
-    const [categorie, setCategorie] = useState([]);
-    const [dipartimenti, setDipartimenti] = useState([]);
+    const { categorie, dipartimenti } = useCategorieDipartimenti();
     const [seminari, setSeminari] = useState([]);
     const [statiSeminari, setStatiSeminari] = useState([]);
 
     useEffect(() => {
-        api.get("/categorie").then(risposta => setCategorie(risposta.data));
-        api.get("/dipartimenti").then(risposta => setDipartimenti(risposta.data));
         api.get("/seminari").then(risposta => setSeminari(risposta.data));
         api.get("/stati-seminari").then(risposta => setStatiSeminari(risposta.data));
     }, []);

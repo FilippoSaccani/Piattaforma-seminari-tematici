@@ -198,9 +198,9 @@ button:disabled {
 .pointer { cursor: pointer; }
 .shadow { box-shadow: 0 1px 3px rgb(128 128 128 / 0.30); }
 
-/* Le schede bianche si sollevano leggermente al passaggio del mouse */
-.background-white.shadow { transition: box-shadow 0.2s; }
-.background-white.shadow:hover { box-shadow: 0 4px 12px rgb(128 128 128 / 0.35); }
+/* Ombra più marcata al passaggio del mouse, da aggiungere solo agli elementi scelti */
+.shadow-hover { transition: box-shadow 0.2s; }
+.shadow-hover:hover { box-shadow: 0 4px 12px rgb(128 128 128 / 0.35); }
 
 
 /*Immagini*/

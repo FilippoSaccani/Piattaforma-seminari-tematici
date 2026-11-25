@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import api from "../services/api";
+import { useCategorieDipartimenti } from "../hooks/useCategorieDipartimenti";
 
 import Titolo from "../components/Titolo";
 import FormSeminario from "../components/FormSeminario";
@@ -9,8 +10,7 @@ import FormSeminario from "../components/FormSeminario";
 function AggiungiSeminario() {
     const navigate = useNavigate();
 
-    const [categorie, setCategorie] = useState([]);
-    const [dipartimenti, setDipartimenti] = useState([]);
+    const { categorie, dipartimenti } = useCategorieDipartimenti();
 
     const [seminario, setSeminario] = useState({
         docente: "",
@@ -30,9 +30,6 @@ function AggiungiSeminario() {
     });
 
     useEffect(() => {
-        api.get("/categorie").then(risposta => setCategorie(risposta.data));
-        api.get("/dipartimenti").then(risposta => setDipartimenti(risposta.data));
-
         // Il docente relatore è l'utente collegato
         api.get("/utente").then(risposta =>
             setSeminario(precedente => ({
@@ -45,8 +42,6 @@ function AggiungiSeminario() {
 
     function aggiungiSeminario(event) {
         event.preventDefault();
-
-        console.log(seminario);
 
         // TODO: invio dei dati al backend tramite fetch
 

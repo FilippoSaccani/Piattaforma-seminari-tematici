@@ -44,20 +44,14 @@ function Prenotazione({ disponibilita, modalita, durata }) {
             return;
         }
 
-        const prenotazione = {
-            data: dataSelezionata,
-            oraInizio: fasciaSelezionata,
-            numeroStudenti: Number(numeroStudenti),
-            modalita: modalitaSelezionata
-        };
-
-        console.log(prenotazione);
+        // TODO: inviare la prenotazione al backend con i campi
+        // data, oraInizio, numeroStudenti e modalita
 
         navigate("/");
     }
 
     return (
-        <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+        <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
 
             <h2 className="color-granato">Prenota il seminario</h2>
 

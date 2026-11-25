@@ -51,7 +51,7 @@ function Prenotazioni() {
             prenotazione.stato === statoSelezionato;
 
         const corrispondeRicerca =
-            prenotazione.titolo.toLowerCase().includes(testoRicerca.toLowerCase());
+            prenotazione.titolo.toLowerCase().includes(testoRicerca.trim().toLowerCase());
 
         return corrispondeStato && corrispondeRicerca;
     });

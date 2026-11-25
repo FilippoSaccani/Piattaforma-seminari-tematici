@@ -13,6 +13,11 @@ export function rispettaPreavviso(data, oraInizio) {
     return convertiDataOra(data, oraInizio, 0) >= primaDataPrenotabile;
 }
 
+// Indica se una fascia è occupata da una prenotazione attiva: una prenotazione disdetta la libera
+export function fasciaOccupata(fascia) {
+    return Boolean(fascia.prenotazione) && !fascia.prenotazione.disdetta;
+}
+
 export function filtraDisponibilitaDisponibili(
     disponibilita,
     dataSelezionata,
@@ -28,7 +33,7 @@ export function filtraDisponibilitaDisponibili(
                 }
 
                 return (
-                    fascia.prenotazione === null ||
+                    !fasciaOccupata(fascia) ||
                     (
                         giorno.data === dataSelezionata &&
                         fascia.oraInizio === oraInizioSelezionata
