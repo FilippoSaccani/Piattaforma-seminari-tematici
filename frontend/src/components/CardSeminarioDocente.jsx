@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formattaData, calcolaOraFine, convertiDataOra } from "../utils/date";
+import { fasciaOccupata } from "../utils/disponibilita";
 
 import Pulsante from "./Pulsante";
 import TabellaPrenotazioni from "./TabellaPrenotazioni";
 
 function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
-    const [mostraTutte, setMostraTutte] = useState(false);
-
-    const oggi = new Date();
+    // Momento in cui la scheda viene mostrata, usato per distinguere le prenotazioni concluse
+    const [oggi] = useState(() => new Date());
 
     // Recupera tutte le prenotazioni, distinguendo quelle concluse
     const prenotazioni = seminario.disponibilita
@@ -28,11 +28,13 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                     );
 
                     return {
+                        id: fascia.prenotazione.id,
                         scuola: fascia.prenotazione.scuola,
                         data: disponibilita.data,
                         oraInizio: fascia.oraInizio,
                         orario: `${fascia.oraInizio} - ${oraFine}`,
-                        conclusa: fine <= oggi
+                        conclusa: fine <= oggi,
+                        disdetta: Boolean(fascia.prenotazione.disdetta)
                     };
                 })
         )
@@ -62,16 +64,12 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                     seminario.durata
                 );
 
-                return fascia.prenotazione === null && fine > oggi;
+                return !fasciaOccupata(fascia) && fine > oggi;
             })
         );
 
-    const prenotazioniVisibili = mostraTutte
-        ? prenotazioni
-        : prenotazioni.slice(0, 3);
-
     const numeroPrenotazioniConcluse = prenotazioni.filter(
-        prenotazione => prenotazione.conclusa
+        prenotazione => prenotazione.conclusa && !prenotazione.disdetta
     ).length;
 
     const prenotazioniTabella = prenotazioni.map(prenotazione => ({
@@ -84,7 +82,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
     }));
 
     return (
-        <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+        <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
 
             {/* Intestazione */}
             <div className="flex-between flex-align-center">

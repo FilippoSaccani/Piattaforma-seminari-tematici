@@ -4,6 +4,7 @@ import { useState } from "react";
 import GestioneDisponibilita from "../components/GestioneDisponibilita";
 import GestioneVideo from "../components/GestioneVideo";
 import Pulsante from "../components/Pulsante";
+import { fasciaOccupata } from "../utils/disponibilita";
 
 function calcolaDataMinima() {
     const domani = new Date();
@@ -31,10 +32,10 @@ function FormSeminario({
     const [disponibilitaIniziale] = useState(seminario.disponibilita);
     const [durataIniziale] = useState(seminario.durata);
 
-    // Fasce già prenotate da una scuola al momento dell'apertura del form
+    // Fasce prenotate (e non disdette) da una scuola al momento dell'apertura del form
     const fascePrenotate = disponibilitaIniziale.flatMap(giorno =>
         giorno.fasceOrarie
-            .filter(fascia => fascia.prenotazione)
+            .filter(fasciaOccupata)
             .map(fascia => ({ id: fascia.id, data: giorno.data, oraInizio: fascia.oraInizio }))
     );
 
@@ -250,7 +251,7 @@ function FormSeminario({
                             if (inizio1 < fine2 && fine1 > inizio2) {
                                 // Segnala l'errore sulle fasce che il docente può modificare
                                 [i, j].forEach(indice => {
-                                    if (!elemento.fasceOrarie[indice].prenotazione) {
+                                    if (!fasciaOccupata(elemento.fasceOrarie[indice])) {
                                         errori[`fascia_${indiceData}_${indice}`] =
                                             "Questa fascia oraria si sovrappone a un'altra.";
                                     }
@@ -313,7 +314,7 @@ function FormSeminario({
         <form
             onSubmit={gestisciSubmit}
             noValidate
-            className="flex-column gap-2 background-white padding-1 border rounded shadow"
+            className="flex-column gap-2 background-white padding-1 border rounded shadow shadow-hover"
         >
 
             <div className="flex-column gap-1">

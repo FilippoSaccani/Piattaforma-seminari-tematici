@@ -21,6 +21,11 @@ export function contaPrenotazioni(seminari, adesso, anno = null) {
                     return;
                 }
 
+                if (fascia.prenotazione.disdetta) {
+                    disdette++;
+                    return;
+                }
+
                 const fine = convertiDataOra(giorno.data, fascia.oraInizio, seminario.durata);
 
                 if (fine <= adesso) {
@@ -31,8 +36,6 @@ export function contaPrenotazioni(seminari, adesso, anno = null) {
                 }
             });
         });
-
-        disdette += (seminario.disdette ?? []).filter(disdetta => nellAnno(disdetta.data)).length;
     });
 
     return { completati, prenotati, disdette, studentiCoinvolti };

@@ -11,7 +11,7 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
     const [mostraRecensione, setMostraRecensione] = useState(false);
 
     return (
-        <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+        <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
 
             {mostraFormRecensione ? (
                 <>

@@ -11,14 +11,12 @@ function TextareaProposta() {
 
         // TODO: inviare la proposta al backend tramite fetch
 
-        console.log("Proposta:", proposta);
-
         setProposta("");
         setInviata(true);
     }
 
     return (
-        <div className="width-100 flex flex-column gap-1 padding-1 border rounded background-white shadow">
+        <div className="width-100 flex flex-column gap-1 padding-1 border rounded background-white shadow shadow-hover">
 
             <div className="flex-column gap-05">
                 <h3 className="color-granato">Non trovi quello che cerchi?</h3>

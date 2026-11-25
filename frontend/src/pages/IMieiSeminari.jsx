@@ -71,7 +71,7 @@ function IMieiSeminari() {
             (statoSelezionato === "Conclusi" && seminario.stato === "Concluso");
 
         const corrispondeRicerca =
-            seminario.titolo.toLowerCase().includes(testoRicerca.toLowerCase());
+            seminario.titolo.toLowerCase().includes(testoRicerca.trim().toLowerCase());
 
         return corrispondeStato && corrispondeRicerca;
     });

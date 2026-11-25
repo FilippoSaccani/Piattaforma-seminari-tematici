@@ -23,7 +23,7 @@ function Navbar({ utente }) {
     const links = linkUtenti[utente] || [];
 
     return (
-        <div className="navbar width-100 flex-center flex-between background-white shadow">
+        <div className="navbar width-100 flex-center flex-between background-white shadow shadow-hover">
 
             <Link to="/">
                 <img src={logo} alt="Logo unimore" />

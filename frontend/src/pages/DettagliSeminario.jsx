@@ -75,12 +75,12 @@ function DettagliSeminario() {
             </div>
 
             <div className="grid-2">
-                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">Descrizione</h2>
                     <p className="color-grey">{seminario.descrizione_dettagliata}</p>
                 </div>
 
-                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">Relatore</h2>
 
                     <div className="flex-align-center gap-1">
@@ -97,7 +97,7 @@ function DettagliSeminario() {
             </div>
 
             {disponibilitaDisponibili.length > 0 ? (
-                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <div className="flex-between flex-align-center">
                         <h2 className="color-granato">Disponibilità</h2>
 
@@ -135,7 +135,7 @@ function DettagliSeminario() {
                     <p className="info-label">{messaggioPreavviso}</p>
                 </div>
             ) : (
-                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">Disponibilità</h2>
                     <p className="color-grey">
                         Al momento non ci sono date disponibili per prenotare questo seminario.
@@ -146,7 +146,7 @@ function DettagliSeminario() {
             )}
 
             {utente === "Admin" && prenotazioni.length > 0 && (
-                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">
                         Prenotazioni ({prenotazioni.length})
                     </h2>
@@ -159,7 +159,7 @@ function DettagliSeminario() {
             )}
 
             {seminario.video && (
-                <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+                <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">Trailer del seminario</h2>
 
                     <div className="video">
@@ -176,7 +176,7 @@ function DettagliSeminario() {
                 />
             )}
 
-            <div className="background-white border rounded padding-1 flex-column gap-1 shadow">
+            <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                 <div className="flex-between flex-align-center">
                     <h2 className="color-granato">Recensioni</h2>
 

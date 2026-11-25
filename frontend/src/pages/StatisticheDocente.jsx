@@ -84,7 +84,7 @@ function Statistiche() {
                 classe="grid-4"
             />
 
-            <div className="background-white border rounded padding-1 shadow flex-column gap-1">
+            <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
                 <div className="flex-column gap-05">
                     <h2 className="color-granato">Attività e gradimento</h2>
                     <p className="color-grey">Consulta le statistiche di attività e il gradimento delle scuole.</p>
