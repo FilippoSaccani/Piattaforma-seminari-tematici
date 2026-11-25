@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="3000" viewBox="0 0 420 3000">
+    <!-- Motivo del lato destro, ripetuto verso il basso ogni 3000px.
+         I cerchi cadono a metà strada tra quelli del lato sinistro. -->
+    <defs>
+        <linearGradient id="sfumatura" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="30%" stop-color="#D14124" />
+            <stop offset="70%" stop-color="#93021F" />
+        </linearGradient>
+    </defs>
+
+    <!-- 170: cerchio grande, tagliato dal bordo destro -->
+    <circle cx="420" cy="170" r="160" fill="none" stroke="url(#sfumatura)" stroke-width="28" opacity="0.9" />
+
+    <!-- 760: cerchio piccolo nel margine -->
+    <circle cx="290" cy="760" r="72" fill="none" stroke="#D14124" stroke-width="16" opacity="0.8" />
+
+    <!-- 1550: cerchio medio che passa sotto alle card -->
+    <circle cx="125" cy="1550" r="100" fill="none" stroke="url(#sfumatura)" stroke-width="20" opacity="0.9" />
+
+    <!-- 2330: cerchio grande, tagliato dal bordo destro -->
+    <circle cx="420" cy="2330" r="230" fill="none" stroke="url(#sfumatura)" stroke-width="34" opacity="0.9" />
+</svg>

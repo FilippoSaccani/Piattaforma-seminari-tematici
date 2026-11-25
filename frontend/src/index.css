@@ -58,42 +58,17 @@ body, #root {
     padding: 7rem 15rem 3rem 15rem;
 
     position: relative;
-    isolation: isolate;        
-    overflow: hidden;
     min-height: 100vh;
 
+    /* Cerchi decorativi: un motivo per lato, agganciato al bordo e ripetuto verso il basso.
+       Più la pagina è lunga, più cerchi compaiono; allargando la finestra restano attaccati ai bordi.
+       I cerchi dei due lati si alternano, così restano distanziati tra loro. */
     background-image:
-        radial-gradient(circle at 93% 10%, transparent 0 90px, rgba(209, 65, 36, 0.8) 90px 108px, transparent 108px),
-        radial-gradient(circle at 12% 64%, transparent 0 60px, rgba(209, 65, 36, 0.8) 60px 74px, transparent 74px);
-}
-
-.page-content::before,
-.page-content::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0.9;
-    background: linear-gradient(45deg, var(--rosso) 30%, var(--granato) 70%);
-
-    --spessore: 30px;
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--spessore)), #000 calc(100% - var(--spessore)));
-    mask: radial-gradient(farthest-side, transparent calc(100% - var(--spessore)), #000 calc(100% - var(--spessore)));
-}
-
-.page-content::before {
-    width: 460px;
-    top: -150px;
-    left: -220px;
-}
-
-.page-content::after {
-    width: 560px;
-    bottom: -230px;
-    right: -150px;
-    --spessore: 36px;
+        url("./assets/cerchi-sinistra.svg"),
+        url("./assets/cerchi-destra.svg");
+    background-position: left top, right top;
+    background-repeat: repeat-y;
+    background-size: 420px auto;
 }
 
 
@@ -441,6 +416,13 @@ textarea {
 /*Responsive*/
 @media only screen and (max-width: 1300px) {
     .page-content { padding: 7rem 2rem 3rem 2rem; }
+    /* Margini stretti: un unico motivo a tutta larghezza, con i cerchi sparsi
+       anche al centro (sotto alle card) e solo due cerchi che spuntano dai bordi in alto */
+    .page-content {
+        background-image: url("./assets/cerchi-medi.svg");
+        background-position: center top;
+        background-size: 100% auto;
+    }
     .navbar { padding: 0.4rem 3rem}
 }
 
@@ -448,6 +430,8 @@ textarea {
     .navbar span { display: none; }
     .navbar i { font-size: 1.5rem; }
     .page-content { padding: 6rem 0.7rem 1rem 0.7rem; }
+    /* Sui telefoni non c'è spazio ai lati: niente cerchi */
+    .page-content { background-image: none; }
     .navbar { padding: 0.4rem 2rem}
     .grid-2 { grid-template-columns: 1fr; }
     .grid-4 { grid-template-columns: repeat(2, 1fr); }

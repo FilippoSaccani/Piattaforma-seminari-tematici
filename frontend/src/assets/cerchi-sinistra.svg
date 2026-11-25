@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="3000" viewBox="0 0 420 3000">
+    <!-- Motivo del lato sinistro, ripetuto verso il basso ogni 3000px.
+         I cerchi si alternano con quelli del lato destro (stessa altezza del motivo),
+         così sono distribuiti in modo regolare lungo la pagina senza finire troppo vicini. -->
+    <defs>
+        <linearGradient id="sfumatura" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="30%" stop-color="#D14124" />
+            <stop offset="70%" stop-color="#93021F" />
+        </linearGradient>
+    </defs>
+
+    <!-- 320: cerchio grande, tagliato dal bordo sinistro -->
+    <circle cx="0" cy="320" r="200" fill="none" stroke="url(#sfumatura)" stroke-width="30" opacity="0.9" />
+
+    <!-- 1150: cerchio medio che passa sotto alle card -->
+    <circle cx="290" cy="1150" r="110" fill="none" stroke="url(#sfumatura)" stroke-width="22" opacity="0.9" />
+
+    <!-- 1900: cerchio piccolo nel margine -->
+    <circle cx="150" cy="1900" r="75" fill="none" stroke="#D14124" stroke-width="16" opacity="0.8" />
+
+    <!-- 2700: altro cerchio piccolo -->
+    <circle cx="190" cy="2700" r="58" fill="none" stroke="#D14124" stroke-width="14" opacity="0.8" />
+</svg>
