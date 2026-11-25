@@ -80,7 +80,6 @@ function StatisticheAdmin() {
                 </div>
 
                 <GraficoStatoPrenotazioni
-                    anno={statistiche.annoCorrente}
                     completati={statistiche.prenotazioniAnnoCorrente.completati}
                     prenotati={statistiche.prenotazioniAnnoCorrente.prenotati}
                     disdette={statistiche.prenotazioniAnnoCorrente.disdette}
@@ -107,7 +106,7 @@ function StatisticheAdmin() {
                 <div className="flex-column gap-05">
                     <h2 className="color-granato">Seminari più richiesti</h2>
                     <p className="color-grey">
-                        I cinque seminari che hanno ricevuto il maggior numero di prenotazioni.
+                        I seminari che hanno ricevuto il maggior numero di prenotazioni.
                     </p>
                 </div>
 

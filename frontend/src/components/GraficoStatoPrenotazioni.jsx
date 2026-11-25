@@ -15,7 +15,7 @@ ChartJS.register(
     Tooltip
 );
 
-function GraficoStatoPrenotazioni({ anno, completati, prenotati, disdette }) {
+function GraficoStatoPrenotazioni({ completati, prenotati, disdette }) {
 
     const totale = completati + prenotati + disdette;
 

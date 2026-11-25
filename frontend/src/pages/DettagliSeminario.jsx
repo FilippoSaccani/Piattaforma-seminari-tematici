@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { formattaData, calcolaOraFine } from "../utils/date";
-import { filtraDisponibilitaDisponibili, giorniPreavviso } from "../utils/disponibilita";
+import { elencoPrenotazioni, filtraDisponibilitaDisponibili, giorniPreavviso } from "../utils/disponibilita";
 import api from "../services/api";
 
 import Titolo from "../components/Titolo";
@@ -14,6 +14,9 @@ function DettagliSeminario() {
 
     const { id } = useParams();
     const [seminario, setSeminario] = useState(null);
+
+    // Momento di apertura della pagina, usato per distinguere le prenotazioni concluse
+    const [adesso] = useState(() => new Date());
 
     useEffect(() => {
         api.get(`/seminari/${id}`).then(risposta => setSeminario(risposta.data));
@@ -31,27 +34,8 @@ function DettagliSeminario() {
         seminario.disponibilita
     );
 
-    const prenotazioni = seminario.disponibilita.flatMap(giorno =>
-        giorno.fasceOrarie
-            .filter(fascia => fascia.prenotazione)
-            .map(fascia => {
-                const dataFine = new Date(
-                    `${giorno.data}T${fascia.oraInizio}`
-                );
-                dataFine.setMinutes(dataFine.getMinutes() + seminario.durata);
-
-                return {
-                    ...fascia.prenotazione,
-                    data: giorno.data,
-                    orario: `${fascia.oraInizio} - ${calcolaOraFine(fascia.oraInizio, seminario.durata)}`,
-                    stato: fascia.prenotazione.disdetta
-                        ? "Disdetta"
-                        : dataFine < new Date()
-                            ? "Conclusa"
-                            : "In programma"
-                };
-            })
-    );
+    // Prenotazioni in ordine cronologico, mostrate all'amministrazione
+    const prenotazioni = elencoPrenotazioni(seminario, adesso);
 
     const numeroRecensioni = seminario.numeroRecensioni;
 

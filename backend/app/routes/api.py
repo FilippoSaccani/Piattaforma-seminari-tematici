@@ -845,12 +845,14 @@ def statistiche_admin(adesso):
                     prenotazioni["completate"] += 1
                     if nell_anno_corrente:
                         prenotazioni_anno_corrente["completati"] += 1
+
+                    # Come nelle statistiche del docente, contano solo gli incontri già svolti
+                    riepilogo["studentiCoinvolti"] += prenotazione_fascia["numeroStudenti"]
                 else:
                     prenotazioni["prenotate"] += 1
                     if nell_anno_corrente:
                         prenotazioni_anno_corrente["prenotati"] += 1
 
-                riepilogo["studentiCoinvolti"] += prenotazione_fascia["numeroStudenti"]
                 richieste_seminari[seminario["id"]] += 1
 
     seminari_piu_richiesti = []

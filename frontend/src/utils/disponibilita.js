@@ -1,4 +1,4 @@
-import { convertiDataOra } from "./date";
+import { calcolaOraFine, convertiDataOra } from "./date";
 
 // Impostazioni lette dal server all'avvio dell'app (vedi App.jsx)
 const impostazioni = {
@@ -93,4 +93,31 @@ export function filtraDisponibilitaDisponibili(
             }).sort((a, b) => a.oraInizio.localeCompare(b.oraInizio))
         }))
         .filter(giorno => giorno.fasceOrarie.length > 0);
+}
+
+// Elenca le prenotazioni di un seminario in ordine cronologico, con lo stato da mostrare in tabella
+export function elencoPrenotazioni(seminario, adesso) {
+    return seminario.disponibilita
+        .flatMap(giorno =>
+            giorno.fasceOrarie
+                .filter(fascia => fascia.prenotazione)
+                .map(fascia => {
+                    const fine = convertiDataOra(giorno.data, fascia.oraInizio, seminario.durata);
+                    const disdetta = Boolean(fascia.prenotazione.disdetta);
+                    const conclusa = fine <= adesso;
+
+                    return {
+                        id: fascia.prenotazione.id,
+                        scuola: fascia.prenotazione.scuola,
+                        numeroStudenti: fascia.prenotazione.numeroStudenti,
+                        data: giorno.data,
+                        oraInizio: fascia.oraInizio,
+                        orario: `${fascia.oraInizio} - ${calcolaOraFine(fascia.oraInizio, seminario.durata)}`,
+                        conclusa,
+                        disdetta,
+                        stato: disdetta ? "Disdetta" : conclusa ? "Conclusa" : "In programma"
+                    };
+                })
+        )
+        .sort((a, b) => `${a.data} ${a.oraInizio}`.localeCompare(`${b.data} ${b.oraInizio}`));
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { formattaData, calcolaOraFine, convertiDataOra } from "../utils/date";
-import { fasciaOccupata } from "../utils/disponibilita";
+import { formattaData, convertiDataOra } from "../utils/date";
+import { elencoPrenotazioni, fasciaOccupata } from "../utils/disponibilita";
 
 import Pulsante from "./Pulsante";
 import TabellaPrenotazioni from "./TabellaPrenotazioni";
@@ -10,49 +10,8 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
     // Momento in cui la scheda viene mostrata, usato per distinguere le prenotazioni concluse
     const [oggi] = useState(() => new Date());
 
-    // Recupera tutte le prenotazioni, distinguendo quelle concluse
-    const prenotazioni = seminario.disponibilita
-        .flatMap(disponibilita =>
-            disponibilita.fasceOrarie
-                .filter(fascia => fascia.prenotazione !== null)
-                .map(fascia => {
-                    const fine = convertiDataOra(
-                        disponibilita.data,
-                        fascia.oraInizio,
-                        seminario.durata
-                    );
-
-                    const oraFine = calcolaOraFine(
-                        fascia.oraInizio,
-                        seminario.durata
-                    );
-
-                    return {
-                        id: fascia.prenotazione.id,
-                        scuola: fascia.prenotazione.scuola,
-                        data: disponibilita.data,
-                        oraInizio: fascia.oraInizio,
-                        orario: `${fascia.oraInizio} - ${oraFine}`,
-                        conclusa: fine <= oggi,
-                        disdetta: Boolean(fascia.prenotazione.disdetta)
-                    };
-                })
-        )
-        .sort((a, b) => {
-            const dataA = convertiDataOra(
-                a.data,
-                a.oraInizio,
-                0
-            );
-
-            const dataB = convertiDataOra(
-                b.data,
-                b.oraInizio,
-                0
-            );
-
-            return dataA - dataB;
-        });
+    // Tutte le prenotazioni in ordine cronologico, con il loro stato
+    const prenotazioni = elencoPrenotazioni(seminario, oggi);
 
     // Conta le fasce future ancora disponibili
     const fasceDisponibili = seminario.disponibilita
@@ -71,15 +30,6 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
     const numeroPrenotazioniConcluse = prenotazioni.filter(
         prenotazione => prenotazione.conclusa && !prenotazione.disdetta
     ).length;
-
-    const prenotazioniTabella = prenotazioni.map(prenotazione => ({
-        ...prenotazione,
-        stato: prenotazione.disdetta
-            ? "Disdetta"
-            : prenotazione.conclusa
-                ? "Conclusa"
-                : "In programma"
-    }));
 
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
@@ -147,7 +97,7 @@ function CardSeminarioDocente({ seminario, onModifica, onElimina }) {
                     </div>
 
                     <TabellaPrenotazioni
-                        prenotazioni={prenotazioniTabella}
+                        prenotazioni={prenotazioni}
                         formattaData={formattaData}
                     />
                 </div>
