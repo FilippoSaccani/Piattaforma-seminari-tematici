@@ -23,11 +23,21 @@ export function annoAccademicoCorrente() {
     return annoAccademico(`${oggi.getFullYear()}-${oggi.getMonth() + 1}-${oggi.getDate()}`);
 }
 
-// Calcola l'orario di fine
+// Calcola l'orario di fine.
+// Restituisce una stringa vuota se l'orario o la durata non sono ancora stati inseriti
+// (per esempio mentre il docente compila il form) o se la fine andrebbe oltre la mezzanotte.
 export function calcolaOraFine(oraInizio, durata) {
+    if (!/^\d{2}:\d{2}$/.test(oraInizio ?? "") || !(Number(durata) > 0)) {
+        return "";
+    }
+
     const [ore, minuti] = oraInizio.split(":").map(Number);
 
     const minutiTotali = ore * 60 + minuti + Number(durata);
+
+    if (minutiTotali >= 24 * 60) {
+        return "";
+    }
 
     const oreFine = Math.floor(minutiTotali / 60);
     const minutiFine = minutiTotali % 60;
