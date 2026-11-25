@@ -15,7 +15,7 @@ ChartJS.register(
     Tooltip
 );
 
-function GraficoStatoPrenotazioni({ completati, prenotati, disdette }) {
+function GraficoStatoPrenotazioni({ anno, completati, prenotati, disdette }) {
 
     const totale = completati + prenotati + disdette;
 
@@ -80,7 +80,10 @@ function GraficoStatoPrenotazioni({ completati, prenotati, disdette }) {
 
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1">
-            <h3>Stato delle prenotazioni</h3>
+            <div className="flex-column gap-05">
+                <h3>Stato delle prenotazioni</h3>
+                <p className="info-label">Anno accademico {anno}</p>
+            </div>
 
             <div className="grafico-stato-prenotazioni">
                 <Bar data={dati} options={opzioni} />

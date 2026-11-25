@@ -202,7 +202,7 @@ function DettagliSeminario() {
                             >
                                 <div className="flex-between flex-align-center gap-1">
                                     <p className="info-value">{recensione.scuola}</p>
-                                    <span className="info-label">{recensione.anno}</span>
+                                    <span className="info-label">{formattaData(recensione.data)}</span>
                                 </div>
 
                                 <div className="flex gap-05">

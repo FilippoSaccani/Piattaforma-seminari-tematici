@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import api from "./services/api";
+import api, { impostaRuolo } from "./services/api";
 
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
@@ -20,6 +20,12 @@ function App() {
         api.get("/utente").then(risposta => setUtente(risposta.data.ruolo));
     }, []);
 
+    // Cambia il tipo di utente dal selettore del prototipo
+    function cambiaRuolo(ruolo) {
+        impostaRuolo(ruolo);
+        api.get("/utente").then(risposta => setUtente(risposta.data.ruolo));
+    }
+
     // Attende il ruolo dell'utente prima di mostrare le pagine
     if (!utente) {
         return null;
@@ -32,7 +38,7 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route element={<MainLayout utente={utente} />}>
+                <Route element={<MainLayout utente={utente} onCambiaRuolo={cambiaRuolo} />}>
                     <Route path="/" element={<Home />} />
 
                     <Route path="/dettagli-seminario/:id" element={<DettagliSeminario />} />

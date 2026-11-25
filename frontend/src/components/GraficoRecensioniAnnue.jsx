@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
     Chart as ChartJS,
@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 
 import Filtro from "./Filtro";
+import { annoAccademico } from "../utils/date";
 
 ChartJS.register(
     CategoryScale,
@@ -18,33 +19,9 @@ ChartJS.register(
     Tooltip
 );
 
-function GraficoRecensioniAnnue() {
-
-    const [recensioni, setRecensioni] = useState([]);
-    const [seminari, setSeminari] = useState([]);
-    const [dipartimenti, setDipartimenti] = useState([]);
-    const [categorie, setCategorie] = useState([]);
-
+function GraficoRecensioniAnnue({ seminari, recensioni, dipartimenti, categorie }) {
     const [dipartimentoSelezionato, setDipartimentoSelezionato] = useState("");
     const [categoriaSelezionata, setCategoriaSelezionata] = useState("");
-
-    useEffect(() => {
-        Promise.all([
-            fetch("/api/recensioni").then(r => r.json()),
-            fetch("/api/miei-seminari").then(r => r.json()),
-            fetch("/api/dipartimenti").then(r => r.json()),
-            fetch("/api/categorie").then(r => r.json())
-        ])
-            .then(([recensioni, seminari, dipartimenti, categorie]) => {
-                setRecensioni(recensioni);
-                setSeminari(seminari);
-                setDipartimenti(dipartimenti);
-                setCategorie(categorie);
-            })
-            .catch(errore => {
-                console.error("Errore nel recupero delle statistiche:", errore);
-            });
-    }, []);
 
     const recensioniFiltrate = recensioni.filter(recensione => {
         const seminario = seminari.find(
@@ -61,13 +38,14 @@ function GraficoRecensioniAnnue() {
         );
     });
 
+    // Le recensioni sono raggruppate per anno accademico
     const anni = [...new Set(
-        recensioniFiltrate.map(r => r.anno)
+        recensioniFiltrate.map(r => annoAccademico(r.data))
     )].sort();
 
     const medieAnnue = anni.map(anno => {
         const recensioniAnno = recensioniFiltrate.filter(
-            r => r.anno === anno
+            r => annoAccademico(r.data) === anno
         );
 
         const media = recensioniAnno.reduce(
@@ -161,7 +139,7 @@ function GraficoRecensioniAnnue() {
                 {anni.length > 0 ? (
                     <Bar data={dati} options={opzioni} />
                 ) : (
-                    <p className="text-center color-grigio">
+                    <p className="color-grey">
                         Non sono presenti recensioni per i filtri selezionati.
                     </p>
                 )}
