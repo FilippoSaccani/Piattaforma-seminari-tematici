@@ -1,0 +1,103 @@
+
+import { useState } from "react";
+
+import Filtro from "./Filtro";
+import Pulsante from "./Pulsante";
+
+function TabellaSeminariPiuRichiesti({ seminari, dipartimenti, categorie }) {
+    const [mostraTutte, setMostraTutte] = useState(false);
+    const [ordinamento, setOrdinamento] = useState("Decrescente");
+    const [dipartimentoSelezionato, setDipartimentoSelezionato] = useState("");
+    const [categoriaSelezionata, setCategoriaSelezionata] = useState("");
+
+    // Applica i filtri e ordina i seminari
+    const seminariFiltrati = seminari
+        .filter(seminario =>
+            (!dipartimentoSelezionato ||
+                seminario.dipartimento === dipartimentoSelezionato) &&
+            (!categoriaSelezionata ||
+                seminario.categoria === categoriaSelezionata)
+        )
+        .sort((a, b) =>
+            ordinamento === "Decrescente"
+                ? b.prenotazioni - a.prenotazioni
+                : a.prenotazioni - b.prenotazioni
+        );
+
+    const seminariVisibili = mostraTutte
+        ? seminariFiltrati
+        : seminariFiltrati.slice(0, 5);
+
+    if (seminariFiltrati.length === 0) {
+        return (
+            <p className="color-grey">
+                Nessun seminario trovato con i filtri selezionati.
+            </p>
+        );
+    }
+
+    return (
+        <div className="flex-column gap-1">
+            <div className="flex-align-center gap-1">
+                <Filtro
+                    opzioni={["Decrescente", "Crescente"]}
+                    opzioneSelezionata={ordinamento}
+                    onChange={setOrdinamento}
+                />
+
+                <Filtro
+                    opzioni={dipartimenti}
+                    opzioneSelezionata={dipartimentoSelezionato}
+                    onChange={setDipartimentoSelezionato}
+                    testoPredefinito="Tutti i dipartimenti"
+                />
+
+                <Filtro
+                    opzioni={categorie}
+                    opzioneSelezionata={categoriaSelezionata}
+                    onChange={setCategoriaSelezionata}
+                    testoPredefinito="Tutte le categorie"
+                />
+            </div>
+
+            <div className="grid-3 flex-align-center">
+                <p className="info-value">Seminario</p>
+                <p className="info-value flex-center">Prenotazioni</p>
+                <p className="info-value flex-end">Media stelle</p>
+            </div>    
+
+            <div className="flex-column gap-1">
+                {seminariVisibili.map(seminario => (
+                    <div key = {seminario.id} className="grid-3 border-top flex-align-center">
+                        <span className="info-label">{seminario.titolo}</span>
+                        
+                        <span className="info-label flex-center">
+                            {seminario.prenotazioni}
+                        </span>
+
+                        <span className="info-label flex-end">
+                            {seminario.mediaRecensioni !== null ? (
+                                <>
+                                    <i className="fa-solid fa-star stella"></i>
+                                    {" "}{seminario.mediaRecensioni.toFixed(1)} / 5
+                                </>
+                            ) : (
+                                "Nessuna recensione"
+                            )}
+                        </span>
+                        
+                    </div>
+                ))}
+            </div>
+
+            {seminariFiltrati.length > 5 && (
+                <Pulsante
+                    testo={mostraTutte ? "Mostra meno" : "Mostra tutte"}
+                    onClick={() => setMostraTutte(!mostraTutte)}
+                />
+            )}
+        </div>
+    );
+}
+
+export default TabellaSeminariPiuRichiesti;

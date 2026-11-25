@@ -79,12 +79,7 @@ function GraficoStatoPrenotazioni({ anno, completati, prenotati, disdette }) {
     };
 
     return (
-        <div className="background-white border rounded padding-1 shadow flex-column gap-1">
-            <div className="flex-column gap-05">
-                <h3>Stato delle prenotazioni</h3>
-                <p className="info-label">Anno accademico {anno}</p>
-            </div>
-
+        <>
             <div className="grafico-stato-prenotazioni">
                 <Bar data={dati} options={opzioni} />
             </div>
@@ -111,7 +106,7 @@ function GraficoStatoPrenotazioni({ anno, completati, prenotati, disdette }) {
                     <p className="info-label">Disdette</p>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

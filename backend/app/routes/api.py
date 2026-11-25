@@ -604,7 +604,9 @@ def riassumi_seminario(seminario, adesso):
         "dipartimento": completo["dipartimento"],
         "mediaRecensioni": completo["mediaRecensioni"],
         "numeroRecensioni": completo["numeroRecensioni"],
-        "stato": completo["stato"]
+        "stato": completo["stato"],
+        "idDocente": seminario["idDocente"],
+        "docente": trova_docente(seminario["idDocente"])["nome"],
     }
 
 
@@ -745,3 +747,139 @@ def recensioni():
 @api_bp.get("/proposte")
 def proposte():
     return jsonify(PROPOSTE)
+
+
+def statistiche_admin(adesso):
+    seminari_completi = [
+        componi_seminario(seminario, adesso)
+        for seminario in SEMINARI
+    ]
+
+    # Individua l'anno accademico corrente (settembre-agosto)
+    anno_inizio = adesso.year if adesso.month >= 9 else adesso.year - 1
+    inizio_anno_accademico = datetime(anno_inizio, 9, 1)
+    fine_anno_accademico = datetime(anno_inizio + 1, 9, 1)
+    anno_corrente = f"{anno_inizio}/{anno_inizio + 1}"
+
+    riepilogo = {
+        "seminariPubblicati": sum(
+            s["stato"] == "Pubblicato" for s in seminari_completi
+        ),
+        "docentiAttivi": len({
+            s["idDocente"]
+            for s in seminari_completi
+            if s["stato"] != "Concluso"
+        }),
+        "seminariConclusi": sum(
+            s["stato"] == "Concluso" for s in seminari_completi
+        ),
+        "studentiCoinvolti": 0
+    }
+
+    # Conteggi complessivi
+    prenotazioni = {
+        "completate": 0,
+        "prenotate": 0,
+        "disdette": 0
+    }
+
+    # Conteggi del solo anno accademico corrente
+    prenotazioni_anno_corrente = {
+        "completati": 0,
+        "prenotati": 0,
+        "disdette": 0
+    }
+
+    richieste_seminari = {}
+
+    for seminario in SEMINARI:
+        richieste_seminari[seminario["id"]] = 0
+
+        for disponibilita in seminario["disponibilita"]:
+            data_prenotazione = datetime.strptime(
+                disponibilita["data"], "%Y-%m-%d"
+            )
+
+            nell_anno_corrente = (
+                inizio_anno_accademico <= data_prenotazione
+                < fine_anno_accademico
+            )
+
+            for fascia_oraria in disponibilita["fasceOrarie"]:
+                prenotazione_fascia = fascia_oraria["prenotazione"]
+
+                if prenotazione_fascia is None:
+                    continue
+
+                if prenotazione_fascia["disdetta"]:
+                    prenotazioni["disdette"] += 1
+
+                    if nell_anno_corrente:
+                        prenotazioni_anno_corrente["disdette"] += 1
+
+                    continue
+
+                fine = calcola_fine(
+                    disponibilita["data"],
+                    fascia_oraria["oraInizio"],
+                    seminario["durata"]
+                )
+
+                if fine <= adesso:
+                    prenotazioni["completate"] += 1
+                    if nell_anno_corrente:
+                        prenotazioni_anno_corrente["completati"] += 1
+                else:
+                    prenotazioni["prenotate"] += 1
+                    if nell_anno_corrente:
+                        prenotazioni_anno_corrente["prenotati"] += 1
+
+                riepilogo["studentiCoinvolti"] += prenotazione_fascia["numeroStudenti"]
+                richieste_seminari[seminario["id"]] += 1
+
+    seminari_piu_richiesti = []
+
+    for seminario in SEMINARI:
+        numero_prenotazioni = richieste_seminari[seminario["id"]]
+
+        if numero_prenotazioni == 0:
+            continue
+
+        completo = componi_seminario(seminario, adesso)
+
+        seminari_piu_richiesti.append({
+            "id": seminario["id"],
+            "titolo": seminario["titolo"],
+            "dipartimento": seminario["dipartimento"],
+            "categoria": seminario["categoria"],
+            "prenotazioni": numero_prenotazioni,
+            "mediaRecensioni": (
+                completo["mediaRecensioni"]
+                if completo["numeroRecensioni"] > 0
+                else None
+            )
+        })
+
+    seminari_piu_richiesti.sort(
+        key=lambda s: s["prenotazioni"],
+        reverse=True
+    )
+
+    return {
+        "riepilogo": riepilogo,
+        "prenotazioni": prenotazioni,
+        "annoCorrente": anno_corrente,
+        "prenotazioniAnnoCorrente": prenotazioni_anno_corrente,
+        "seminariPiuRichiesti": seminari_piu_richiesti
+    }
+
+
+
+@api_bp.get("/docenti")
+def docenti():
+    return jsonify(DOCENTI)
+
+
+@api_bp.get("/statistiche-admin")
+def statistiche_admin_endpoint():
+    return jsonify(statistiche_admin(datetime.now()))

@@ -115,9 +115,7 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
     };
 
     return (
-        <div className="background-white border rounded padding-1 shadow flex-column gap-1">
-            <h3>Media recensioni per seminario</h3>
-                
+        <>   
             <div className="flex-align-center gap-1">
                 <Filtro
                     opzioni={anni}
@@ -149,7 +147,7 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
                     Non sono presenti recensioni per i filtri selezionati.
                 </p>
             )}
-        </div>
+        </>
     );
 }
 
