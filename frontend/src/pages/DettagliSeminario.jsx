@@ -1,23 +1,37 @@
 import { useEffect, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { formattaData, calcolaOraFine } from "../utils/date";
-import { filtraDisponibilitaDisponibili, giorniPreavviso } from "../utils/disponibilita";
+import { elencoPrenotazioni, filtraDisponibilitaDisponibili, giorniPreavviso } from "../utils/disponibilita";
 import api from "../services/api";
 
 import Titolo from "../components/Titolo";
 import Prenotazione from "../components/Prenotazione";
 import TabellaPrenotazioni from "../components/TabellaPrenotazioni";
+import Pulsante from "../components/Pulsante";
 
 function DettagliSeminario() {
     const { utente } = useOutletContext();
 
     const { id } = useParams();
+    const navigate = useNavigate();
     const [seminario, setSeminario] = useState(null);
+
+    // Email del docente collegato, per mostrargli il tasto Modifica solo sui suoi seminari
+    const [emailDocente, setEmailDocente] = useState(null);
+
+    // Momento di apertura della pagina, usato per distinguere le prenotazioni concluse
+    const [adesso] = useState(() => new Date());
 
     useEffect(() => {
         api.get(`/seminari/${id}`).then(risposta => setSeminario(risposta.data));
     }, [id]);
+
+    useEffect(() => {
+        if (utente === "Docente") {
+            api.get("/utente").then(risposta => setEmailDocente(risposta.data.email));
+        }
+    }, [utente]);
 
     if (!seminario) {
         return null;
@@ -31,27 +45,8 @@ function DettagliSeminario() {
         seminario.disponibilita
     );
 
-    const prenotazioni = seminario.disponibilita.flatMap(giorno =>
-        giorno.fasceOrarie
-            .filter(fascia => fascia.prenotazione)
-            .map(fascia => {
-                const dataFine = new Date(
-                    `${giorno.data}T${fascia.oraInizio}`
-                );
-                dataFine.setMinutes(dataFine.getMinutes() + seminario.durata);
-
-                return {
-                    ...fascia.prenotazione,
-                    data: giorno.data,
-                    orario: `${fascia.oraInizio} - ${calcolaOraFine(fascia.oraInizio, seminario.durata)}`,
-                    stato: fascia.prenotazione.disdetta
-                        ? "Disdetta"
-                        : dataFine < new Date()
-                            ? "Conclusa"
-                            : "In programma"
-                };
-            })
-    );
+    // Prenotazioni in ordine cronologico, mostrate all'amministrazione
+    const prenotazioni = elencoPrenotazioni(seminario, adesso);
 
     const numeroRecensioni = seminario.numeroRecensioni;
 
@@ -227,6 +222,18 @@ function DettagliSeminario() {
                     </div>
                 )}
             </div>
+
+            {utente === "Docente" && emailDocente === seminario.email && (
+                <div className="flex-end">
+                    <Pulsante
+                        testo="Modifica"
+                        onClick={() =>
+                            // Dalla modifica, "Annulla" riporta a questa pagina
+                            navigate(`/modifica-seminario/${seminario.id}`, { state: { daDettagli: true } })
+                        }
+                    />
+                </div>
+            )}
 
         </div>
     );

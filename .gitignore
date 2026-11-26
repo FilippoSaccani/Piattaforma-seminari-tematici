@@ -16,6 +16,7 @@ instance/
 
 # Build
 dist/
+dist-statico/
 build/
 
 # Log

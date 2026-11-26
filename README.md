@@ -67,3 +67,22 @@ npm run build
 ```
 
 La cartella `frontend/dist/` generata contiene i file statici del sito, che possono essere serviti da Flask o da un web server.
+
+## Sito statico per la demo
+
+Per mostrare il prototipo senza tenere acceso il backend si può creare una versione statica del sito, con i dati di esempio "congelati" in file JSON. Dalla cartella `backend`, con l'ambiente virtuale attivo:
+
+```bash
+cd backend
+.venv\Scripts\activate
+python crea_sito_statico.py
+```
+
+Lo script compila il frontend in modalità statica (`npm run build:statico`), salva le risposte delle API in `frontend/dist-statico/api/` e aggiunge il file `_redirects`, che fa funzionare le pagine anche quando vengono ricaricate.
+
+Per pubblicarla gratis basta trascinare la cartella `frontend/dist-statico` su [Netlify Drop](https://app.netlify.com/drop) (serve un account Netlify).
+
+Da sapere:
+- i dati sono quelli presenti al momento dell'esecuzione dello script: conviene rigenerare il sito poco prima della demo, perché stati, preavviso e statistiche dipendono dalla data;
+- le modifiche fatte nella demo (prenotazioni, recensioni, ecc.) restano solo nella pagina e si perdono ricaricandola;
+- il selettore del ruolo funziona anche nella versione statica.

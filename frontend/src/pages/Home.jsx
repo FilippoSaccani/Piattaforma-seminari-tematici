@@ -49,7 +49,7 @@ function Home() {
                 <>
                     <div className="flex-column gap-05">
                         <BarraRicerca
-                            placeholder="Cerca seminari, categorie o dipartimenti..."
+                            placeholder="Cerca seminari, docenti, categorie o dipartimenti..."
                             value={testoRicerca}
                             onChange={setTestoRicerca}
                         />

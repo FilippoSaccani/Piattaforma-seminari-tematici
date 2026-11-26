@@ -55,7 +55,8 @@ body, #root {
 
 /*Contenuto della pagina*/
 .page-content {
-    padding: 7rem 15rem 3rem;
+    /* In basso c'è spazio per il selettore del ruolo, così non copre gli ultimi pulsanti */
+    padding: 7rem 15rem 6rem 15rem;
 
     position: relative;
     min-height: 100vh;
@@ -376,10 +377,10 @@ textarea {
 /*Selettore del ruolo*/
 .selettore-ruolo {
     position: fixed;
-    right: 1.5rem;
+    left: 1.5rem;
     bottom: 1.5rem;
     z-index: 5;
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 
@@ -416,6 +417,9 @@ textarea {
 
 /*Responsive*/
 @media only screen and (max-width: 1300px) {
+    .page-content { padding: 7rem 2rem 6rem 2rem; }
+    /* Margini stretti: un unico motivo a tutta larghezza, con i cerchi sparsi
+       anche al centro (sotto alle card) e solo due cerchi che spuntano dai bordi in alto */
     .page-content {
         padding: 7rem 2rem 3rem 2rem;
         background-image: url("./assets/cerchi-medi.svg");
@@ -428,7 +432,9 @@ textarea {
 @media only screen and (max-width: 768px) {
     .navbar span { display: none; }
     .navbar i { font-size: 1.5rem; }
-    .page-content { padding: 6rem 0.7rem 1rem 0.7rem; }
+    .page-content { padding: 6rem 0.7rem 5rem 0.7rem; }
+    /* Sui telefoni non c'è spazio ai lati: niente cerchi */
+    .page-content { background-image: none; }
     .navbar { padding: 0.4rem 2rem}
     /*.grid-2 { grid-template-columns: 1fr; }*/
     .grid-3.width-100 { grid-template-columns: repeat(2, 1fr); }

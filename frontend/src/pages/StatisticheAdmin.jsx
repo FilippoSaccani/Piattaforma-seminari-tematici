@@ -52,8 +52,8 @@ function StatisticheAdmin() {
             <Riepilogo
                 riepiloghi={[
                     {
-                        numero: statistiche.riepilogo.seminariPubblicati,
-                        testo: "Seminari pubblicati"
+                        numero: statistiche.riepilogo.seminariAttivi,
+                        testo: "Seminari attivi"
                     },
                     {
                         numero: statistiche.riepilogo.seminariConclusi,
@@ -80,7 +80,6 @@ function StatisticheAdmin() {
                 </div>
 
                 <GraficoStatoPrenotazioni
-                    anno={statistiche.annoCorrente}
                     completati={statistiche.prenotazioniAnnoCorrente.completati}
                     prenotati={statistiche.prenotazioniAnnoCorrente.prenotati}
                     disdette={statistiche.prenotazioniAnnoCorrente.disdette}
@@ -100,6 +99,7 @@ function StatisticheAdmin() {
                     recensioni={recensioni}
                     dipartimenti={valoriDistinti(seminari, "dipartimento")}
                     categorie={valoriDistinti(seminari, "categoria")}
+                    docenti={valoriDistinti(seminari, "docente")}
                 />
             </div>
 
@@ -107,7 +107,7 @@ function StatisticheAdmin() {
                 <div className="flex-column gap-05">
                     <h2 className="color-granato">Seminari più richiesti</h2>
                     <p className="color-grey">
-                        I cinque seminari che hanno ricevuto il maggior numero di prenotazioni.
+                        I seminari che hanno ricevuto il maggior numero di prenotazioni.
                     </p>
                 </div>
 

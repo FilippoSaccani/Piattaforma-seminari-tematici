@@ -1,6 +1,4 @@
-
 import { useState } from "react";
-
 import Filtro from "./Filtro";
 import Pulsante from "./Pulsante";
 

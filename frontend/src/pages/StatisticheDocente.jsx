@@ -55,7 +55,8 @@ function StatisticheDocente() {
     const riepiloghi = [
         { numero: totali.completati, testo: "Incontri svolti" },
         {
-            numero: totali.completati + totali.prenotati + totali.disdette,
+            // Le disdette non contano, come in "I miei seminari"
+            numero: totali.completati + totali.prenotati,
             testo: "Prenotazioni ricevute"
         },
         { numero: totali.studentiCoinvolti, testo: "Studenti coinvolti" },

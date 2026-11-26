@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:statico": "vite build --mode statico --outDir dist-statico --emptyOutDir",
     "lint": "oxlint",
     "preview": "vite preview"
   },

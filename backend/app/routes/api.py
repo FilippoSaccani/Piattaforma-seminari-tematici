@@ -112,6 +112,10 @@ def prenotazione(id_prenotazione, scuola, numero_studenti, modalita="In presenza
     }
 
 
+# Video di esempio: il file non esiste ancora, serve solo a mostrare nel prototipo
+# il riquadro del trailer nel dettaglio del seminario
+VIDEO_ESEMPIO = "/video/esempio.mp4"
+
 # Catalogo dei seminari.
 # Docente, recensioni, media e stato vengono aggiunti dagli endpoint.
 
@@ -129,7 +133,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [3, 4, 5],
         "limite_prenotazioni": 10,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 1, "data": "2026-12-15", "fasceOrarie": [
                 fascia(1, "09:00", prenotazione(1, "Liceo Scientifico Aldo Moro", 25)),
@@ -156,7 +160,7 @@ SEMINARI = [
         "modalita": ["In presenza", "A distanza"],
         "anni": [3, 4, 5],
         "limite_prenotazioni": 10,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 4, "data": "2027-01-12", "fasceOrarie": [
                 fascia(5, "09:00"),
@@ -177,7 +181,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [3, 4, 5],
         "limite_prenotazioni": 10,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 5, "data": "2026-11-10", "fasceOrarie": [
                 fascia(7, "09:00", prenotazione(3, "Istituto Tecnico Einaudi", 24)),
@@ -198,7 +202,7 @@ SEMINARI = [
         "modalita": ["A distanza"],
         "anni": [1, 2, 3],
         "limite_prenotazioni": 8,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 6, "data": "2026-10-14", "fasceOrarie": [
                 fascia(9, "10:00", prenotazione(5, "Istituto Tecnico Fermi", 25, modalita="A distanza"))
@@ -222,7 +226,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [3, 4, 5],
         "limite_prenotazioni": 10,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 8, "data": "2026-10-16", "fasceOrarie": [
                 fascia(12, "09:00", prenotazione(6, "Liceo delle Scienze Applicate", 22))
@@ -246,7 +250,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [1, 2],
         "limite_prenotazioni": 6,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 10, "data": "2026-12-14", "fasceOrarie": [
                 fascia(15, "10:00"),
@@ -270,7 +274,7 @@ SEMINARI = [
         "modalita": ["In presenza", "A distanza"],
         "anni": [4, 5],
         "limite_prenotazioni": 8,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 12, "data": "2026-10-20", "fasceOrarie": [
                 fascia(18, "09:00", prenotazione(8, "Liceo Scientifico Aldo Moro", 22))
@@ -293,7 +297,7 @@ SEMINARI = [
         "modalita": ["A distanza"],
         "anni": [3, 4, 5],
         "limite_prenotazioni": 10,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 14, "data": "2026-12-03", "fasceOrarie": [
                 fascia(20, "14:00")
@@ -316,7 +320,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [3, 4, 5],
         "limite_prenotazioni": 6,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 16, "data": "2026-12-16", "fasceOrarie": [
                 fascia(22, "10:00"),
@@ -337,7 +341,7 @@ SEMINARI = [
         "modalita": ["A distanza"],
         "anni": [4, 5],
         "limite_prenotazioni": 12,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 17, "data": "2026-09-29", "fasceOrarie": [
                 fascia(24, "11:00", prenotazione(10, "Istituto Tecnico Blaise Pascal", 30, modalita="A distanza"))
@@ -360,7 +364,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [1, 2, 3, 4, 5],
         "limite_prenotazioni": 10,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 19, "data": "2027-02-16", "fasceOrarie": [
                 fascia(26, "09:00"),
@@ -381,7 +385,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [4, 5],
         "limite_prenotazioni": 8,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 20, "data": "2027-01-20", "fasceOrarie": [
                 fascia(28, "09:00"),
@@ -402,7 +406,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [1, 2, 3],
         "limite_prenotazioni": 6,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 21, "data": "2026-11-03", "fasceOrarie": [
                 fascia(30, "10:00", prenotazione(12, "Liceo delle Scienze Applicate", 24))
@@ -422,7 +426,7 @@ SEMINARI = [
         "modalita": ["A distanza"],
         "anni": [1, 2, 3],
         "limite_prenotazioni": 12,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 22, "data": "2026-12-11", "fasceOrarie": [
                 fascia(31, "09:00", prenotazione(13, "Liceo Scientifico Aldo Moro", 27, modalita="A distanza")),
@@ -443,7 +447,7 @@ SEMINARI = [
         "modalita": ["In presenza"],
         "anni": [4, 5],
         "limite_prenotazioni": 8,
-        "video": None,
+        "video": VIDEO_ESEMPIO,
         "disponibilita": [
             {"id": 23, "data": "2027-01-14", "fasceOrarie": [
                 fascia(33, "09:00", prenotazione(14, "Istituto Tecnico Fermi", 23)),
@@ -778,8 +782,9 @@ def statistiche_admin(adesso):
     anno_corrente = f"{anno_inizio}/{anno_inizio + 1}"
 
     riepilogo = {
-        "seminariPubblicati": sum(
-            s["stato"] == "Pubblicato" for s in seminari_completi
+        # Seminari ancora in corso: pubblicati, con o senza prenotazioni
+        "seminariAttivi": sum(
+            s["stato"] != "Concluso" for s in seminari_completi
         ),
         "docentiAttivi": len({
             s["idDocente"]
@@ -845,12 +850,14 @@ def statistiche_admin(adesso):
                     prenotazioni["completate"] += 1
                     if nell_anno_corrente:
                         prenotazioni_anno_corrente["completati"] += 1
+
+                    # Come nelle statistiche del docente, contano solo gli incontri già svolti
+                    riepilogo["studentiCoinvolti"] += prenotazione_fascia["numeroStudenti"]
                 else:
                     prenotazioni["prenotate"] += 1
                     if nell_anno_corrente:
                         prenotazioni_anno_corrente["prenotati"] += 1
 
-                riepilogo["studentiCoinvolti"] += prenotazione_fascia["numeroStudenti"]
                 richieste_seminari[seminario["id"]] += 1
 
     seminari_piu_richiesti = []

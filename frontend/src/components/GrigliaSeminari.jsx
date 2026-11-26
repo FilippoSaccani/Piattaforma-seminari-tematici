@@ -16,7 +16,8 @@ function GrigliaSeminari({
             seminario.titolo.toLowerCase().includes(testo) ||
             seminario.descrizione.toLowerCase().includes(testo) ||
             seminario.categoria.toLowerCase().includes(testo) ||
-            seminario.dipartimento.toLowerCase().includes(testo);
+            seminario.dipartimento.toLowerCase().includes(testo) ||
+            (seminario.docente ?? "").toLowerCase().includes(testo);
 
         const corrispondeCategoria =
             categoriaSelezionata === "" ||

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import api from "../services/api";
 import { useCategorieDipartimenti } from "../hooks/useCategorieDipartimenti";
@@ -10,6 +10,12 @@ import FormSeminario from "../components/FormSeminario";
 function ModificaSeminario() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Se si arriva dal dettaglio del seminario, "Annulla" riporta lì
+    const paginaPrecedente = location.state?.daDettagli
+        ? `/dettagli-seminario/${id}`
+        : "/miei-seminari";
 
     const { categorie, dipartimenti } = useCategorieDipartimenti();
     const [seminario, setSeminario] = useState(null);
@@ -41,7 +47,7 @@ function ModificaSeminario() {
                 dipartimenti={dipartimenti}
                 onSubmit={salvaModifiche}
                 testoPulsante="Salva modifiche"
-                onClickAnnulla={() => navigate("/miei-seminari")}
+                onClickAnnulla={() => navigate(paginaPrecedente)}
             />
 
         </div>
