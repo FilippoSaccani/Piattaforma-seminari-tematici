@@ -100,7 +100,7 @@ function DettagliSeminario() {
 
             {disponibilitaDisponibili.length > 0 ? (
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
-                    <div className="flex-between flex-align-center">
+                    <div className="flex-between flex-align-center column-phone reverse">
                         <h2 className="color-granato">Disponibilità</h2>
 
                         <span className="width-fit padding-03-1 rounded-20 background-red color-cream flex-align-center gap-05">
@@ -224,15 +224,13 @@ function DettagliSeminario() {
             </div>
 
             {utente === "Docente" && emailDocente === seminario.email && (
-                <div className="flex-end">
-                    <Pulsante
-                        testo="Modifica"
-                        onClick={() =>
-                            // Dalla modifica, "Annulla" riporta a questa pagina
-                            navigate(`/modifica-seminario/${seminario.id}`, { state: { daDettagli: true } })
-                        }
-                    />
-                </div>
+                <Pulsante
+                    testo="Modifica"
+                    onClick={() =>
+                        // Dalla modifica, "Annulla" riporta a questa pagina
+                        navigate(`/modifica-seminario/${seminario.id}`, { state: { daDettagli: true } })
+                    }
+                />
             )}
 
         </div>

@@ -113,8 +113,8 @@ function CardPrenotazioneCarrello({
     return (
         <div className="background-white border rounded padding-1 shadow flex-column gap-1 shadow-hover">
 
-            <div className="flex-between flex-align-center">
-                <div className="flex-column gap-05">
+            <div className="flex-between flex-align-center column-phone reverse">
+                <div className="flex-column gap-05 ">
                     <h2 className="color-granato">{seminario.titolo}</h2>
                     <p className="color-grey">{seminario.dipartimento}</p>
                 </div>

@@ -119,7 +119,7 @@ function GraficoRecensioniAnnue({ seminari, recensioni, dipartimenti, categorie 
         <div className="background-white border rounded padding-1 shadow flex-column gap-1">
             <h3>Media recensioni annue</h3>
 
-            <div className="flex-align-center gap-1">
+            <div className="flex-align-center gap-1 column-phone">
                 <Filtro
                     opzioni={dipartimenti}
                     opzioneSelezionata={dipartimentoSelezionato}
@@ -135,7 +135,7 @@ function GraficoRecensioniAnnue({ seminari, recensioni, dipartimenti, categorie 
                 />
             </div>
             
-            <div className="istogramma">
+            <div className="grafico">
                 {anni.length > 0 ? (
                     <Bar data={dati} options={opzioni} />
                 ) : (

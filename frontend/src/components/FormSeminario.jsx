@@ -513,7 +513,7 @@ function FormSeminario({
                             Classi destinatarie <span className="color-red">*</span>
                         </label>
 
-                        <div className="grid-2">
+                        <div className="grid-2 grid-phone">
                             <div className="flex-column gap-05">
                                 {[1, 2, 3].map(anno => (
                                     <label key={anno} className="flex-align-center gap-05">
@@ -676,8 +676,7 @@ function FormSeminario({
                 }
             />
 
-            <div className="width-100 grid-2">
-
+            <div className="width-100 grid-2 grid-phone">
                 <button
                     type="button"
                     className="border color-granato background-white rounded padding-05-1 hover pointer"

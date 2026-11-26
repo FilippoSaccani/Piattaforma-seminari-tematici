@@ -26,7 +26,7 @@ function ProposteScuole({ proposte }) {
                             key={proposta.id}
                             className={`${index > 0 ? "border-top " : ""}flex-column gap-05`}
                         >
-                            <div className="flex-between flex-align-center gap-1">
+                            <div className="flex-between flex-align-center gap-1 column-phone">
                                 <p className="info-value">{proposta.scuola}</p>
                                 <span className="info-label">
                                     {formattaData(proposta.data)}

@@ -61,7 +61,7 @@ function CardPrenotazioneScuola({ prenotazione, onDisdici, onRecensisci }) {
                 </>
             ) : (
                 <>
-                    <div className="flex-between flex-align-center">
+                    <div className="flex-between flex-align-center column-phone reverse">
                         <div className="flex-column gap-05">
                             <h2 className="color-granato">{prenotazione.titolo}</h2>
                             <p className="color-grey">{prenotazione.dipartimento}</p>

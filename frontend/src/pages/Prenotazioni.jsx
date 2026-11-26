@@ -166,7 +166,7 @@ function Prenotazioni() {
                 />
             ) : (
                 <>
-                    <div className="flex gap-1 width-100">
+                    <div className="flex gap-1 width-100 column-phone">
                         <BarraRicerca
                             placeholder="Cerca seminari prenotati..."
                             value={testoRicerca}

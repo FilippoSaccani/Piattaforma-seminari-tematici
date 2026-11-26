@@ -154,7 +154,7 @@ function GraficoInteressiScuole() {
                 </p>
             </div>
 
-            <div className="istogramma flex-align-center">
+            <div className="grafico flex-align-center">
                 <Chart
                     type="nuvolaDiParole"
                     data={dati}

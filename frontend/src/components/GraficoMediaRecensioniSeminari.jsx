@@ -154,7 +154,7 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
             </div>
 
             {recensioniFiltrate.length > 0 ? (
-                <div className="istogramma">
+                <div className="grafico">
                     <Bar data={datiGrafico} options={opzioni} />
                 </div>
             ) : (

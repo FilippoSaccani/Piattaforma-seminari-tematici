@@ -139,7 +139,7 @@ function IMieiSeminari() {
                 <>
                     <Riepilogo riepiloghi={riepiloghi} classe="grid-3" />
 
-                    <div className="flex gap-1 width-100">
+                    <div className="flex gap-1 width-100 column-phone">
                         <BarraRicerca
                             placeholder="Cerca i tuoi seminari..."
                             value={testoRicerca}

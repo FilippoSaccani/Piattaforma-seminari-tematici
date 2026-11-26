@@ -25,7 +25,7 @@ function FormPrenotazione({
             <div className="flex-column gap-05">
                 <p>Seleziona una data</p>
 
-                <div className="flex gap-05">
+                <div className="grid-10">
                     {disponibilita.map(giorno => (
                         <button
                             key={giorno.data}
@@ -47,7 +47,7 @@ function FormPrenotazione({
                 <div className="flex-column gap-05">
                     <p>Seleziona una fascia oraria</p>
 
-                    <div className="flex gap-05">
+                    <div className="grid-10">
                         {giornoSelezionato.fasceOrarie.map(fascia => (
                             <button
                                 key={fascia.oraInizio}
@@ -66,8 +66,8 @@ function FormPrenotazione({
                 </div>
             )}
 
-            <div className="flex-between flex-align-center gap-2">
-                <div className="flex-column gap-05 width-50">
+            <div className="grid-2 gap-1">
+                <div className="flex-column gap-05">
                     <label htmlFor="numeroStudenti">
                         Numero di studenti per turno
                     </label>
@@ -94,7 +94,7 @@ function FormPrenotazione({
                 </div>
 
                 {modalita.length > 1 && (
-                    <div className="flex-column gap-05 width-50">
+                    <div className="flex-column gap-05">
                         <label htmlFor="modalita">Modalità</label>
 
                         <select

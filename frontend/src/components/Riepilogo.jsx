@@ -12,7 +12,7 @@ function Riepilogo({ riepiloghi, classe }) {
                         { riepilogo.icona && <i className={`${riepilogo.icona} stella `} /> }
                     </div>
 
-                    <p className="info-label">{riepilogo.testo}</p>
+                    <p className="info-label text-center">{riepilogo.testo}</p>
                 </div>
             ))}
         </div>

@@ -248,7 +248,12 @@ function GestioneDisponibilita({
 
                                 {elemento.fasceOrarie.length > 1 && !fasciaOccupata(fascia) && (
                                     <Pulsante
-                                        testo={<>Rimuovi <span className="none">fascia</span></>}
+                                        testo={
+                                            <span className="none">
+                                                Rimuovi fascia
+                                            </span>
+                                        }
+                                        icona="fa-solid fa-trash visible"
                                         onClick={() =>
                                             rimuoviFascia(indiceData, indiceFascia)
                                         }
