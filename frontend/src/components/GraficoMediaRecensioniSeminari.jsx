@@ -116,19 +116,21 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
 
     return (
         <>   
-            <div className="flex-align-center gap-1">
-                <Filtro
-                    opzioni={anni}
-                    opzioneSelezionata={annoSelezionato}
-                    onChange={setAnnoSelezionato}
-                />
+            <div className="flex-align-center gap-1 column">
+                <div className="flex-align-center gap-1 column-phone">
+                    <Filtro
+                        opzioni={anni}
+                        opzioneSelezionata={annoSelezionato}
+                        onChange={setAnnoSelezionato}
+                    />
 
-                <Filtro
-                    opzioni={dipartimenti}
-                    opzioneSelezionata={dipartimentoSelezionato}
-                    onChange={setDipartimentoSelezionato}
-                    testoPredefinito="Tutti i dipartimenti"
-                />
+                    <Filtro
+                        opzioni={dipartimenti}
+                        opzioneSelezionata={dipartimentoSelezionato}
+                        onChange={setDipartimentoSelezionato}
+                        testoPredefinito="Tutti i dipartimenti"
+                    />
+                </div>
 
                 <Filtro
                     opzioni={categorie}

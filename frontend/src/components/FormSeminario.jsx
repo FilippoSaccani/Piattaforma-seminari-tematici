@@ -492,7 +492,6 @@ function FormSeminario({
                         </label>
 
                         <div className="grid-2">
-
                             <div className="flex-column gap-05">
                                 {[1, 2, 3].map(anno => (
                                     <label key={anno} className="flex-align-center gap-05">

@@ -155,7 +155,7 @@ function DettagliSeminario() {
             {utente === "Admin" && prenotazioni.length > 0 && (
                 <div className="background-white border rounded padding-1 flex-column gap-1 shadow shadow-hover">
                     <h2 className="color-granato">
-                        Prenotazioni ({prenotazioni.length})
+                        Prenotazioni
                     </h2>
 
                     <TabellaPrenotazioni

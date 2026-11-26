@@ -35,7 +35,7 @@ function Home() {
         <div className="page-content flex-column gap-2">
             <Titolo
                 titolo="Seminari tematici"
-                sottotitolo="I seminari tematici sono volti ad approfondire contenuti disciplinari curricolari o ad introdurre tematiche caratterizzanti il «mondo universitario» attraverso argomenti d’attualità, impatto scientifico e sociale."
+                sottotitolo="I seminari tematici si propongono di approfondire i contenuti delle discipline curricolari e di avvicinare gli studenti al mondo universitario, attraverso l’esplorazione di tematiche di attualità e di particolare rilevanza scientifica e sociale."
                 paragrafo={seminari.length > 0 && utente === "Scuola" ? "Non trovi l'argomento che cerchi? Puoi suggerire nuove categorie e seminari selezionando la categoria «Altro»!" : ""}
             />
 
@@ -54,21 +54,23 @@ function Home() {
                             onChange={setTestoRicerca}
                         />
 
-                        <div className="flex-align-center gap-1">
-                            <Filtro
-                                opzioni={categorie}
-                                opzioneSelezionata={categoriaSelezionata}
-                                onChange={setCategoriaSelezionata}
-                                testoPredefinito="Tutte le categorie"
-                                mostraAltro={utente === "Scuola"}
-                            />
-
-                            <Filtro
-                                opzioni={dipartimenti}
-                                opzioneSelezionata={dipartimentoSelezionato}
-                                onChange={setDipartimentoSelezionato}
-                                testoPredefinito="Tutti i dipartimenti"
-                            />
+                        <div className="flex-align-center gap-1 column">
+                            <div className="flex-align-center gap-1 column-phone">
+                                <Filtro
+                                    opzioni={dipartimenti}
+                                    opzioneSelezionata={dipartimentoSelezionato}
+                                    onChange={setDipartimentoSelezionato}
+                                    testoPredefinito="Tutti i dipartimenti"
+                                />
+                                
+                                <Filtro
+                                    opzioni={categorie}
+                                    opzioneSelezionata={categoriaSelezionata}
+                                    onChange={setCategoriaSelezionata}
+                                    testoPredefinito="Tutte le categorie"
+                                    mostraAltro={utente === "Scuola"}
+                                />
+                            </div>
 
                             {utente === "Admin" && (
                                 <Filtro

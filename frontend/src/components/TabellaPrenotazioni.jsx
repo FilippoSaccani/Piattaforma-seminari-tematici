@@ -19,7 +19,7 @@ function TabellaPrenotazioni({ prenotazioni, formattaData }) {
         <div className="flex-column gap-1">
 
             {/* Intestazione */}
-            <div className="grid-4 flex-align-center">
+            <div className="grid-4 flex-align-center none">
                 <p className="info-value">Scuola</p>
                 <p className="info-value">Data</p>
                 <p className="info-value">Orario</p>
@@ -33,19 +33,19 @@ function TabellaPrenotazioni({ prenotazioni, formattaData }) {
                         key={prenotazione.id ?? `${prenotazione.data}_${prenotazione.orario}_${index}`}
                         className="grid-4 border-top flex-align-center"
                     >
-                        <span className="info-label">
+                        <span className="info-label span-flex-between" data-label="Scuola">
                             {prenotazione.scuola}
                         </span>
 
-                        <span className="info-label">
+                        <span className="info-label span-flex-between" data-label="Data">
                             {formattaData(prenotazione.data)}
                         </span>
 
-                        <span className="info-label">
+                        <span className="info-label span-flex-between" data-label="Orario">
                             {prenotazione.orario}
                         </span>
 
-                        <span className="info-label">
+                        <span className="info-label span-flex-between" data-label="Stato">
                             {prenotazione.stato}
                         </span>
                     </div>

@@ -30,19 +30,21 @@ function TabellaSeminariPiuRichiesti({ seminari, dipartimenti, categorie }) {
 
     return (
         <div className="flex-column gap-1">
-            <div className="flex-align-center gap-1">
-                <Filtro
-                    opzioni={["Dal più richiesto", "Dal meno richiesto"]}
-                    opzioneSelezionata={ordinamento}
-                    onChange={setOrdinamento}
-                />
+            <div className="flex-align-center gap-1 column">
+                <div className="flex-align-center gap-1 column-phone">
+                    <Filtro
+                        opzioni={["Dal più richiesto", "Dal meno richiesto"]}
+                        opzioneSelezionata={ordinamento}
+                        onChange={setOrdinamento}
+                    />
 
-                <Filtro
-                    opzioni={dipartimenti}
-                    opzioneSelezionata={dipartimentoSelezionato}
-                    onChange={setDipartimentoSelezionato}
-                    testoPredefinito="Tutti i dipartimenti"
-                />
+                    <Filtro
+                        opzioni={dipartimenti}
+                        opzioneSelezionata={dipartimentoSelezionato}
+                        onChange={setDipartimentoSelezionato}
+                        testoPredefinito="Tutti i dipartimenti"
+                    />
+                </div>
 
                 <Filtro
                     opzioni={categorie}
