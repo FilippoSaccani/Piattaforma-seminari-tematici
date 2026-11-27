@@ -110,6 +110,10 @@ body, #root {
     justify-content: end;
 }
 
+.grid-3.flex-end span {
+    text-align: right;
+}
+
 
 /*Gap*/
 .gap-025 { gap: 0.25rem; }
