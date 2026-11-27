@@ -55,7 +55,7 @@ function Home() {
                         />
 
                         <div className="flex-align-center gap-1 column">
-                            <div className="flex-align-center gap-1 column-phone">
+                            <div className="flex-align-center gap-1 column-phone width-100">
                                 <Filtro
                                     opzioni={dipartimenti}
                                     opzioneSelezionata={dipartimentoSelezionato}

@@ -121,7 +121,7 @@ function GraficoMediaRecensioniSeminari({ seminari, recensioni, dipartimenti, ca
     return (
         <>   
             <div className="flex-align-center gap-1 column">
-                <div className="flex-align-center gap-1 column-phone">
+                <div className="flex-align-center gap-1 column-phone width-100">
                     <Filtro
                         opzioni={anni}
                         opzioneSelezionata={annoSelezionato}

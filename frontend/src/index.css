@@ -453,12 +453,14 @@ textarea {
 @media only screen and (max-width: 600px) {
     .page-content { background-image: none }
 
-    .navbar { padding: 0.4rem}
-    .navbar div {gap: 0.5rem}
-    .navbar a { font-size: 1.2rem; padding: 0.4rem 0.6rem; }
+    .navbar { padding: 0.4rem }
+    .navbar div { gap: 0.5rem }
+    .navbar div a { font-size: 1.2rem; padding: 0.4rem 0.6rem; }
     .navbar img {
-        clip-path: inset(0 150px 0 0);
-        margin-right: -150px;
+        clip-path: inset(0 130px 0 0);
+        margin-right: -130px;
+        width: 18rem;
+        padding: 0;
     }
 
     .grid-10 { grid-template-columns: repeat(2, 1fr); }
@@ -492,4 +494,9 @@ textarea {
     .visible { display: flex; }
 
     .grafico { height: 250px;}
+
+    select {
+        max-width: 100%;
+        min-width: 0;
+    }
 }

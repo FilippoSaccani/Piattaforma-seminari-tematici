@@ -345,7 +345,6 @@ function FormSeminario({
             <div className="flex-column gap-1">
 
                 <div className="grid-2">
-
                     <div className="flex-column gap-05">
                         <label htmlFor="docente">Docente relatore</label>
                         <input
@@ -371,11 +370,9 @@ function FormSeminario({
                             disabled
                         />
                     </div>
-
                 </div>
 
                 <div className="grid-2">
-
                     <div className="flex-column gap-05">
                         <label htmlFor="dipartimento">
                             Dipartimento <span className="color-red">*</span>
@@ -386,7 +383,7 @@ function FormSeminario({
                             name="dipartimento"
                             value={seminario.dipartimento}
                             onChange={aggiornaCampo}
-                            className={`border rounded padding-05-1 ${mostraErrori && errori.dipartimento ? "border-red" : ""}`}
+                            className={`border rounded padding-05-1 width-100 ${mostraErrori && errori.dipartimento ? "border-red" : ""}`}
                             required
                         >
                             <option value="">Seleziona un dipartimento</option>
