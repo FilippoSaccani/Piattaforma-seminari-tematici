@@ -119,10 +119,9 @@ function DettagliSeminario() {
                                     {formattaData(giorno.data)}
                                 </p>
 
-                                <div className="flex-align-center gap-1 flex-wrap">
+                                <div className="grid-3 flex-end">
                                     {giorno.fasceOrarie.map((fascia, i) => (
                                         <span key={fascia.oraInizio} className="color-grey">
-                                            {i > 0 && " | "}
                                             {fascia.oraInizio} - {calcolaOraFine(
                                                 fascia.oraInizio,
                                                 seminario.durata

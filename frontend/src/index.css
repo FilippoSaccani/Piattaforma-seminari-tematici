@@ -105,6 +105,11 @@ body, #root {
     gap: 0.5rem;
 }
 
+.grid-3.flex-end {
+    grid-template-columns: repeat(3, max-content);
+    justify-content: end;
+}
+
 
 /*Gap*/
 .gap-025 { gap: 0.25rem; }
@@ -468,6 +473,8 @@ textarea {
     .grid-2, .grid-3.width-100, .grid-4.border-top { grid-template-columns: 1fr; }
 
     .grid-phone, .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.5rem;}
+
+    .grid-3.flex-end { grid-template-columns: repeat(1, max-content); }
     
     .column-phone { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
 
